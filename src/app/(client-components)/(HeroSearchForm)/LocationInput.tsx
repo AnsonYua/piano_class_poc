@@ -12,9 +12,30 @@ export interface LocationInputProps {
   autoFocus?: boolean;
 }
 
+const HONG_KONG_DISTRICTS = [
+  "中西區",
+  "灣仔區",
+  "東區",
+  "南區",
+  "油尖旺區",
+  "深水埗區",
+  "九龍城區",
+  "黃大仙區",
+  "觀塘區",
+  "荃灣區",
+  "屯門區",
+  "元朗區",
+  "北區",
+  "大埔區",
+  "西貢區",
+  "沙田區",
+  "葵青區",
+  "離島區"
+];
+
 const LocationInput: FC<LocationInputProps> = ({
   autoFocus = false,
-  placeHolder = "地點",
+  placeHolder = "地區",
   desc = "你希望在哪區上堂?",
   className = "nc-flex-1.5",
   divHideVerticalLineClass = "left-10 -right-0.5",
@@ -61,59 +82,32 @@ const LocationInput: FC<LocationInputProps> = ({
     setShowPopover(false);
   };
 
-  const renderRecentSearches = () => {
+  const filteredDistricts = HONG_KONG_DISTRICTS.filter(district => 
+    district.toLowerCase().includes(value.toLowerCase())
+  );
+
+  const renderDistrictsList = () => {
     return (
       <>
         <h3 className="block mt-2 sm:mt-0 px-4 sm:px-8 font-semibold text-base sm:text-lg text-neutral-800 dark:text-neutral-100">
-          Recent searches
+          香港十八區
         </h3>
         <div className="mt-2">
-          {[
-            "Hamptons, Suffolk County, NY",
-            "Las Vegas, NV, United States",
-            "Ueno, Taito, Tokyo",
-            "Ikebukuro, Toshima, Tokyo",
-          ].map((item) => (
+          {filteredDistricts.map((district) => (
             <span
-              onClick={() => handleSelectLocation(item)}
-              key={item}
-              className="flex px-4 sm:px-8 items-center space-x-3 sm:space-x-4 py-4 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
+              onClick={() => handleSelectLocation(district)}
+              key={district}
+              className="flex px-4 sm:px-8 items-center space-x-3 sm:space-x-4 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
             >
               <span className="block text-neutral-400">
-                <ClockIcon className="h-4 sm:h-6 w-4 sm:w-6" />
+                <MapPinIcon className="h-4 sm:h-6 w-4 sm:w-6" />
               </span>
-              <span className=" block font-medium text-neutral-700 dark:text-neutral-200">
-                {item}
+              <span className="block font-medium text-neutral-700 dark:text-neutral-200">
+                {district}
               </span>
             </span>
           ))}
         </div>
-      </>
-    );
-  };
-
-  const renderSearchValue = () => {
-    return (
-      <>
-        {[
-          "Ha Noi, Viet Nam",
-          "San Diego, CA",
-          "Humboldt Park, Chicago, IL",
-          "Bangor, Northern Ireland",
-        ].map((item) => (
-          <span
-            onClick={() => handleSelectLocation(item)}
-            key={item}
-            className="flex px-4 sm:px-8 items-center space-x-3 sm:space-x-4 py-4 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
-          >
-            <span className="block text-neutral-400">
-              <ClockIcon className="h-4 w-4 sm:h-6 sm:w-6" />
-            </span>
-            <span className="block font-medium text-neutral-700 dark:text-neutral-200">
-              {item}
-            </span>
-          </span>
-        ))}
       </>
     );
   };
@@ -161,7 +155,7 @@ const LocationInput: FC<LocationInputProps> = ({
 
       {showPopover && (
         <div className="absolute left-0 z-40 w-full min-w-[300px] sm:min-w-[500px] bg-white dark:bg-neutral-800 top-full mt-3 py-3 sm:py-6 rounded-3xl shadow-xl max-h-96 overflow-y-auto">
-          {value ? renderSearchValue() : renderRecentSearches()}
+          {renderDistrictsList()}
         </div>
       )}
     </div>

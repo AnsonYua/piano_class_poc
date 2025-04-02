@@ -24,7 +24,7 @@ const DatePickerCustomHeaderTwoMonth = ({
         </span>
       </button>
       <span className="react-datepicker__current-month">
-        {monthDate.toLocaleString("en-US", {
+        {monthDate.toLocaleString("zh-TW", {
           month: "long",
           year: "numeric",
         })}
