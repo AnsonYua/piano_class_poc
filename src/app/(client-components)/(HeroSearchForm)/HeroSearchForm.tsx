@@ -16,7 +16,7 @@ const HeroSearchForm: FC<HeroSearchFormProps> = ({
 }) => {
   const renderHeroSearchForm = () => {
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-10xl mx-auto px-4 sm:px-6 lg:px-8">
         <ExperiencesSearchForm />
       </div>
     );
@@ -24,7 +24,7 @@ const HeroSearchForm: FC<HeroSearchFormProps> = ({
 
   return (
     <div
-      className={`nc-HeroSearchForm w-full max-w-6xl py-5 lg:py-0 ${className}`}
+      className={`nc-HeroSearchForm w-full max-w-10xl py-5 lg:py-0 ${className}`}
       data-nc-id="HeroSearchForm"
     >
       {renderHeroSearchForm()}
