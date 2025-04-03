@@ -86,21 +86,47 @@ const LocationInput: FC<LocationInputProps> = ({
     district.toLowerCase().includes(value.toLowerCase())
   );
 
-  const renderDistrictsList = () => {
+  const renderSearchValues = () => {
+    return (
+      <>
+        <h3 className="block mt-2 sm:mt-0 px-4 sm:px-8 font-semibold text-base sm:text-lg text-neutral-800 dark:text-neutral-100">
+          搜尋結果
+        </h3>
+        <div className="mt-2 grid grid-cols-4 gap-2 px-4 sm:px-8">
+          {filteredDistricts.map((district) => (
+            <span
+              onClick={() => handleSelectLocation(district)}
+              key={district}
+              className="flex items-center space-x-3 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
+            >
+              <span className="block text-neutral-400">
+                <MapPinIcon className="h-4 w-4" />
+              </span>
+              <span className="block font-medium text-neutral-700 dark:text-neutral-200">
+                {district}
+              </span>
+            </span>
+          ))}
+        </div>
+      </>
+    );
+  };
+
+  const renderRecentSearches = () => {
     return (
       <>
         <h3 className="block mt-2 sm:mt-0 px-4 sm:px-8 font-semibold text-base sm:text-lg text-neutral-800 dark:text-neutral-100">
           香港十八區
         </h3>
-        <div className="mt-2">
-          {filteredDistricts.map((district) => (
+        <div className="mt-2 grid grid-cols-2 gap-2 px-4 sm:px-8">
+          {HONG_KONG_DISTRICTS.map((district) => (
             <span
               onClick={() => handleSelectLocation(district)}
               key={district}
-              className="flex px-4 sm:px-8 items-center space-x-3 sm:space-x-4 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
+              className="flex items-center space-x-3 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
             >
               <span className="block text-neutral-400">
-                <MapPinIcon className="h-4 sm:h-6 w-4 sm:w-6" />
+                <MapPinIcon className="h-4 w-4" />
               </span>
               <span className="block font-medium text-neutral-700 dark:text-neutral-200">
                 {district}
@@ -155,7 +181,7 @@ const LocationInput: FC<LocationInputProps> = ({
 
       {showPopover && (
         <div className="absolute left-0 z-40 w-full min-w-[300px] sm:min-w-[500px] bg-white dark:bg-neutral-800 top-full mt-3 py-3 sm:py-6 rounded-3xl shadow-xl max-h-96 overflow-y-auto">
-          {renderDistrictsList()}
+          {value ? renderSearchValues() : renderRecentSearches()}
         </div>
       )}
     </div>

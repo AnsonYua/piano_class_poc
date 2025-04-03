@@ -7,20 +7,43 @@ import DatePickerCustomDay from "@/components/DatePickerCustomDay";
 
 export interface StayDatesRangeInputProps {
   className?: string;
+  onDateChange?: (date: Date | null) => void;
+  onClose?: () => void;
 }
 
 const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({
   className = "",
+  onDateChange,
+  onClose,
 }) => {
-  const [startDate, setStartDate] = useState<Date | null>(
-    new Date("2023/02/06")
-  );
-  const [endDate, setEndDate] = useState<Date | null>(new Date("2023/02/23"));
+  // Get tomorrow's date (current date + 1 day)
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  };
 
-  const onChangeDate = (dates: [Date | null, Date | null]) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(getTomorrowDate());
+
+  // Update the selected date when the component mounts
+  useEffect(() => {
+    const tomorrow = getTomorrowDate();
+    setSelectedDate(tomorrow);
+    if (onDateChange) {
+      onDateChange(tomorrow);
+    }
+  }, []);
+
+  const onChangeDate = (date: Date | null) => {
+    setSelectedDate(date);
+    if (onDateChange) {
+      onDateChange(date);
+    }
+    
+    // Close the date picker after selection
+    if (onClose) {
+      onClose();
+    }
   };
 
   return (
@@ -34,14 +57,11 @@ const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({
         className={`relative flex-shrink-0 flex justify-center z-10 py-5 ${className} `}
       >
         <DatePicker
-          selected={startDate}
+          selected={selectedDate}
           onChange={onChangeDate}
-          startDate={startDate}
-          endDate={endDate}
-          selectsRange
-          monthsShown={2}
           showPopperArrow={false}
           inline
+          monthsShown={2}
           renderCustomHeader={(p) => <DatePickerCustomHeaderTwoMonth {...p} />}
           renderDayContents={(day, date) => (
             <DatePickerCustomDay dayOfMonth={day} date={date} />

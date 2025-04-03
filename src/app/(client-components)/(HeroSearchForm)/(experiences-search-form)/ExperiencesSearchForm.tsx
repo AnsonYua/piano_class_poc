@@ -8,15 +8,17 @@ export interface ExperiencesSearchFormProps {}
 const ExperiencesSearchForm: FC<ExperiencesSearchFormProps> = ({}) => {
   const renderForm = () => {
     return (
-      <form className="w-full relative mt-8 mb-8 flex flex-col md:flex-row rounded-3xl md:rounded-full shadow-xl dark:shadow-2xl bg-white dark:bg-neutral-800 mx-auto max-w-10xl">
+      <form className="w-full relative mt-6 mb-6 flex flex-col md:flex-row rounded-3xl md:rounded-full shadow-xl dark:shadow-2xl bg-white dark:bg-neutral-800 mx-auto max-w-10xl">
         <LocationInput className="flex-1" />
-        <div className="self-center border-r border-slate-200 dark:border-slate-700 h-8"></div>
+        
+        <div className="self-center border-r border-slate-200 dark:border-slate-700 h-4"></div>
         <ExperiencesDateSingleInput className="flex-1" selectsRange={false} />
-        <div className="self-center border-r border-slate-200 dark:border-slate-700 h-8"></div>
+        <div className="self-center border-r border-slate-200 dark:border-slate-700 h-4"></div>
         <GuestsInput
           className="flex-1"
           buttonSubmitHref="/listing-experiences"
         />
+        
       </form>
     );
   };

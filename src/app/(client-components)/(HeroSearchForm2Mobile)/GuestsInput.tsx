@@ -8,12 +8,16 @@ export interface GuestsInputProps {
   defaultValue?: GuestsObject;
   onChange?: (data: GuestsObject) => void;
   className?: string;
+  onClose?: () => void;
+  onServiceTypeSelect?: (serviceType: string) => void;
 }
 
 const GuestsInput: FC<GuestsInputProps> = ({
   defaultValue,
   onChange,
   className = "",
+  onClose,
+  onServiceTypeSelect,
 }) => {
   const [guestAdultsInputValue, setGuestAdultsInputValue] = useState(
     defaultValue?.guestAdults || 0
@@ -24,6 +28,7 @@ const GuestsInput: FC<GuestsInputProps> = ({
   const [guestInfantsInputValue, setGuestInfantsInputValue] = useState(
     defaultValue?.guestInfants || 0
   );
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   useEffect(() => {
     setGuestAdultsInputValue(defaultValue?.guestAdults || 0);
@@ -56,36 +61,51 @@ const GuestsInput: FC<GuestsInputProps> = ({
     onChange && onChange(newValue);
   };
 
+  const handleOptionSelect = (option: string) => {
+    setSelectedOption(option);
+    
+    // Notify parent component about the selected service type
+    if (onServiceTypeSelect) {
+      onServiceTypeSelect(option);
+    }
+    
+    // Close the picker after selection
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
     <div className={`flex flex-col relative p-5 ${className}`}>
       <span className="mb-5 block font-semibold text-xl sm:text-2xl">
-        {`Who's coming?`}
+        {`選擇服務類型`}
       </span>
-      <NcInputNumber
-        className="w-full"
-        defaultValue={guestAdultsInputValue}
-        onChange={(value) => handleChangeData(value, "guestAdults")}
-        max={20}
-        label="Adults"
-        desc="Ages 13 or above"
-      />
-      <NcInputNumber
-        className="w-full mt-6"
-        defaultValue={guestChildrenInputValue}
-        onChange={(value) => handleChangeData(value, "guestChildren")}
-        max={20}
-        label="Children"
-        desc="Ages 2–12"
-      />
-
-      <NcInputNumber
-        className="w-full mt-6"
-        defaultValue={guestInfantsInputValue}
-        onChange={(value) => handleChangeData(value, "guestInfants")}
-        max={20}
-        label="Infants"
-        desc="Ages 0–2"
-      />
+      
+      <div className="space-y-4">
+        <button 
+          className={`w-full p-4 text-left rounded-lg border ${
+            selectedOption === "參加評估" 
+              ? "bg-blue-50 border-blue-500 text-blue-700" 
+              : "border-gray-200 hover:border-blue-300"
+          }`}
+          onClick={() => handleOptionSelect("參加評估")}
+        >
+          <div className="font-medium">參加評估</div>
+          <div className="text-sm text-gray-500">預約評估時間</div>
+        </button>
+        
+        <button 
+          className={`w-full p-4 text-left rounded-lg border ${
+            selectedOption === "上堂" 
+              ? "bg-blue-50 border-blue-500 text-blue-700" 
+              : "border-gray-200 hover:border-blue-300"
+          }`}
+          onClick={() => handleOptionSelect("上堂")}
+        >
+          <div className="font-medium">上堂</div>
+          <div className="text-sm text-gray-500">預約上課時間</div>
+        </button>
+      </div>
     </div>
   );
 };

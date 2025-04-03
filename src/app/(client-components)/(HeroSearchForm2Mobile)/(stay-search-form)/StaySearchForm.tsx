@@ -1,7 +1,7 @@
 "use client";
 
 import converSelectedDateToString from "@/utils/converSelectedDateToString";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { GuestsObject } from "../../type";
 import GuestsInput from "../GuestsInput";
 import LocationInput from "../LocationInput";
@@ -10,7 +10,7 @@ import DatesRangeInput from "../DatesRangeInput";
 const StaySearchForm = () => {
   //
   const [fieldNameShow, setFieldNameShow] = useState<
-    "location" | "dates" | "guests"
+    "location" | "dates" | "guests" | ""
   >("location");
   //
   const [locationInputTo, setLocationInputTo] = useState("");
@@ -19,16 +19,41 @@ const StaySearchForm = () => {
     guestChildren: 0,
     guestInfants: 0,
   });
-  const [startDate, setStartDate] = useState<Date | null>(
-    new Date("2023/02/06")
-  );
-  const [endDate, setEndDate] = useState<Date | null>(new Date("2023/02/23"));
+  const [selectedServiceType, setSelectedServiceType] = useState<string | null>(null);
+  
+  // Get tomorrow's date (current date + 1 day)
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  };
+  
+  const [selectedDate, setSelectedDate] = useState<Date | null>(getTomorrowDate());
   //
 
-  const onChangeDate = (dates: [Date | null, Date | null]) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
+  // Format date to Japanese format (YYYY年M月D日)
+  const formatDateToJapanese = (date: Date | null) => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // JavaScript months are 0-indexed
+    const day = date.getDate();
+    return `${year}年${month}月${day}日`;
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+  };
+
+  const handleCloseDatePicker = () => {
+    setFieldNameShow("guests");
+  };
+
+  const handleServiceTypeChange = (data: GuestsObject) => {
+    setGuestInput(data);
+  };
+
+  const handleServiceTypeSelect = (serviceType: string) => {
+    setSelectedServiceType(serviceType);
   };
 
   const renderInputLocation = () => {
@@ -80,13 +105,16 @@ const StaySearchForm = () => {
           >
             <span className="text-neutral-400">When</span>
             <span>
-              {startDate
-                ? converSelectedDateToString([startDate, endDate])
+              {selectedDate
+                ? formatDateToJapanese(selectedDate)
                 : "Add date"}
             </span>
           </button>
         ) : (
-          <DatesRangeInput />
+          <DatesRangeInput 
+            onDateChange={handleDateChange} 
+            onClose={handleCloseDatePicker}
+          />
         )}
       </div>
     );
@@ -94,16 +122,6 @@ const StaySearchForm = () => {
 
   const renderInputGuests = () => {
     const isActive = fieldNameShow === "guests";
-    let guestSelected = "";
-    if (guestInput.guestAdults || guestInput.guestChildren) {
-      const guest =
-        (guestInput.guestAdults || 0) + (guestInput.guestChildren || 0);
-      guestSelected += `${guest} guests`;
-    }
-
-    if (guestInput.guestInfants) {
-      guestSelected += `, ${guestInput.guestInfants} infants`;
-    }
 
     return (
       <div
@@ -118,11 +136,19 @@ const StaySearchForm = () => {
             className={`w-full flex justify-between text-sm font-medium p-4`}
             onClick={() => setFieldNameShow("guests")}
           >
-            <span className="text-neutral-400">Who</span>
-            <span>{guestSelected || `Add guests`}</span>
+            <span className="text-neutral-400">服務類型</span>
+            <span>{selectedServiceType || "選擇服務類型"}</span>
           </button>
         ) : (
-          <GuestsInput defaultValue={guestInput} onChange={setGuestInput} />
+          <GuestsInput 
+            defaultValue={guestInput} 
+            onChange={handleServiceTypeChange} 
+            onServiceTypeSelect={handleServiceTypeSelect}
+            onClose={() => {
+              setFieldNameShow("");
+              // After selection, we don't automatically move to another field
+            }}
+          />
         )}
       </div>
     );
