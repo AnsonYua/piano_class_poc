@@ -118,7 +118,7 @@ const LocationInput: FC<LocationInputProps> = ({
         <h3 className="block mt-2 sm:mt-0 px-4 sm:px-8 font-semibold text-base sm:text-lg text-neutral-800 dark:text-neutral-100">
           香港十八區
         </h3>
-        <div className="mt-2 grid grid-cols-2 gap-2 px-4 sm:px-8">
+        <div className="mt-2 grid grid-cols-4 gap-2 px-4 sm:px-8">
           {HONG_KONG_DISTRICTS.map((district) => (
             <span
               onClick={() => handleSelectLocation(district)}
