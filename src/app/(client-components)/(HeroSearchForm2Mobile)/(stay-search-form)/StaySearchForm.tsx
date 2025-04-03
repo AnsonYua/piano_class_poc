@@ -6,11 +6,12 @@ import { GuestsObject } from "../../type";
 import GuestsInput from "../GuestsInput";
 import LocationInput from "../LocationInput";
 import DatesRangeInput from "../DatesRangeInput";
+import TimeSlotInput from "./TimeSlotInput";
 
 const StaySearchForm = () => {
   //
   const [fieldNameShow, setFieldNameShow] = useState<
-    "location" | "dates" | "guests" | ""
+    "location" | "dates" | "guests" | "time" | ""
   >("location");
   //
   const [locationInputTo, setLocationInputTo] = useState("");
@@ -20,6 +21,7 @@ const StaySearchForm = () => {
     guestInfants: 0,
   });
   const [selectedServiceType, setSelectedServiceType] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
   
   // Get tomorrow's date (current date + 1 day)
   const getTomorrowDate = () => {
@@ -54,6 +56,10 @@ const StaySearchForm = () => {
 
   const handleServiceTypeSelect = (serviceType: string) => {
     setSelectedServiceType(serviceType);
+  };
+
+  const handleTimeSelect = (time: string) => {
+    setSelectedTime(time);
   };
 
   const renderInputLocation = () => {
@@ -154,6 +160,38 @@ const StaySearchForm = () => {
     );
   };
 
+  const renderInputTime = () => {
+    const isActive = fieldNameShow === "time";
+
+    return (
+      <div
+        className={`w-full bg-white dark:bg-neutral-800 overflow-hidden ${
+          isActive
+            ? "rounded-2xl shadow-lg"
+            : "rounded-xl shadow-[0px_2px_2px_0px_rgba(0,0,0,0.25)]"
+        }`}
+      >
+        {!isActive ? (
+          <button
+            className={`w-full flex justify-between text-sm font-medium p-4`}
+            onClick={() => setFieldNameShow("time")}
+          >
+            <span className="text-neutral-400">上課時間</span>
+            <span>{selectedTime || "選擇時間"}</span>
+          </button>
+        ) : (
+          <TimeSlotInput 
+            selectedTime={selectedTime}
+            onTimeSelect={handleTimeSelect}
+            onClose={() => {
+              setFieldNameShow("");
+            }}
+          />
+        )}
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className="w-full space-y-5">
@@ -163,6 +201,8 @@ const StaySearchForm = () => {
         {renderInputDates()}
         {/*  */}
         {renderInputGuests()}
+        {/*  */}
+        {renderInputTime()}
       </div>
     </div>
   );
