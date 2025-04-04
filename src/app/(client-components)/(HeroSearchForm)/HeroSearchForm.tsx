@@ -3,10 +3,12 @@
 import React, { FC } from "react";
 import ExperiencesSearchForm from "./(experiences-search-form)/ExperiencesSearchForm";
 
+export type SearchTab = "Stays" | "Experiences" | "Cars" | "Flights";
+
 export interface HeroSearchFormProps {
   className?: string;
-  currentTab?: "Stays" | "Experiences" | "Cars" | "Flights";
-  currentPage?: "Stays" | "Experiences" | "Cars" | "Flights";
+  currentTab?: SearchTab;
+  currentPage?: SearchTab;
 }
 
 const HeroSearchForm: FC<HeroSearchFormProps> = ({
