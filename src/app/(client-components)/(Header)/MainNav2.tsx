@@ -10,11 +10,16 @@ import Link from "next/link";
 import TemplatesDropdown from "./TemplatesDropdown";
 import { Route } from "@/routers/types";
 import ButtonPrimary from "@/shared/ButtonPrimary";
+import { usePathname } from "next/navigation";
+
 export interface MainNav2Props {
   className?: string;
 }
 
 const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
+  const pathname = usePathname();
+  const isLoginPage = pathname === "/login";
+  
   return (
     <div className={`MainNav2 relative z-10 ${className}`}>
       <div className="px-4 h-20 lg:container flex justify-between">
@@ -33,7 +38,7 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
         <div className="hidden md:flex flex-shrink-0 justify-end flex-1 lg:flex-none text-neutral-700 dark:text-neutral-100">
        
           <div className="hidden lg:flex space-x-1">
-            {/*
+            {/* 
             <TemplatesDropdown />
             <LangDropdown />
             
@@ -46,28 +51,28 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
 
             <NotifyDropdown />
             <AvatarDropdown />
-            
-            */
-            <ButtonPrimary  href="/listing-stay-map" 
-            sizeClass="px-5 py-4 sm:px-7"
-            className="my-5">
-            登入
-            </ButtonPrimary>
-            }
+            */}
+            {!isLoginPage && (
+              <ButtonPrimary href="/listing-stay-map" 
+                sizeClass="px-5 py-4 sm:px-7"
+                className="my-5">
+                登入
+              </ButtonPrimary>
+            )}
           </div>
           
           <div className="flex space-x-2 lg:hidden">
-            {/*
+            {/* 
             <NotifyDropdown />
             <AvatarDropdown />
-            
-            */
-              <ButtonPrimary  href="/listing-stay-map" 
-              sizeClass="px-5 py-4 sm:px-7"
-              className="my-5">
-              登入
+            */}
+            {!isLoginPage && (
+              <ButtonPrimary href="/listing-stay-map" 
+                sizeClass="px-5 py-4 sm:px-7"
+                className="my-5">
+                登入
               </ButtonPrimary>
-            }
+            )}
             <MenuBar />
           </div>
         </div>
