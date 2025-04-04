@@ -69,7 +69,7 @@ const GuestsInput: FC<GuestsInputProps> = ({
 
             {hasButtonSubmit && (
               <div className="pr-2 xl:pr-4">
-                <ButtonSubmit href={buttonSubmitHref} />
+                <ButtonSubmit />
               </div>
             )}
           </div>

@@ -1,4 +1,6 @@
-import React, { FC } from "react";
+"use client";
+
+import React, { FC, useState } from "react";
 import facebookSvg from "@/images/Facebook.svg";
 import twitterSvg from "@/images/Twitter.svg";
 import googleSvg from "@/images/Google.svg";
@@ -6,6 +8,8 @@ import Input from "@/shared/Input";
 import ButtonPrimary from "@/shared/ButtonPrimary";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Route } from "@/routers/types";
 
 export interface PageSignUpProps {}
 
@@ -28,6 +32,21 @@ const loginSocials = [
 ];
 
 const PageSignUp: FC<PageSignUpProps> = ({}) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // In a real app, you would register the user with your backend
+    // For this demo, we'll just set a token in localStorage
+    localStorage.setItem("auth_token", "demo_token");
+    
+    // Redirect to home page
+    router.push("/" as Route);
+  };
+
   return (
     <div className={`nc-PageSignUp  `}>
       <div className="container mb-24 lg:mb-32">
@@ -61,7 +80,7 @@ const PageSignUp: FC<PageSignUpProps> = ({}) => {
             <div className="absolute left-0 w-full top-1/2 transform -translate-y-1/2 border border-neutral-100 dark:border-neutral-800"></div>
           </div>
           {/* FORM */}
-          <form className="grid grid-cols-1 gap-6" action="#" method="post">
+          <form className="grid grid-cols-1 gap-6" onSubmit={handleSubmit}>
             <label className="block">
               <span className="text-neutral-800 dark:text-neutral-200">
                 Email address
@@ -70,13 +89,20 @@ const PageSignUp: FC<PageSignUpProps> = ({}) => {
                 type="email"
                 placeholder="example@example.com"
                 className="mt-1"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </label>
             <label className="block">
               <span className="flex justify-between items-center text-neutral-800 dark:text-neutral-200">
                 Password
               </span>
-              <Input type="password" className="mt-1" />
+              <Input 
+                type="password" 
+                className="mt-1" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </label>
             <ButtonPrimary type="submit">Continue</ButtonPrimary>
           </form>
@@ -84,7 +110,7 @@ const PageSignUp: FC<PageSignUpProps> = ({}) => {
           {/* ==== */}
           <span className="block text-center text-neutral-700 dark:text-neutral-300">
             Already have an account? {` `}
-            <Link href="/login" className="font-semibold underline">
+            <Link href={"/login" as Route} className="font-semibold underline">
               Sign in
             </Link>
           </span>

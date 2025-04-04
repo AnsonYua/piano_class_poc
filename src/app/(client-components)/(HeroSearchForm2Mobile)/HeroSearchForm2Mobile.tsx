@@ -9,9 +9,11 @@ import { useTimeoutFn } from "react-use";
 import StaySearchForm from "./(stay-search-form)/StaySearchForm";
 import CarsSearchForm from "./(car-search-form)/CarsSearchForm";
 import FlightSearchForm from "./(flight-search-form)/FlightSearchForm";
+import { useAuth } from "@/hooks/useAuth";
 
 const HeroSearchForm2Mobile = () => {
   const [showModal, setShowModal] = useState(false);
+  const { isAuthenticated, isLoading, redirectToLogin } = useAuth();
 
   // FOR RESET ALL DATA WHEN CLICK CLEAR BUTTON
   const [showDialog, setShowDialog] = useState(false);
@@ -22,6 +24,15 @@ const HeroSearchForm2Mobile = () => {
   }
 
   function openModal() {
+    if (isLoading) return;
+    
+    if (!isAuthenticated) {
+      // User is not logged in, redirect to login page
+      redirectToLogin();
+      return;
+    }
+    
+    // User is logged in, show the modal
     setShowModal(true);
   }
 
