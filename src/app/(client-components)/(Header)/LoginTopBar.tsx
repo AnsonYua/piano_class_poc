@@ -8,7 +8,7 @@ const LoginTopBar = () => {
         <Logo className="w-24" />
         <div className="absolute left-1/2 transform -translate-x-1/2">
           <span className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-            Login
+            登入
           </span>
         </div>
       </div>

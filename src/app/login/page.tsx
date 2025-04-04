@@ -90,7 +90,7 @@ const PageLogin: FC<PageLoginProps> = ({}) => {
           <form className="grid grid-cols-1 gap-6" onSubmit={handleSubmit}>
             <label className="block">
               <span className="text-neutral-800 dark:text-neutral-200">
-                Email address
+                電話號碼
               </span>
               <Input
                 type="email"
@@ -102,9 +102,9 @@ const PageLogin: FC<PageLoginProps> = ({}) => {
             </label>
             <label className="block">
               <span className="flex justify-between items-center text-neutral-800 dark:text-neutral-200">
-                Password
+                密碼
                 <Link href={"/login" as Route} className="text-sm underline font-medium">
-                  Forgot password?
+                  忘記密碼
                 </Link>
               </span>
               <Input 
@@ -114,14 +114,14 @@ const PageLogin: FC<PageLoginProps> = ({}) => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </label>
-            <ButtonPrimary type="submit">Continue</ButtonPrimary>
+            <ButtonPrimary type="submit">確定</ButtonPrimary>
           </form>
 
           {/* ==== */}
           <span className="block text-center text-neutral-700 dark:text-neutral-300">
-            New user? {` `}
+            沒有帳號? {` `}
             <Link href={"/signup" as Route} className="font-semibold underline">
-              Create an account
+            創建帳戶
             </Link>
           </span>
         </div>
