@@ -6,6 +6,7 @@ import HeroSearchForm2Mobile from "./HeroSearchForm2Mobile";
 import HeroSearchForm2RealEstateMobile from "./HeroSearchForm2RealEstateMobile";
 import { usePathname } from "next/navigation";
 import LoginTopBar from "../(Header)/LoginTopBar";
+import SignUpTopBar from "../(Header)/SignUpTopBar";
 
 const PAGES_REAL_ESTATE: PathName[] = [
   "/home-2",
@@ -20,6 +21,10 @@ const HeroSearchForm2MobileFactory = () => {
     return <LoginTopBar />;
   } 
   
+  if (pathname === "/signup") {
+    return <SignUpTopBar />;
+  }
+
   if (PAGES_REAL_ESTATE.includes(pathname as PathName)) {
     return <HeroSearchForm2RealEstateMobile />;
   }
