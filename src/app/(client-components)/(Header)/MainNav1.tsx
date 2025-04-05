@@ -16,6 +16,8 @@ export interface MainNav1Props {
 const MainNav1: FC<MainNav1Props> = ({ className = "" }) => {
   const pathname = usePathname();
   const isLoginPage = pathname === "/login";
+  const isSignupPage = pathname === "/signup";
+  const isVerifyOtpPage = pathname === "/verify-otp";
 
   return (
     <div className={`nc-MainNav1 relative z-10 ${className}`}>

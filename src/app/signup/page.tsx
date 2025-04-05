@@ -35,7 +35,7 @@ const PageSignUp: FC<PageSignUpProps> = ({}) => {
     setStudents(newStudents);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -54,7 +54,8 @@ const PageSignUp: FC<PageSignUpProps> = ({}) => {
     }
 
     // Basic student validation
-    students.forEach((student, index) => {
+    for (let index = 0; index < students.length; index++) {
+      const student = students[index];
       if (!student.studentName) {
         alert(`請填寫第 ${index + 1} 位學生的稱呼`);
         return;
@@ -63,10 +64,33 @@ const PageSignUp: FC<PageSignUpProps> = ({}) => {
         alert(`請填寫有效的年齡（數字）給第 ${index + 1} 位學生`);
         return;
       }
+    }
 
-    });
-    localStorage.setItem("auth_token", "demo_token");
-    router.push("/" as Route);
+    try {
+      // Dummy API call for signup
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName,
+          phone: email,
+          password,
+          students,
+        }),
+      });
+
+      if (response.ok) {
+        // Redirect to OTP verification page with phone number
+        router.push(`/verify-otp?phone=${email}` as Route);
+      } else {
+        const data = await response.json();
+        alert(data.message || "註冊失敗，請重試");
+      }
+    } catch (error) {
+      alert("註冊失敗，請重試");
+    }
   };
 
   return (

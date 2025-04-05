@@ -24,6 +24,9 @@ const HeroSearchForm2MobileFactory = () => {
   if (pathname === "/signup") {
     return <SignUpTopBar />;
   }
+  if (pathname === "/verify-otp") {
+    return <SignUpTopBar />;
+  }
 
   if (PAGES_REAL_ESTATE.includes(pathname as PathName)) {
     return <HeroSearchForm2RealEstateMobile />;

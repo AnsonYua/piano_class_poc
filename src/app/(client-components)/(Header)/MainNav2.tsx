@@ -19,7 +19,9 @@ export interface MainNav2Props {
 const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
   const pathname = usePathname();
   const isLoginPage = pathname === "/login";
-  
+  const isSignupPage = pathname === "/signup";
+  const isVerifyOtpPage = pathname === "/verify-otp";
+
   return (
     <div className={`MainNav2 relative z-10 ${className}`}>
       <div className="px-4 h-20 lg:container flex justify-between">
@@ -52,7 +54,7 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
             <NotifyDropdown />
             <AvatarDropdown />
             */}
-            {!isLoginPage && (
+            {!isLoginPage && !isSignupPage && !isVerifyOtpPage && (
               <ButtonPrimary href="/listing-stay-map" 
                 sizeClass="px-5 py-4 sm:px-7"
                 className="my-5">
@@ -66,7 +68,7 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
             <NotifyDropdown />
             <AvatarDropdown />
             */}
-            {!isLoginPage && (
+            {!isLoginPage && !isSignupPage && !isVerifyOtpPage && (
               <ButtonPrimary href="/listing-stay-map" 
                 sizeClass="px-5 py-4 sm:px-7"
                 className="my-5">
