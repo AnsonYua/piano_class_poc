@@ -5,6 +5,10 @@ import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { Fragment } from "react";
 import { PathName } from "@/routers/types";
 import Link from "next/link";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useState } from 'react';
+
 
 interface SolutionItem {
   name: string;
@@ -43,6 +47,16 @@ const solutions: SolutionItem[] = [
 ];
 
 export default function DropdownTravelers() {
+  const [selectedDate, setSelectedDate] = useState(null);
+  const minAge = 5;
+  const minDate = new Date();
+  minDate.setFullYear(minDate.getFullYear() - minAge); // Calculate date 5 years ago
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
+
   return (
     <Popover className="DropdownTravelers relative flex">
       {({ open, close }) => (
@@ -52,21 +66,14 @@ export default function DropdownTravelers() {
                 group self-center py-2 h-10 sm:h-12 rounded-md text-sm sm:text-base font-medium hover:text-opacity-100 focus:outline-none`}
           >
             <div className={` inline-flex items-center `} role="button">
-              <span>家長或學生</span>
+              <span>家長或同學</span>
               <ChevronDownIcon
                 className={`${ "text-opacity-70 "}
                   ml-2 h-5 w-5 text-neutral-700 group-hover:text-opacity-80 transition ease-in-out duration-150 `}
                 aria-hidden="true"
               />
-              {/*
-              <ChevronDownIcon
-                className={`${open ? "-rotate-180" : "text-opacity-70 "}
-                  ml-2 h-5 w-5 text-neutral-700 group-hover:text-opacity-80 transition ease-in-out duration-150 `}
-                aria-hidden="true"
-              />*/}
             </div>
           </Popover.Button>
-          {/*
           <Transition
             as={Fragment}
             enter="transition ease-out duration-200"
@@ -77,8 +84,23 @@ export default function DropdownTravelers() {
             leaveTo="opacity-0 translate-y-1"
           >
             <Popover.Panel className="absolute z-40 w-screen max-w-xs px-4 top-full transform -translate-x-1/2 left-1/2 sm:px-0">
-              <div className="overflow-hidden rounded-2xl shadow-lg ring-1 ring-black ring-opacity-5">
-                <div className="relative grid grid-cols-1 gap-7 bg-white dark:bg-neutral-800 p-7 ">
+              <div className="relative grid grid-cols-1 gap-7 bg-white dark:bg-neutral-800 p-7 ">
+                {/* Age Picker */}
+                <div>
+                  <label htmlFor="age-picker">Select Age:</label>
+                  <DatePicker
+                    id="age-picker"
+                    selected={selectedDate}
+                    onChange={handleDateChange}
+                    minDate={minDate}
+                    dateFormat="yyyy-MM-dd" // Adjust format as needed
+                    placeholderText="Enter Date of Birth"
+                    // Other props...
+                  />
+                  {selectedDate && ( // Display selected Age
+                    <p>Selected Age: {new Date().getFullYear() - selectedDate.getFullYear()}</p>
+                  )}
+                </div>
                   {solutions.map((item, index) => (
                     <Link
                       key={index}
@@ -99,26 +121,24 @@ export default function DropdownTravelers() {
                       </div>
                     </Link>
                   ))}
-                </div>
-                <div className="p-4 bg-neutral-50 dark:bg-neutral-700">
-                  <Link
-                    href="/"
-                    className="flow-root px-2 py-2 space-y-0.5 transition duration-150 ease-in-out rounded-md focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
-                  >
-                    <span className="flex items-center">
-                      <span className="text-sm font-medium ">
-                        Documentation
-                      </span>
+              </div>
+              <div className="p-4 bg-neutral-50 dark:bg-neutral-700">
+                <Link
+                  href="/"
+                  className="flow-root px-2 py-2 space-y-0.5 transition duration-150 ease-in-out rounded-md focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                >
+                  <span className="flex items-center">
+                    <span className="text-sm font-medium ">
+                      Documentation
                     </span>
-                    <span className="block text-sm text-gray-500 dark:text-neutral-400">
-                      Start integrating products and tools
-                    </span>
-                  </Link>
-                </div>
+                  </span>
+                  <span className="block text-sm text-gray-500 dark:text-neutral-400">
+                    Start integrating products and tools
+                  </span>
+                </Link>
               </div>
             </Popover.Panel>
           </Transition>
-          */}
         </>
       )}
     </Popover>
