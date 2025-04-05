@@ -87,19 +87,24 @@ const PageLogin: FC<PageLoginProps> = ({}) => {
           </div>
           */}
           {/* FORM */}
-          <form className="grid grid-cols-1 gap-6" onSubmit={handleSubmit}>
+          <form className="grid grid-cols-1 gap-6" onSubmit={handleSubmit} autoComplete="off">
+            <input type="text" style={{ display: 'none' }} autoComplete="off" />
+            
             <label className="block">
               <span className="text-neutral-800 dark:text-neutral-200">
                 電話號碼
               </span>
               <Input
                 type="email"
-                placeholder="example@example.com"
+                name={`email-${Date.now()}`}
+                placeholder="請輸入聯絡電話"
                 className="mt-1"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="new-email"
               />
             </label>
+            
             <label className="block">
               <span className="flex justify-between items-center text-neutral-800 dark:text-neutral-200">
                 密碼
@@ -107,11 +112,14 @@ const PageLogin: FC<PageLoginProps> = ({}) => {
                   忘記密碼
                 </Link>
               </span>
-              <Input 
-                type="password" 
-                className="mt-1" 
+              <Input
+                type="password"
+                name={`password-${Date.now()}`}
+                placeholder="請輸入密碼"
+                className="mt-1"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
               />
             </label>
             <ButtonPrimary type="submit">確定</ButtonPrimary>
