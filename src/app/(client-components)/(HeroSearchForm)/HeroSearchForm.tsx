@@ -22,7 +22,6 @@ const HeroSearchForm: FC<HeroSearchFormProps> = ({
 
   const handleSearch = () => {
     if (isLoading) return;
-    
     if (!isAuthenticated) {
       // User is not logged in, redirect to login page
       redirectToLogin();

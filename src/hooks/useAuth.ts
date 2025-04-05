@@ -11,6 +11,7 @@ export function useAuth() {
   useEffect(() => {
     // Check if user is logged in by looking for a token in localStorage
     const checkAuth = () => {
+      localStorage.removeItem("auth_token");
       const token = localStorage.getItem("auth_token");
       setIsAuthenticated(!!token);
       setIsLoading(false);
