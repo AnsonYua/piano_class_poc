@@ -10,27 +10,36 @@ export const Nav = () => {
 
   const listNav: Route[] = [
     "/account",
-    "/account-savelists",
+    "/account-students",
+   // "/account-savelists",
     "/account-password",
-    "/account-billing",
+    //"/account-billing",
   ];
+  const displayMap = {
+    "/account" :"帳號設定",
+    "/account-students" :"同學資料",
+    "/account-savelists" :"我的預約",
+    "/account-password" :"密碼修改",
+    "/account-billing" :"帳單管理",
+  }
+
 
   return (
     <div className="container">
-      <div className="flex space-x-8 md:space-x-14 overflow-x-auto hiddenScrollbar">
+      <div className="flex justify-center space-x-8 md:space-x-14 overflow-x-auto hiddenScrollbar">
         {listNav.map((item) => {
           const isActive = pathname === item;
           return (
             <Link
               key={item}
               href={item}
-              className={`block py-5 md:py-8 border-b-2 flex-shrink-0 capitalize ${
+              className={`block py-4 md:py-4 border-b-2 flex-shrink-0 capitalize ${
                 isActive
                   ? "border-primary-500 font-medium"
                   : "border-transparent"
               }`}
             >
-              {item.replace("-", " ").replace("/", " ")}
+              {displayMap[item as keyof typeof displayMap]}
             </Link>
           );
         })}

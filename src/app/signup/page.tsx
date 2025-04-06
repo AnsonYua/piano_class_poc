@@ -79,7 +79,7 @@ const PageSignUp: FC<PageSignUpProps> = ({}) => {
     }
 
     if (students.length === 0) {
-      showError("至少需要輸入一位學生資料");
+      showError("至少需要輸入一位同學資料");
       return;
     }
 
@@ -87,11 +87,11 @@ const PageSignUp: FC<PageSignUpProps> = ({}) => {
     for (let index = 0; index < students.length; index++) {
       const student = students[index];
       if (!student.studentName) {
-        showError(`請填寫第 ${index + 1} 位學生的稱呼`);
+        showError(`請填寫第 ${index + 1} 位同學的稱呼`);
         return;
       }
       if (isNaN(student.studentAge) || student.studentAge <= 0) {
-        showError(`請填寫有效的年齡（數字）給第 ${index + 1} 位學生`);
+        showError(`請填寫有效的年齡（數字）給第 ${index + 1} 位同學`);
         return;
       }
     }
@@ -250,14 +250,14 @@ const PageSignUp: FC<PageSignUpProps> = ({}) => {
                 </div>
               </section>
 
-              {/* 學生資料 Section */}
+              {/* 同學資料 Section */}
               <section className="space-y-6">
-                <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">學生資料</h3>
+                <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">同學資料</h3>
                 <div className="space-y-4">
                   {students.map((student, index) => (
                     <div key={index} className="bg-gray-50 dark:bg-neutral-700 p-6 rounded-xl space-y-4">
                       <div className="flex items-center justify-between">
-                        <h4 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">學生 {index + 1}</h4>
+                        <h4 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">同學 {index + 1}</h4>
                         {index > 0 && (
                           <button
                             type="button"
@@ -273,10 +273,10 @@ const PageSignUp: FC<PageSignUpProps> = ({}) => {
                         )}
                       </div>
                       <label className="block">
-                        <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">學生稱呼</span>
+                        <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">同學稱呼</span>
                         <Input
                           type="text"
-                          placeholder="請輸入學生稱呼"
+                          placeholder="請輸入同學稱呼"
                           className="w-full"
                           value={student.studentName}
                           onChange={(e) => handleStudentChange(index, "studentName", e.target.value)}
@@ -284,10 +284,10 @@ const PageSignUp: FC<PageSignUpProps> = ({}) => {
                         />
                       </label>
                       <label className="block">
-                        <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">學生年齡</span>
+                        <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">同學年齡</span>
                         <Input
                           type="number"
-                          placeholder="請輸入學生年齡"
+                          placeholder="請輸入同學年齡"
                           className="w-full"
                           value={student.studentAge}
                           onChange={(e) => handleStudentChange(index, "studentAge", parseInt(e.target.value))}
@@ -302,7 +302,7 @@ const PageSignUp: FC<PageSignUpProps> = ({}) => {
                     className="w-full py-3 px-4 border border-gray-300 dark:border-neutral-600 rounded-xl text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-gray-50 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                     disabled={isLoading}
                   >
-                    + 新增學生
+                    + 新增同學
                   </button>
                 </div>
               </section>
