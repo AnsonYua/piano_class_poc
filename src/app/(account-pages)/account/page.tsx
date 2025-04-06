@@ -12,13 +12,13 @@ const AccountPage = () => {
   return (
     <div className="nc-AccountPage min-h-screen bg-gray-50 dark:bg-neutral-900">
       <div className="container max-w-2xl mx-auto py-0 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-8">
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6">
           {/* HEADING */}
-          <h2 className="text-3xl font-semibold text-center mb-6">帳號資料</h2>
-          <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-8"></div>
+          <h2 className="text-3xl font-semibold text-center mb-4">帳號資料</h2>
+          <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-6"></div>
           
-          <div className="space-y-6">
-            <div className="flex flex-col items-center mb-8">
+          <div className="space-y-4">
+            <div className="flex flex-col items-center mb-6">
               {/* Avatar section */}
               <div className="relative rounded-full overflow-hidden flex">
                 <Avatar sizeClass="w-32 h-32" />

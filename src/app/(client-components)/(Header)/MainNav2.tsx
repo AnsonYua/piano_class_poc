@@ -41,14 +41,22 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
        
           <div className="hidden lg:flex space-x-1">
             
-
-            <div className="TemplatesDropdown hidden lg:block self-center px-4">
-            <a href="/add-listing"><span className="">我的預約</span></a>
+            <div className="TemplatesDropdown hidden lg:block self-center">
+              <Link 
+                href="/my-reservations/recent" 
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+              >
+                我的預約
+              </Link>
             </div>
-            <div className="TemplatesDropdown hidden lg:block self-center px-4">
-              <a href="/account"><span className="">帳號設定</span></a>
+            <div className="TemplatesDropdown hidden lg:block self-center">
+              <Link 
+                href="/account" 
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+              >
+                帳號設定
+              </Link>
             </div>
-
 
             <NotifyDropdown />
             <AvatarDropdown />

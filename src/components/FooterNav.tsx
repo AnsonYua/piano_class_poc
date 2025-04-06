@@ -4,6 +4,8 @@ import {
   HeartIcon,
   MagnifyingGlassIcon,
   UserCircleIcon,
+  HomeIcon,
+  BookmarkIcon
 } from "@heroicons/react/24/outline";
 import React, { useEffect, useRef } from "react";
 import { PathName } from "@/routers/types";
@@ -22,7 +24,7 @@ interface NavItem {
   link?: PathName;
   icon: any;
 }
-
+/*
 const NAV: NavItem[] = [
   {
     name: "主頁",
@@ -39,7 +41,29 @@ const NAV: NavItem[] = [
     icon: MenuBar,
   },
 ];
+*/
 
+const NAV: NavItem[] = [
+  {
+    name: "主頁",
+    link: "/",
+    icon: HomeIcon,
+  },
+  {
+    name: "我的",
+    link: "/account",
+    icon: HomeIcon,
+  },
+  {
+    name: "設定",
+    link: "/account",
+    icon: UserCircleIcon,
+  },
+  {
+    name: "更多",
+    icon: MenuBar,
+  },
+];
 const FooterNav = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 

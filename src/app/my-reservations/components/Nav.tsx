@@ -5,24 +5,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-export const Nav = () => {
+export const ReservationsNav = () => {
   const pathname = usePathname();
 
   const listNav: Route[] = [
-    "/account",
-    "/account-students",
-   // "/account-savelists",
-    "/account-password",
-    //"/account-billing",
+    "/my-reservations/recent",
+    "/my-reservations/history",
   ];
+  
   const displayMap = {
-    "/account" :"帳號資料",
-    "/account-students" :"同學資料",
-    "/account-savelists" :"我的預約",
-    "/account-password" :"密碼修改",
-    "/account-billing" :"帳單管理",
-  }
-
+    "/my-reservations/recent": "近期預約",
+    "/my-reservations/history": "上課紀錄",
+  };
 
   return (
     <div className="container">
@@ -46,4 +40,4 @@ export const Nav = () => {
       </div>
     </div>
   );
-};
+}; 
