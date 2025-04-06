@@ -11,7 +11,7 @@ import TemplatesDropdown from "./TemplatesDropdown";
 import { Route } from "@/routers/types";
 import ButtonPrimary from "@/shared/ButtonPrimary";
 import { usePathname } from "next/navigation";
-
+import { Popover, Transition } from "@headlessui/react";
 export interface MainNav2Props {
   className?: string;
 }
@@ -40,6 +40,18 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
         <div className="hidden md:flex flex-shrink-0 justify-end flex-1 lg:flex-none text-neutral-700 dark:text-neutral-100">
        
           <div className="hidden lg:flex space-x-1">
+            
+
+            <div className="TemplatesDropdown hidden lg:block self-center px-4">
+            <a href="/add-listing"><span className="">我的預約</span></a>
+            </div>
+            <div className="TemplatesDropdown hidden lg:block self-center px-4">
+              <a href="/account"><span className="">帳號設定</span></a>
+            </div>
+
+
+            <NotifyDropdown />
+            <AvatarDropdown />
             {/* 
             <TemplatesDropdown />
             <LangDropdown />
@@ -54,17 +66,20 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
             <NotifyDropdown />
             <AvatarDropdown />
             */}
-            {!isLoginPage && !isSignupPage && !isVerifyOtpPage && (
+            {
+            /*!isLoginPage && !isSignupPage && !isVerifyOtpPage && (
               <ButtonPrimary href="/listing-stay-map" 
                 sizeClass="px-5 py-4 sm:px-7"
                 className="my-5">
                 登入
               </ButtonPrimary>
-            )}
+            )}*/} 
           </div>
           
           <div className="flex space-x-2 lg:hidden">
-            {/* 
+          <NotifyDropdown />
+          <AvatarDropdown />
+            { /*
             <NotifyDropdown />
             <AvatarDropdown />
             */}

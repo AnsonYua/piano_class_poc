@@ -16,6 +16,7 @@ const AccountPage = () => {
       <div className="w-14 border-b border-neutral-200 dark:border-neutral-700"></div>
       <div className="flex flex-col md:flex-row">
         <div className="flex-shrink-0 flex items-start">
+          {/* 頭像 
           <div className="relative rounded-full overflow-hidden flex">
             <Avatar sizeClass="w-32 h-32" />
             <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center text-neutral-50 cursor-pointer">
@@ -42,6 +43,7 @@ const AccountPage = () => {
               className="absolute inset-0 opacity-0 cursor-pointer"
             />
           </div>
+          */}
         </div>
         <div className="flex-grow mt-10 md:mt-0 md:pl-16 max-w-3xl space-y-6">
           <div>
