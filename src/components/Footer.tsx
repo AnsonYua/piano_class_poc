@@ -15,46 +15,35 @@ export interface WidgetFooterMenu {
 const widgetMenus: WidgetFooterMenu[] = [
   {
     id: "5",
-    title: "Getting started",
+    title: "關於我們",
     menus: [
-      { href: "#", label: "Installation" },
-      { href: "#", label: "Release Notes" },
-      { href: "#", label: "Upgrade Guide" },
-      { href: "#", label: "Browser Support" },
-      { href: "#", label: "Editor Support" },
+      { href: "#", label: "學琴Goo! 的使命" }, 
+      { href: "#", label: "學琴Goo! 的團隊" }
     ],
   },
   {
     id: "1",
-    title: "Explore",
+    title: "服務",
     menus: [
-      { href: "#", label: "Design features" },
-      { href: "#", label: "Prototyping" },
-      { href: "#", label: "Design systems" },
-      { href: "#", label: "Pricing" },
-      { href: "#", label: "Security" },
+      { href: "#", label: "我們的課程" },
+      { href: "#", label: "AI 智能評估系統" },
+      { href: "#", label: "服務條款" }
     ],
   },
   {
     id: "2",
-    title: "Resources",
+    title: "疑問",
     menus: [
-      { href: "#", label: "Best practices" },
-      { href: "#", label: "Support" },
-      { href: "#", label: "Developers" },
-      { href: "#", label: "Learn design" },
-      { href: "#", label: "Releases" },
+      { href: "#", label: "如何開始" },
+      { href: "#", label: "常見問題" }
     ],
   },
   {
     id: "4",
-    title: "Community",
+    title: "聯絡我們",
     menus: [
-      { href: "#", label: "Discussion Forums" },
-      { href: "#", label: "Code of Conduct" },
-      { href: "#", label: "Community Resources" },
-      { href: "#", label: "Contributing" },
-      { href: "#", label: "Concurrent Mode" },
+      { href: "#", label: "工作機會" },
+      { href: "#", label: "聯絡我們" }
     ],
   },
 ];

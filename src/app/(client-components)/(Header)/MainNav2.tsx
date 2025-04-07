@@ -21,6 +21,8 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
   const isLoginPage = pathname === "/login";
   const isSignupPage = pathname === "/signup";
   const isVerifyOtpPage = pathname === "/verify-otp";
+  const isMyReservationsPage = pathname.startsWith("/my-reservations");
+  const isAccountPage = pathname.startsWith("/account");
 
   return (
     <div className={`MainNav2 relative z-10 ${className}`}>
@@ -44,7 +46,11 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
             <div className="TemplatesDropdown hidden lg:block self-center">
               <Link 
                 href="/my-reservations/recent" 
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+                className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                  isMyReservationsPage 
+                    ? "text-primary-6000 underline" 
+                    : "text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100"
+                }`}
               >
                 我的預約
               </Link>
@@ -52,7 +58,11 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
             <div className="TemplatesDropdown hidden lg:block self-center">
               <Link 
                 href="/account" 
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+                className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                  isAccountPage 
+                    ? "text-primary-6000 underline" 
+                    : "text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100"
+                }`}
               >
                 帳號設定
               </Link>
