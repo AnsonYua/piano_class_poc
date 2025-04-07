@@ -55,7 +55,8 @@ const RecentReservationsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-neutral-900">
+    // min-h-screen
+    <div className="bg-gray-50 dark:bg-neutral-900">
       <div className="container max-w-5xl mx-auto py-0 px-4 sm:px-6 lg:px-8">
         <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6">
           <div className="space-y-4">

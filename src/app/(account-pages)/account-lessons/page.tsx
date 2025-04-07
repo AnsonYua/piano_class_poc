@@ -40,7 +40,7 @@ const AccountLessonsPage = () => {
   const lessonRecords = allLessonRecords.filter(record => record.studentId === selectedStudent);
 
   return (
-    <div className="nc-AccountLessonsPage min-h-screen bg-gray-50 dark:bg-neutral-900">
+    <div className="nc-AccountLessonsPage bg-gray-50 dark:bg-neutral-900">
       <div className="container max-w-5xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-8">
           {/* HEADING */}

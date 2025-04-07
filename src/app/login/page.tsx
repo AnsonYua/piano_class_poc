@@ -151,7 +151,7 @@ const PageLogin: FC<PageLoginProps> = ({}) => {
             <label className="block">
               <span className="flex justify-between items-center text-neutral-800 dark:text-neutral-200">
                 密碼
-                <Link href={"/login" as Route} className="text-sm underline font-medium">
+                <Link href="/forgot-password" className="text-sm underline font-medium">
                   忘記密碼
                 </Link>
               </span>

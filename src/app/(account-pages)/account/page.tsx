@@ -10,7 +10,9 @@ export interface AccountPageProps {}
 
 const AccountPage = () => {
   return (
-    <div className="nc-AccountPage min-h-screen bg-gray-50 dark:bg-neutral-900">
+    //<div className="nc-AccountPage min-h-screen bg-gray-50 dark:bg-neutral-900">
+     
+    <div className="nc-AccountPage bg-gray-50 dark:bg-neutral-900">
       <div className="container max-w-2xl mx-auto py-0 px-4 sm:px-6 lg:px-8">
         <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6">
           {/* HEADING */}
