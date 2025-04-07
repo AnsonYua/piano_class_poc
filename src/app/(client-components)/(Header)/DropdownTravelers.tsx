@@ -74,6 +74,8 @@ export default function DropdownTravelers() {
               />
             </div>
           </Popover.Button>
+          {
+            false &&
           <Transition
             as={Fragment}
             enter="transition ease-out duration-200"
@@ -139,6 +141,7 @@ export default function DropdownTravelers() {
               </div>
             </Popover.Panel>
           </Transition>
+          }
         </>
       )}
     </Popover>
