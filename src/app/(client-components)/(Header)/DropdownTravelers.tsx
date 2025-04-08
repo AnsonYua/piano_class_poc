@@ -7,7 +7,7 @@ import { PathName } from "@/routers/types";
 import Link from "next/link";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 
@@ -49,24 +49,18 @@ const solutions: SolutionItem[] = [
 
 export default function DropdownTravelers() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [isTeacherPage, setIsTeacherPage] = useState(false);
-  const [isShopOwnerPage, setIsShopOwnerPage] = useState(false);
   const pathname = usePathname();
   const minAge = 5;
   const minDate = new Date();
   minDate.setFullYear(minDate.getFullYear() - minAge); // Calculate date 5 years ago
 
-  useEffect(() => {
-    // Check if we're on a teacher-admin page
-    setIsTeacherPage(pathname?.includes('/teacher-admin'));
-    // Check if we're on a shop-owner-admin page
-    setIsShopOwnerPage(pathname?.includes('/shop-owner-admin'));
-  }, [pathname]);
-
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
   };
 
+  // Check pathname directly in the render logic
+  const isTeacherPage = pathname?.includes('/teacher-admin');
+  const isShopOwnerPage = pathname?.includes('/shop-owner-admin');
 
   return (
     <Popover className="DropdownTravelers relative flex">
