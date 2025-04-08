@@ -28,12 +28,38 @@ export default function ResetPasswordPage() {
 
     setIsLoading(true);
     try {
-      // TODO: Add API call to verify OTP and reset password
-      router.push("/reset-password-success" as Route);
+      const token = localStorage.getItem('reset_token');
+      if (!token) {
+        setError('無效的請求，請重新發送驗證碼');
+        return;
+      }
+      //`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/reset-password`
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token,
+          otp,
+          newPassword
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Clear the token from localStorage
+        localStorage.removeItem('reset_token');
+        router.push("/reset-password-success" as Route);
+      } else {
+        setError(data.message || '發生錯誤，請稍後再試');
+        setIsLoading(false);
+      }
     } catch (err) {
       setError('發生錯誤，請稍後再試');
-    } finally {
       setIsLoading(false);
+    } finally {
     }
   };
 
@@ -66,7 +92,7 @@ export default function ResetPasswordPage() {
             
             <label className="block">
               <span className="text-neutral-800 dark:text-neutral-200">
-                驗證碼
+                驗證碼 (請查收WhatsApp訊息)
               </span>
               <Input
                 type="text"

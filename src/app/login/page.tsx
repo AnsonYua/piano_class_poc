@@ -60,19 +60,35 @@ const PageLogin: FC<PageLoginProps> = ({}) => {
     setErrorMessage(null);
     
     try {
-      // In a real app, you would validate credentials with your backend
-      // For this demo, we'll simulate an API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For demo purposes, just set a token in localStorage
-      localStorage.setItem("auth_token", "demo_token");
+      const response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contactNumber: "852"+email,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setIsLoading(false);
+        throw new Error(data.message || '登入失敗，請重試');
+        
+      }
+
+      // Store the token
+      localStorage.setItem("auth_token", data.token);
       
       // Redirect to home page
       router.push("/" as Route);
     } catch (error) {
-      setErrorMessage("登入失敗，請重試");
-    } finally {
       setIsLoading(false);
+      setErrorMessage(error instanceof Error ? error.message : "登入失敗，請重試");
+    } finally {
+     
     }
   };
 
@@ -137,13 +153,13 @@ const PageLogin: FC<PageLoginProps> = ({}) => {
                 電話號碼
               </span>
               <Input
-                type="email"
-                name={`email-${Date.now()}`}
+                type="tel"
+                name={`phone-${Date.now()}`}
                 placeholder="請輸入聯絡電話"
                 className="mt-1"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                autoComplete="new-email"
+                autoComplete="tel"
                 disabled={isLoading}
               />
             </label>

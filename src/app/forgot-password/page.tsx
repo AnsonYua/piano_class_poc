@@ -19,13 +19,35 @@ export default function ForgotPasswordPage() {
     setIsLoading(true);
 
     try {
-      // TODO: Add API call to send OTP
-      // For now, just redirect to reset password page
-      router.push("/reset-password" as Route);
+      //`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/request-reset-password`
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/request-reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contactNumber: "852"+phoneNumber
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store the token in localStorage for the reset password page
+        localStorage.setItem('reset_token', data.token);
+        router.push("/reset-password" as Route);
+      } else if (data.message === 'OTP_TOO_RECENT') {
+        setError('請求過於頻繁，請等待1分鐘再請求一次OTP。');
+        setIsLoading(false);
+      } else {
+        setError(data.message || '發生錯誤，請稍後再試');
+        setIsLoading(false);
+      }
     } catch (err) {
       setError('發生錯誤，請稍後再試');
-    } finally {
       setIsLoading(false);
+    } finally {
+     
     }
   };
 
