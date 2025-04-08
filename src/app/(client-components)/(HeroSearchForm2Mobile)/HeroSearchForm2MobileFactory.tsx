@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import LoginTopBar from "../(Header)/LoginTopBar";
 import SignUpTopBar from "../(Header)/SignUpTopBar";
 import TeacherLoginTopBar from "../(Header)/TeacherLoginTopBar";
+import ShopOwnerLoginTopBar from "../(Header)/ShopOwnerLoginTopBar";
 
 const PAGES_REAL_ESTATE: PathName[] = [
   "/home-2",
@@ -24,6 +25,10 @@ const HeroSearchForm2MobileFactory = () => {
   
   if (pathname === "/teacher-admin/login") {
     return <TeacherLoginTopBar />;
+  }
+  
+  if (pathname === "/shop-owner-admin/login") {
+    return <ShopOwnerLoginTopBar />;
   }
   
   if (pathname === "/signup") {

@@ -50,6 +50,7 @@ const solutions: SolutionItem[] = [
 export default function DropdownTravelers() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isTeacherPage, setIsTeacherPage] = useState(false);
+  const [isShopOwnerPage, setIsShopOwnerPage] = useState(false);
   const pathname = usePathname();
   const minAge = 5;
   const minDate = new Date();
@@ -58,6 +59,8 @@ export default function DropdownTravelers() {
   useEffect(() => {
     // Check if we're on a teacher-admin page
     setIsTeacherPage(pathname?.includes('/teacher-admin'));
+    // Check if we're on a shop-owner-admin page
+    setIsShopOwnerPage(pathname?.includes('/shop-owner-admin'));
   }, [pathname]);
 
   const handleDateChange = (date: Date | null) => {
@@ -74,7 +77,11 @@ export default function DropdownTravelers() {
                 group self-center py-2 h-10 sm:h-12 rounded-md text-sm sm:text-base font-medium hover:text-opacity-100 focus:outline-none`}
           >
             <div className={` inline-flex items-center `} role="button">
-              <span>{isTeacherPage ? "導師" : "家長或同學"}</span>
+              <span>
+                {isTeacherPage ? "導師" : 
+                 isShopOwnerPage ? "琴行" : 
+                 "家長或同學"}
+              </span>
               <ChevronDownIcon
                 className={`${ "text-opacity-70 "}
                   ml-2 h-5 w-5 text-neutral-700 group-hover:text-opacity-80 transition ease-in-out duration-150 `}
