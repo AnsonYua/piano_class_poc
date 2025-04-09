@@ -15,19 +15,42 @@ const PAGES_REAL_ESTATE: PathName[] = [
 
 const HeroSearchForm2MobileFactory = () => {
   const pathname = usePathname();
+  const isTeacherPage = pathname?.includes('/teacher-admin');
+  const isShopOwnerPage = pathname?.includes('/shop-owner-admin');
+  const fontText = isTeacherPage ? "導師" : isShopOwnerPage ? "琴行" : "家長或同學";
+  const fontTextDefault = isTeacherPage ? "導師" : isShopOwnerPage ? "琴行" : "";
   
-  if (pathname === "/login") {
-    return <CommonTopBar title="登入" className="nc-LoginTopBar" />;
+  if (pathname === "/login" || 
+      pathname === "/teacher-admin/login" ||
+      pathname === "/shop-owner-admin/login" 
+  ) {
+    
+    return <CommonTopBar title={`${fontTextDefault}登入`} className="nc-LoginTopBar" />;
   } 
   
-  if (pathname === "/teacher-admin/login") {
-    return <CommonTopBar title="導師登入" className="nc-LoginTopBar" />;
-  }
   
-  if (pathname === "/shop-owner-admin/login") {
-    return <CommonTopBar title="琴行登入" className="nc-LoginTopBar" />;
+  if (pathname === "/forgot-password"||
+      pathname === "/teacher-admin/forgot-password" ||
+      pathname === "/shop-owner-admin/forgot-password"
+  ) {
+    return <CommonTopBar title={`忘記密碼`} className="nc-LoginTopBar" />;
   }
-  
+
+  if (pathname === "/reset-password"||
+      pathname === "/teacher-admin/reset-password" ||
+      pathname === "/shop-owner-admin/reset-password"
+  ) {
+    return <CommonTopBar title="重設密碼" className="nc-LoginTopBar" />;
+  }
+
+
+  if (pathname === "/reset-password-success"||
+    pathname === "/teacher-admin/reset-password-success" ||
+    pathname === "/shop-owner-admin/reset-password-success"
+  ) {
+    return <CommonTopBar title="重設密碼" className="nc-LoginTopBar" />;
+  }
+
   if (pathname === "/signup") {
     return <CommonTopBar title="創建帳戶" className="nc-SignUpTopBar" />;
   }
