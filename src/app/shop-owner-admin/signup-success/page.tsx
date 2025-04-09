@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import SignupSuccess from "@/components/auth/SignupSuccess";
+import AdminSignupSuccess from "@/components/auth/AdminSignupSuccess";
 
 export default function ShopOwnerSignupSuccessPage() {
-  return <SignupSuccess userType="shop-owner" />;
+  return <AdminSignupSuccess userType="shop-owner" />;
 } 

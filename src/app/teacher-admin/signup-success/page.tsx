@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import SignupSuccess from "@/components/auth/SignupSuccess";
+import AdminSignupSuccess from "@/components/auth/AdminSignupSuccess";
 
 export default function TeacherSignupSuccessPage() {
-  return <SignupSuccess userType="teacher" />;
+  return <AdminSignupSuccess userType="teacher" />;
 } 
