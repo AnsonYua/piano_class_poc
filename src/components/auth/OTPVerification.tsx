@@ -5,8 +5,8 @@ import ButtonPrimary from "@/shared/ButtonPrimary";
 interface OTPVerificationProps {
   userType: 'student' | 'teacher' | 'shop-owner';
   email: string;
-  onVerify: (otp: string) => Promise<void>;
-  onResendOTP: () => Promise<void>;
+  onVerify: (otp: string) => Promise<{ success: boolean; message?: string }>;
+  onResendOTP: () => Promise<{ success: boolean; message?: string }>;
 }
 
 const OTPVerification: FC<OTPVerificationProps> = ({ userType, email, onVerify, onResendOTP }) => {
@@ -59,11 +59,15 @@ const OTPVerification: FC<OTPVerificationProps> = ({ userType, email, onVerify, 
     setErrorMessage(null);
 
     try {
-      await onVerify(otpString);
+      const result = await onVerify(otpString);
+      if (!result.success) {
+        setIsLoading(false);
+        setErrorMessage(result.message || "驗證失敗，請重試");
+      }
     } catch (error) {
+      setIsLoading(false);
       setErrorMessage("驗證失敗，請重試");
     } finally {
-      setIsLoading(false);
     }
   };
 
@@ -74,19 +78,27 @@ const OTPVerification: FC<OTPVerificationProps> = ({ userType, email, onVerify, 
     setErrorMessage(null);
 
     try {
-      await onResendOTP();
-      setTimer(60);
-      setCanResend(false);
-      setErrorMessage(null);
+      const result = await onResendOTP();
+      if (result.success) {
+        setTimer(60);
+        setCanResend(false);
+        setErrorMessage(null);
+        setIsLoading(false);
+      } else {
+
+        setIsLoading(false);
+        setErrorMessage(result.message || "發送失敗，請重試");
+      }
     } catch (error) {
+
+      setIsLoading(false);
       setErrorMessage("發送失敗，請重試");
     } finally {
-      setIsResending(false);
     }
   };
 
   return (
-    <div className="nc-PageVerifyOTP bg-gray-50 dark:bg-neutral-900">
+    <div className="nc-PageVerifyOTP min-h-screen bg-gray-50 dark:bg-neutral-900">
       <div className="container max-w-2xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-8">
           <h2 className="text-3xl font-bold text-center text-neutral-900 dark:text-neutral-100 mb-8">

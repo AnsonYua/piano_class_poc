@@ -37,11 +37,18 @@ const PageVerifyOTP: FC<PageVerifyOTPProps> = ({}) => {
       if (response.ok) {
         // Redirect to success page
         router.push("/signup-success" as Route);
+        return { success: true };
       } else {
-        throw new Error(data.message || "驗證碼錯誤，請重試");
+        return { 
+          success: false, 
+          message: data.message || "驗證碼錯誤，請重試" 
+        };
       }
     } catch (error) {
-      throw new Error("驗證失敗，請重試");
+      return { 
+        success: false, 
+        message: "驗證失敗，請重試" 
+      };
     }
   };
 
@@ -57,11 +64,19 @@ const PageVerifyOTP: FC<PageVerifyOTPProps> = ({}) => {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || "發送失敗，請重試");
+      if (response.ok) {
+        return { success: true };
+      } else {
+        return { 
+          success: false, 
+          message: data.message || "發送失敗，請重試" 
+        };
       }
     } catch (error) {
-      throw new Error("發送失敗，請重試");
+      return { 
+        success: false, 
+        message: "發送失敗，請重試" 
+      };
     }
   };
 
