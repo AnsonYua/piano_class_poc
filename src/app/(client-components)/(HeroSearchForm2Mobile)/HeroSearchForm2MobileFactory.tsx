@@ -5,10 +5,7 @@ import { PathName } from "@/routers/types";
 import HeroSearchForm2Mobile from "./HeroSearchForm2Mobile";
 import HeroSearchForm2RealEstateMobile from "./HeroSearchForm2RealEstateMobile";
 import { usePathname } from "next/navigation";
-import LoginTopBar from "../(Header)/LoginTopBar";
-import SignUpTopBar from "../(Header)/SignUpTopBar";
-import TeacherLoginTopBar from "../(Header)/TeacherLoginTopBar";
-import ShopOwnerLoginTopBar from "../(Header)/ShopOwnerLoginTopBar";
+import CommonTopBar from "../(Header)/CommonTopBar";
 
 const PAGES_REAL_ESTATE: PathName[] = [
   "/home-2",
@@ -20,22 +17,23 @@ const HeroSearchForm2MobileFactory = () => {
   const pathname = usePathname();
   
   if (pathname === "/login") {
-    return <LoginTopBar />;
+    return <CommonTopBar title="登入" className="nc-LoginTopBar" />;
   } 
   
   if (pathname === "/teacher-admin/login") {
-    return <TeacherLoginTopBar />;
+    return <CommonTopBar title="導師登入" className="nc-LoginTopBar" />;
   }
   
   if (pathname === "/shop-owner-admin/login") {
-    return <ShopOwnerLoginTopBar />;
+    return <CommonTopBar title="琴行登入" className="nc-LoginTopBar" />;
   }
   
   if (pathname === "/signup") {
-    return <SignUpTopBar />;
+    return <CommonTopBar title="創建帳戶" className="nc-SignUpTopBar" />;
   }
+  
   if (pathname === "/verify-otp") {
-    return <SignUpTopBar />;
+    return <CommonTopBar title="創建帳戶" className="nc-SignUpTopBar" />;
   }
 
   if (PAGES_REAL_ESTATE.includes(pathname as PathName)) {
