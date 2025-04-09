@@ -3,11 +3,10 @@
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import OTPVerification from '@/components/auth/OTPVerification';
-import Layout from '@/components/Layout';
 
 export default function ShopOwnerOTPVerificationPage() {
   const searchParams = useSearchParams();
-  const email = searchParams.get('email');
+  const token = searchParams?.get('token') || '';
 
   const handleVerify = async (otp: string) => {
     // TODO: Implement shop owner OTP verification API call
@@ -16,23 +15,19 @@ export default function ShopOwnerOTPVerificationPage() {
 
   const handleResendOTP = async () => {
     // TODO: Implement shop owner OTP resend API call
-    console.log('Resending OTP to:', email);
+    console.log('Resending OTP to:', token);
   };
 
-  if (!email) {
+  if (!token) {
     return null;
   }
 
   return (
-    <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <OTPVerification
-          userType="shop-owner"
-          email={email}
-          onVerify={handleVerify}
-          onResendOTP={handleResendOTP}
-        />
-      </div>
-    </Layout>
+    <OTPVerification
+      userType="shop-owner"
+      email={token}
+      onVerify={handleVerify}
+      onResendOTP={handleResendOTP}
+    />
   );
 } 

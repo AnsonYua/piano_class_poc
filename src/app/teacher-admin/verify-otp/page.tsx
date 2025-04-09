@@ -3,11 +3,10 @@
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import OTPVerification from '@/components/auth/OTPVerification';
-import Layout from '@/components/Layout';
 
 export default function TeacherOTPVerificationPage() {
   const searchParams = useSearchParams();
-  const email = searchParams.get('email');
+  const token = searchParams?.get('token') || '';
 
   const handleVerify = async (otp: string) => {
     // TODO: Implement teacher OTP verification API call
@@ -16,23 +15,19 @@ export default function TeacherOTPVerificationPage() {
 
   const handleResendOTP = async () => {
     // TODO: Implement teacher OTP resend API call
-    console.log('Resending OTP to:', email);
+    console.log('Resending OTP to:', token);
   };
 
-  if (!email) {
+  if (!token) {
     return null;
   }
 
   return (
-    <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <OTPVerification
-          userType="teacher"
-          email={email}
-          onVerify={handleVerify}
-          onResendOTP={handleResendOTP}
-        />
-      </div>
-    </Layout>
+    <OTPVerification
+      userType="teacher"
+      email={token}
+      onVerify={handleVerify}
+      onResendOTP={handleResendOTP}
+    />
   );
 } 

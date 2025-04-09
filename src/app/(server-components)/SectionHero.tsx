@@ -19,7 +19,7 @@ const SectionHero: FC<SectionHeroProps> = ({ className = "" }) => {
           「學琴 Go!」
           </h2>
           <span className="text-base md:text-lg text-neutral-500 dark:text-neutral-400">
-          為親子打造全新鋼琴學習體驗，運用標準化教學模組和AI技術，擺脫對固定老師與時間的依賴，讓學琴更自由、高效、無壓力。
+          為親子打造全新鋼琴學習體驗，運用標準化教學模組和AI技術，擺脫對固定導師與時間的依賴，讓學琴更自由、高效、無壓力。
           </span>
           <ButtonPrimary href="/listing-stay-map" sizeClass="px-5 py-4 sm:px-7">
             立即預約學琴

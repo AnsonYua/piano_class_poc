@@ -14,7 +14,7 @@ export default function ShopOwnerAdminLandingPage() {
             琴行管理平台
           </h1>
           <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl">
-            歡迎來到琴行管理平台，這裡是您管理琴行、課程和教師的中心。
+            歡迎來到琴行管理平台，這裡是您管理琴行、課程和導師的中心。
           </p>
           
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -41,13 +41,13 @@ export default function ShopOwnerAdminLandingPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">教師管理</h3>
+              <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">導師管理</h3>
               <p className="mt-2 text-neutral-600 dark:text-neutral-400">
-                管理您的教師團隊，分配課程和排程。
+                管理您的導師團隊，分配課程和排程。
               </p>
               <div className="mt-4">
                 <Link href={"/shop-owner-admin/teachers" as Route} className="text-green-600 dark:text-green-400 hover:underline">
-                  查看教師 →
+                  查看導師 →
                 </Link>
               </div>
             </div>

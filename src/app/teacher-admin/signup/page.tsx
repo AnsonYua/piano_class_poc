@@ -24,16 +24,17 @@ export default function TeacherSignupPage() {
       if (response.ok) {
         // Redirect to OTP verification page with phone number
         router.push(`/teacher-admin/verify-otp?token=${responseData.token}` as Route);
+        return null; // No error message
       } else {
-        throw new Error(responseData.message || "註冊失敗，請重試");
+        return responseData.message || "註冊失敗，請重試";
       }
     } catch (error) {
-      throw error;
+      return "註冊失敗，請重試";
     }
   };
 
   return (
-    <SignupPageLayout title="教師註冊">
+    <SignupPageLayout title="導師註冊">
       <SignupForm userType="teacher" onSubmit={handleSignup} />
     </SignupPageLayout>
   );

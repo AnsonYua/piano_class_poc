@@ -20,9 +20,9 @@ const AddLessonPage: FC<AddLessonPageProps> = () => {
   ];
   
   const teachers = [
-    { id: "teacher1", name: "王老師" },
-    { id: "teacher2", name: "李老師" },
-    { id: "teacher3", name: "張老師" },
+    { id: "teacher1", name: "王導師" },
+    { id: "teacher2", name: "李導師" },
+    { id: "teacher3", name: "張導師" },
   ];
   
   const [lesson, setLesson] = useState({
@@ -113,7 +113,7 @@ const AddLessonPage: FC<AddLessonPageProps> = () => {
             </div>
             
             <div>
-              <Label>老師</Label>
+              <Label>導師</Label>
               <Select 
                 className="mt-1.5" 
                 name="teacherId"

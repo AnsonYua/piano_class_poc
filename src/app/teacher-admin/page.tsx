@@ -11,10 +11,10 @@ export default function TeacherAdminLandingPage() {
       <div className="container relative pt-10 pb-16 lg:pt-20 lg:pb-28">
         <div className="flex flex-col items-center text-center">
           <h1 className="text-4xl font-bold text-neutral-900 dark:text-neutral-100 sm:text-5xl md:text-6xl">
-            教師管理平台
+            導師管理平台
           </h1>
           <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl">
-            歡迎來到教師管理平台，這裡是您管理課程、學生和排程的中心。
+            歡迎來到導師管理平台，這裡是您管理課程、學生和排程的中心。
           </p>
           
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

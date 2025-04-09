@@ -51,6 +51,14 @@ const HeroSearchForm2MobileFactory = () => {
     return <CommonTopBar title="重設密碼" className="nc-LoginTopBar" />;
   }
 
+  if (pathname === "/verify-otp"||
+    pathname === "/teacher-admin/verify-otp" ||
+    pathname === "/shop-owner-admin/verify-otp"
+  ) {
+    return <CommonTopBar title="" className="nc-LoginTopBar" />;
+  }
+
+
   if (pathname === "/signup") {
     return <CommonTopBar title="創建帳戶" className="nc-SignUpTopBar" />;
   }

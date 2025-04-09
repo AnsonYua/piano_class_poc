@@ -32,7 +32,7 @@ const ClassHistoryPage = () => {
       date: '2024-03-15',
       location: '台北市信義區',
       duration: '60分鐘',
-      teacher: '陳老師',
+      teacher: '陳導師',
       notes: '完成基礎指法練習',
     },
     {
@@ -41,7 +41,7 @@ const ClassHistoryPage = () => {
       date: '2024-03-08',
       location: '台北市信義區',
       duration: '60分鐘',
-      teacher: '陳老師',
+      teacher: '陳導師',
       notes: '學習新曲目',
     },
     {
@@ -50,7 +50,7 @@ const ClassHistoryPage = () => {
       date: '2024-03-10',
       location: '台北市信義區',
       duration: '60分鐘',
-      teacher: '林老師',
+      teacher: '林導師',
       notes: '加強節奏訓練',
     },
   ];
@@ -121,7 +121,7 @@ const ClassHistoryPage = () => {
                           <span className="text-sm text-gray-500 dark:text-gray-400">{history.duration}</span>
                         </div>
                         <div className="mt-1">
-                          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">老師：{history.teacher}</p>
+                          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">導師：{history.teacher}</p>
                           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{history.notes}</p>
                         </div>
                       </div>

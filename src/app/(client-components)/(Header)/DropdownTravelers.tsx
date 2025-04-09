@@ -17,20 +17,20 @@ interface CategoryItem {
 const categories: CategoryItem[] = [
   {
     name: "家長或同學",
-    description: "尋找適合的鋼琴課程和教師",
-    href: "/signup",
+    description: "尋找適合的鋼琴課程和導師",
+    href: "",
     icon: StudentIcon,
   },
   {
     name: "導師",
     description: "管理您的教學課程和學生",
-    href: "/teacher-admin/signup",
+    href: "/teacher-admin",
     icon: TeacherIcon,
   },
   {
     name: "琴行",
-    description: "管理您的琴行和教師團隊",
-    href: "/shop-owner-admin/signup",
+    description: "管理您的琴行和導師團隊",
+    href: "/shop-owner-admin",
     icon: ShopIcon,
   },
 ];

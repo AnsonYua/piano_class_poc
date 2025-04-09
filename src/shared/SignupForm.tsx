@@ -9,7 +9,7 @@ import { Route } from "@/routers/types";
 
 export interface SignupFormProps {
   userType: 'student' | 'teacher' | 'shop-owner';
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: any) => Promise<string | null | undefined>;
 }
 
 interface Student {
@@ -25,7 +25,7 @@ interface FormData {
     name: string;
     age: string;
   }>;
-  shopName?: string;
+  shopAddress?: string;
 }
 
 const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
@@ -34,7 +34,7 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [students, setStudents] = useState<Student[]>([{ studentName: "", studentAge: 0 }]);
-  const [shopName, setShopName] = useState("");
+  const [shopAddress, setShopAddress] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -113,8 +113,8 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
       }
     }
 
-    if (userType === 'shop-owner' && !shopName) {
-      showError("請填寫琴行名稱");
+    if (userType === 'shop-owner' && !shopAddress) {
+      showError("請填寫琴行地址");
       return;
     }
 
@@ -136,14 +136,18 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
       }
 
       if (userType === 'shop-owner') {
-        formData.shopName = shopName;
+        formData.shopAddress = shopAddress;
       }
 
-      await onSubmit(formData);
+      const errorMessage = await onSubmit(formData);
+      if (errorMessage) {
+        setIsLoading(false);
+        showError(errorMessage);
+      }
     } catch (error) {
+      setIsLoading(false);
       showError("註冊失敗，請重試");
     } finally {
-      setIsLoading(false);
     }
   };
 
@@ -175,7 +179,7 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
               />
             </label>
             <label className="block">
-              <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">聯絡號碼</span>
+              <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">聯絡號碼(可收到WhatsApp的號碼)</span>
               <Input
                 type="tel"
                 placeholder="請輸入電話號碼"
@@ -263,13 +267,13 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
             <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">琴行資料</h3>
             <div className="space-y-4">
               <label className="block">
-                <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">琴行名稱</span>
+                <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">琴行地址</span>
                 <Input
                   type="text"
-                  placeholder="請輸入琴行名稱"
+                  placeholder="請輸入琴行地址"
                   className="w-full"
-                  value={shopName}
-                  onChange={(e) => setShopName(e.target.value)}
+                  value={shopAddress}
+                  onChange={(e) => setShopAddress(e.target.value)}
                   disabled={isLoading}
                 />
               </label>
@@ -352,7 +356,7 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
       <div className="text-center">
         <span className="text-sm text-neutral-600 dark:text-neutral-400">
           已有帳號?{" "}
-          <Link href={"/login" as Route} className="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+          <Link href={userType === 'student' ? '/login' : userType === 'teacher' ? '/teacher-admin/login' : '/shop-owner-admin/login' as Route} className="font-medium text-blue-600 dark:text-blue-400 hover:underline">
             登入
           </Link>
         </span>

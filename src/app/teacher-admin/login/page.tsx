@@ -7,7 +7,7 @@ import { Route } from "@/routers/types";
 const PageLogin: FC = () => {
   return (
     <LoginForm
-      title="老師登入"
+      title="導師登入"
       apiEndpoint="http://localhost:3001/api/auth/teacher/login"
       tokenKey="teacher_auth_token"
       redirectPath={"/teacher-admin/dashboard" as Route}

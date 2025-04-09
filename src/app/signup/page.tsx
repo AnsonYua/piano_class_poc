@@ -24,11 +24,12 @@ export default function SignupPage() {
       if (response.ok) {
         // Redirect to OTP verification page with phone number
         router.push(`/verify-otp?token=${responseData.token}` as Route);
+        return null; // No error message
       } else {
-        throw new Error(responseData.message || "註冊失敗，請重試");
+        return responseData.message || "註冊失敗，請重試";
       }
     } catch (error) {
-      throw error;
+      return "註冊失敗，請重試";
     }
   };
 

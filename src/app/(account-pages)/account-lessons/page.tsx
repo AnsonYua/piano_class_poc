@@ -19,21 +19,21 @@ const AccountLessonsPage = () => {
   
   // Sample lesson records with student IDs
   const allLessonRecords = [
-    { id: 1, studentId: "student1", date: "2023-10-01", time: "14:00", teacher: "王老師", notes: "基礎練習" },
-    { id: 2, studentId: "student1", date: "2023-10-08", time: "14:00", teacher: "王老師", notes: "進階練習" },
-    { id: 3, studentId: "student1", date: "2023-10-15", time: "14:00", teacher: "李老師", notes: "考試準備" },
-    { id: 4, studentId: "student1", date: "2023-10-22", time: "14:00", teacher: "王老師", notes: "考試" },
-    { id: 5, studentId: "student1", date: "2023-10-29", time: "14:00", teacher: "李老師", notes: "考試檢討" },
-    { id: 6, studentId: "student2", date: "2023-10-02", time: "15:00", teacher: "張老師", notes: "基礎練習" },
-    { id: 7, studentId: "student2", date: "2023-10-09", time: "15:00", teacher: "張老師", notes: "進階練習" },
-    { id: 8, studentId: "student2", date: "2023-10-16", time: "15:00", teacher: "王老師", notes: "考試準備" },
-    { id: 9, studentId: "student2", date: "2023-10-23", time: "15:00", teacher: "張老師", notes: "考試" },
-    { id: 10, studentId: "student2", date: "2023-10-30", time: "15:00", teacher: "王老師", notes: "考試檢討" },
-    { id: 11, studentId: "student3", date: "2023-10-03", time: "16:00", teacher: "李老師", notes: "基礎練習" },
-    { id: 12, studentId: "student3", date: "2023-10-10", time: "16:00", teacher: "李老師", notes: "進階練習" },
-    { id: 13, studentId: "student3", date: "2023-10-17", time: "16:00", teacher: "張老師", notes: "考試準備" },
-    { id: 14, studentId: "student3", date: "2023-10-24", time: "16:00", teacher: "李老師", notes: "考試" },
-    { id: 15, studentId: "student3", date: "2023-10-31", time: "16:00", teacher: "張老師", notes: "考試檢討" },
+    { id: 1, studentId: "student1", date: "2023-10-01", time: "14:00", teacher: "王導師", notes: "基礎練習" },
+    { id: 2, studentId: "student1", date: "2023-10-08", time: "14:00", teacher: "王導師", notes: "進階練習" },
+    { id: 3, studentId: "student1", date: "2023-10-15", time: "14:00", teacher: "李導師", notes: "考試準備" },
+    { id: 4, studentId: "student1", date: "2023-10-22", time: "14:00", teacher: "王導師", notes: "考試" },
+    { id: 5, studentId: "student1", date: "2023-10-29", time: "14:00", teacher: "李導師", notes: "考試檢討" },
+    { id: 6, studentId: "student2", date: "2023-10-02", time: "15:00", teacher: "張導師", notes: "基礎練習" },
+    { id: 7, studentId: "student2", date: "2023-10-09", time: "15:00", teacher: "張導師", notes: "進階練習" },
+    { id: 8, studentId: "student2", date: "2023-10-16", time: "15:00", teacher: "王導師", notes: "考試準備" },
+    { id: 9, studentId: "student2", date: "2023-10-23", time: "15:00", teacher: "張導師", notes: "考試" },
+    { id: 10, studentId: "student2", date: "2023-10-30", time: "15:00", teacher: "王導師", notes: "考試檢討" },
+    { id: 11, studentId: "student3", date: "2023-10-03", time: "16:00", teacher: "李導師", notes: "基礎練習" },
+    { id: 12, studentId: "student3", date: "2023-10-10", time: "16:00", teacher: "李導師", notes: "進階練習" },
+    { id: 13, studentId: "student3", date: "2023-10-17", time: "16:00", teacher: "張導師", notes: "考試準備" },
+    { id: 14, studentId: "student3", date: "2023-10-24", time: "16:00", teacher: "李導師", notes: "考試" },
+    { id: 15, studentId: "student3", date: "2023-10-31", time: "16:00", teacher: "張導師", notes: "考試檢討" },
   ];
   
   // Filter lesson records based on selected student
@@ -109,7 +109,7 @@ const AccountLessonsPage = () => {
                       <tr className="border-b border-neutral-200 dark:border-neutral-700">
                         <th className="py-3 px-4 text-left text-sm font-medium text-neutral-500 dark:text-neutral-400">日期</th>
                         <th className="py-3 px-4 text-left text-sm font-medium text-neutral-500 dark:text-neutral-400">時間</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-neutral-500 dark:text-neutral-400">老師</th>
+                        <th className="py-3 px-4 text-left text-sm font-medium text-neutral-500 dark:text-neutral-400">導師</th>
                         <th className="py-3 px-4 text-left text-sm font-medium text-neutral-500 dark:text-neutral-400">備註</th>
                         <th className="py-3 px-4 text-left text-sm font-medium text-neutral-500 dark:text-neutral-400">操作</th>
                       </tr>
@@ -155,7 +155,7 @@ const AccountLessonsPage = () => {
                       <span>{record.time}</span>
                     </div>
                     <div className="text-sm text-neutral-600 dark:text-neutral-300 mb-1">
-                      老師: {record.teacher}
+                      導師: {record.teacher}
                     </div>
                     <div className="text-sm text-neutral-600 dark:text-neutral-300 mb-2">
                       備註: {record.notes}
