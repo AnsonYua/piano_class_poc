@@ -2,11 +2,11 @@
 
 import ResetPasswordSuccessPage from '@/shared/ResetPasswordSuccessPage';
 
-export default function StudentResetPasswordSuccessPage() {
+export default function ShopOwnerResetPasswordSuccessPage() {
   return (
     <ResetPasswordSuccessPage 
-      userType="student" 
-      loginPath="/login" 
+      userType="shop-owner" 
+      loginPath="/shop-owner-admin/login" 
     />
   );
 } 

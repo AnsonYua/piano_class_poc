@@ -2,11 +2,11 @@
 
 import ResetPasswordSuccessPage from '@/shared/ResetPasswordSuccessPage';
 
-export default function StudentResetPasswordSuccessPage() {
+export default function TeacherResetPasswordSuccessPage() {
   return (
     <ResetPasswordSuccessPage 
-      userType="student" 
-      loginPath="/login" 
+      userType="teacher" 
+      loginPath="/teacher-admin/login" 
     />
   );
 } 
