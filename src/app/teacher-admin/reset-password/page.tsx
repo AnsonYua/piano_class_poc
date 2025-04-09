@@ -1,13 +1,64 @@
 'use client';
 
-import ResetPasswordPage from '@/shared/ResetPasswordPage';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Route } from "@/routers/types";
+import ResetPasswordPageLayout from '@/shared/ResetPasswordPageLayout';
+import ResetPasswordForm from '@/shared/ResetPasswordForm';
+import { useEffect } from 'react';
 
 export default function TeacherResetPasswordPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams?.get('token');
+
+  useEffect(() => {
+    if (!token) {
+      router.push('/teacher-admin' as Route);
+    }
+  }, [token, router]);
+
+  const handleResetPassword = async (data: { otp: string; newPassword: string }) => {
+    try {
+      if (!token) {
+        return '無效的請求，請重新發送驗證碼';
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/teacher/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token,
+          otp: data.otp,
+          newPassword: data.newPassword
+        }),
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        router.push('/teacher-admin/reset-password-success' as Route);
+        return null;
+      } else {
+        return responseData.message || '發生錯誤，請稍後再試';
+      }
+    } catch (error) {
+      return '發生錯誤，請稍後再試';
+    }
+  };
+
+  if (!token) {
+    return null;
+  }
+
   return (
-    <ResetPasswordPage 
-      userType="teacher" 
-      redirectPath="/teacher-admin/reset-password-success" 
-      loginPath="/teacher-admin/login" 
-    />
+    <ResetPasswordPageLayout title="導師重設密碼">
+      <ResetPasswordForm 
+        userType="teacher" 
+        redirectPath="/teacher-admin/reset-password-success"
+        onSubmit={handleResetPassword}
+      />
+    </ResetPasswordPageLayout>
   );
 } 

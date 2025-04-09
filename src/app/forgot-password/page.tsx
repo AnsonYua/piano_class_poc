@@ -1,13 +1,51 @@
 'use client';
 
-import ForgotPasswordPage from '@/shared/ForgotPasswordPage';
+import { useRouter } from 'next/navigation';
+import { Route } from "@/routers/types";
+import ForgotPasswordPageLayout from '../../shared/ForgotPasswordPageLayout';
+import ForgotPasswordForm from '@/shared/ForgotPasswordForm';
 
 export default function StudentForgotPasswordPage() {
+  const router = useRouter();
+
+  const handleForgotPassword = async (data: { contactNumber: string }) => {
+    try {
+      // Add 852 prefix to the contact number for the API request
+      const contactNumberWithPrefix = data.contactNumber.startsWith('852') 
+        ? data.contactNumber 
+        : `852${data.contactNumber}`;
+      
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/request-reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ contactNumber: contactNumberWithPrefix }),
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        // Pass the token via query parameter instead of localStorage
+        router.push(`/reset-password?token=${responseData.token}` as Route);
+        return null;
+      } else if (responseData.message === 'OTP_TOO_RECENT') {
+        return '請求過於頻繁，請等待1分鐘再請求一次OTP。';
+      } else {
+        return responseData.message || '發生錯誤，請稍後再試';
+      }
+    } catch (error) {
+      return '發生錯誤，請稍後再試';
+    }
+  };
+
   return (
-    <ForgotPasswordPage 
-      userType="student" 
-      redirectPath="/reset-password" 
-      loginPath="/login" 
-    />
+    <ForgotPasswordPageLayout title="忘記密碼">
+      <ForgotPasswordForm 
+        userType="student" 
+        redirectPath="/reset-password"
+        onSubmit={handleForgotPassword}
+      />
+    </ForgotPasswordPageLayout>
   );
 } 

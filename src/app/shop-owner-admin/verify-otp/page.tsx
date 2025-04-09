@@ -12,7 +12,7 @@ export default function ShopOwnerOTPVerificationPage() {
 
   const handleVerify = async (otp: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/verify-otp`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/shop-admin/verify-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -27,7 +27,7 @@ export default function ShopOwnerOTPVerificationPage() {
 
       if (response.ok) {
         // Redirect to shop owner admin dashboard
-        router.push("/shop-owner-admin/dashboard" as Route);
+        router.push("/shop-owner-admin/signup-success" as Route);
         return { success: true };
       } else {
         return { 

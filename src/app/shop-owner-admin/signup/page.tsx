@@ -11,7 +11,7 @@ export default function ShopOwnerSignupPage() {
 
   const handleSignup = async (data: any) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/shop-owner/signup`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/shop_admin/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

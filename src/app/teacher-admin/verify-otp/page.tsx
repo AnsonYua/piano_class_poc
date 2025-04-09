@@ -12,7 +12,7 @@ export default function TeacherOTPVerificationPage() {
 
   const handleVerify = async (otp: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/verify-otp`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/teacher/verify-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -27,7 +27,7 @@ export default function TeacherOTPVerificationPage() {
 
       if (response.ok) {
         // Redirect to teacher admin dashboard
-        router.push("/teacher-admin/dashboard" as Route);
+        router.push("/teacher-admin/signup-success" as Route);
         return { success: true };
       } else {
         return { 

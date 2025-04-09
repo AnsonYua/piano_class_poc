@@ -4,13 +4,11 @@ import React, { FC, useState, useRef, useEffect } from "react";
 import Input from "@/shared/Input";
 import ButtonPrimary from "@/shared/ButtonPrimary";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Route } from "@/routers/types";
 
 export interface LoginFormProps {
   title: string;
-  apiEndpoint: string;
-  tokenKey: string;
+  onSubmit: (data: { contactNumber: string; password: string }) => Promise<string | null>;
   redirectPath: Route;
   forgotPasswordPath: Route;
   signupPath: Route;
@@ -19,19 +17,17 @@ export interface LoginFormProps {
 
 const LoginForm: FC<LoginFormProps> = ({
   title,
-  apiEndpoint,
-  tokenKey,
+  onSubmit,
   redirectPath,
   forgotPasswordPath,
   signupPath,
   showSignupLink = true,
 }) => {
-  const [email, setEmail] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
   const errorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -50,29 +46,18 @@ const LoginForm: FC<LoginFormProps> = ({
     setErrorMessage(null);
     
     try {
-      const response = await fetch(apiEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contactNumber: "852"+email,
-          password: password,
-        }),
+      const error = await onSubmit({
+        contactNumber,
+        password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setIsLoading(false);
-        throw new Error(data.message || '登入失敗，請重試');
+      if (error) {
+        setErrorMessage(error);
       }
-
-      localStorage.setItem(tokenKey, data.token);
-      router.push(redirectPath);
     } catch (error) {
-      setIsLoading(false);
       setErrorMessage(error instanceof Error ? error.message : "登入失敗，請重試");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -111,8 +96,8 @@ const LoginForm: FC<LoginFormProps> = ({
                 name={`phone-${Date.now()}`}
                 placeholder="請輸入聯絡電話"
                 className="mt-1"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={contactNumber}
+                onChange={(e) => setContactNumber(e.target.value)}
                 autoComplete="tel"
                 disabled={isLoading}
               />
