@@ -1,22 +1,23 @@
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Route } from '@/routers/types';
+import { UserTypeUtils, UserType } from '@/utils/UserTypeUtils';
 
 export const useAuthRedirect = () => {
   const router = useRouter();
 
   // This function will be called directly in the component
-  const checkAuth = useCallback(() => {
-    const studentToken = localStorage.getItem('student_auth_token');
-    const teacherToken = localStorage.getItem('teacher_auth_token');
-    const shopOwnerToken = localStorage.getItem('shop_owner_auth_token');
-
-    if (studentToken) {
-      router.push('/' as Route<string>);
-    } else if (teacherToken) {
-      router.push('/teacher-admin' as Route<string>);
-    } else if (shopOwnerToken) {
-      router.push('/shop-owner-admin' as Route<string>);
+  const checkAuth = useCallback((pathname?: string) => {
+    // Determine user type from pathname
+    const userType = UserTypeUtils.getUserTypeFromPathname(pathname);
+    
+    // Check only the token for the current user type
+    const token = localStorage.getItem(`${userType}_auth_token`);
+    
+    if (token) {
+      // Use UserTypeUtils to get the appropriate homepage URL
+      const homepageUrl = UserTypeUtils.getHomepageUrl(userType);
+      router.push(homepageUrl);
     }
   }, [router]);
 

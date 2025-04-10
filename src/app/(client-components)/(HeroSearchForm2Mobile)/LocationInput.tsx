@@ -2,6 +2,7 @@
 
 import { MapPinIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import React, { useState, useEffect, useRef, FC } from "react";
+import { HONG_KONG_DISTRICTS } from "@/utils/locationData";
 
 interface Props {
   onClick?: () => void;
@@ -10,27 +11,6 @@ interface Props {
   defaultValue?: string;
   headingText?: string;
 }
-
-const HONG_KONG_DISTRICTS = [
-  "中西區",
-  "灣仔區",
-  "東區",
-  "南區",
-  "油尖旺區",
-  "深水埗區",
-  "九龍城區",
-  "黃大仙區",
-  "觀塘區",
-  "荃灣區",
-  "屯門區",
-  "元朗區",
-  "北區",
-  "大埔區",
-  "西貢區",
-  "沙田區",
-  "葵青區",
-  "離島區"
-];
 
 const LocationInput: FC<Props> = ({
   onChange = () => {},
@@ -47,6 +27,9 @@ const LocationInput: FC<Props> = ({
   }, [defaultValue]);
 
   const handleSelectLocation = (item: string) => {
+    // Only allow selection of "北角"
+    if (item !== "北角") return;
+    
     // DO NOT REMOVE SETTIMEOUT FUNC
     setTimeout(() => {
       setValue(item);
@@ -64,17 +47,22 @@ const LocationInput: FC<Props> = ({
     return (
       <>
         <p className="block font-semibold text-base">
-          {heading || "Destinations"}
+          {heading || ""}
         </p>
         <div className="mt-3 grid grid-cols-3 gap-2">
           {items.map((item) => {
+            const isActive = item === "北角";
             return (
               <div
-                className="py-2 flex items-center space-x-3 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer rounded-lg"
+                className={`py-2 flex items-center space-x-3 text-sm ${
+                  isActive 
+                    ? "hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer" 
+                    : "opacity-40 cursor-not-allowed"
+                } rounded-lg`}
                 onClick={() => handleSelectLocation(item)}
                 key={item}
               >
-                <MapPinIcon className="w-5 h-5 text-neutral-500 dark:text-neutral-400" />
+                <MapPinIcon className={`w-5 h-5 ${isActive ? "text-neutral-500 dark:text-neutral-400" : "text-neutral-300 dark:text-neutral-600"}`} />
                 <span className="truncate">{item}</span>
               </div>
             );
@@ -104,7 +92,7 @@ const LocationInput: FC<Props> = ({
         </div>
         <div className="mt-7">
           {renderSearchValues({
-            heading: "香港十八區",
+            heading: "",
             items: HONG_KONG_DISTRICTS,
           })}
         </div>

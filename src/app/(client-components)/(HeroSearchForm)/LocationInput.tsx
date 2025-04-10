@@ -3,6 +3,7 @@
 import { ClockIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import React, { useState, useRef, useEffect, FC } from "react";
 import ClearDataButton from "./ClearDataButton";
+import { HONG_KONG_DISTRICTS } from "@/utils/locationData";
 
 export interface LocationInputProps {
   placeHolder?: string;
@@ -11,27 +12,6 @@ export interface LocationInputProps {
   divHideVerticalLineClass?: string;
   autoFocus?: boolean;
 }
-
-const HONG_KONG_DISTRICTS = [
-  "中西區",
-  "灣仔區",
-  "東區",
-  "南區",
-  "油尖旺區",
-  "深水埗區",
-  "九龍城區",
-  "黃大仙區",
-  "觀塘區",
-  "荃灣區",
-  "屯門區",
-  "元朗區",
-  "北區",
-  "大埔區",
-  "西貢區",
-  "沙田區",
-  "葵青區",
-  "離島區"
-];
 
 const LocationInput: FC<LocationInputProps> = ({
   autoFocus = false,
@@ -78,6 +58,9 @@ const LocationInput: FC<LocationInputProps> = ({
   };
 
   const handleSelectLocation = (item: string) => {
+    // Only allow selection of "北角"
+    if (item !== "北角") return;
+    
     setValue(item);
     setShowPopover(false);
   };
@@ -93,20 +76,31 @@ const LocationInput: FC<LocationInputProps> = ({
           搜尋結果
         </h3>
         <div className="mt-2 grid grid-cols-4 gap-2 px-4 sm:px-8">
-          {filteredDistricts.map((district) => (
-            <span
-              onClick={() => handleSelectLocation(district)}
-              key={district}
-              className="flex items-center space-x-3 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
-            >
-              <span className="block text-neutral-400">
-                <MapPinIcon className="h-4 w-4" />
+          {filteredDistricts.map((district) => {
+            const isActive = district === "北角";
+            return (
+              <span
+                onClick={() => handleSelectLocation(district)}
+                key={district}
+                className={`flex items-center space-x-3 py-3 ${
+                  isActive 
+                    ? "hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer" 
+                    : "opacity-40 cursor-not-allowed"
+                }`}
+              >
+                <span className={`block ${isActive ? "text-neutral-400" : "text-neutral-200 dark:text-neutral-600"}`}>
+                  <MapPinIcon className="h-4 w-4" />
+                </span>
+                <span className={`block font-medium ${
+                  isActive 
+                    ? "text-neutral-700 dark:text-neutral-200" 
+                    : "text-neutral-400 dark:text-neutral-500"
+                }`}>
+                  {district}
+                </span>
               </span>
-              <span className="block font-medium text-neutral-700 dark:text-neutral-200">
-                {district}
-              </span>
-            </span>
-          ))}
+            );
+          })}
         </div>
       </>
     );
@@ -116,23 +110,34 @@ const LocationInput: FC<LocationInputProps> = ({
     return (
       <>
         <h3 className="block mt-2 sm:mt-0 px-4 sm:px-8 font-semibold text-base sm:text-lg text-neutral-800 dark:text-neutral-100">
-          香港十八區
+         
         </h3>
         <div className="mt-2 grid grid-cols-4 gap-2 px-4 sm:px-8">
-          {HONG_KONG_DISTRICTS.map((district) => (
-            <span
-              onClick={() => handleSelectLocation(district)}
-              key={district}
-              className="flex items-center space-x-3 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
-            >
-              <span className="block text-neutral-400">
-                <MapPinIcon className="h-4 w-4" />
+          {HONG_KONG_DISTRICTS.map((district) => {
+            const isActive = district === "北角";
+            return (
+              <span
+                onClick={() => handleSelectLocation(district)}
+                key={district}
+                className={`flex items-center space-x-3 py-3 ${
+                  isActive 
+                    ? "hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer" 
+                    : "opacity-40 cursor-not-allowed"
+                }`}
+              >
+                <span className={`block ${isActive ? "text-neutral-400" : "text-neutral-200 dark:text-neutral-600"}`}>
+                  <MapPinIcon className="h-4 w-4" />
+                </span>
+                <span className={`block font-medium ${
+                  isActive 
+                    ? "text-neutral-700 dark:text-neutral-200" 
+                    : "text-neutral-400 dark:text-neutral-500"
+                }`}>
+                  {district}
+                </span>
               </span>
-              <span className="block font-medium text-neutral-700 dark:text-neutral-200">
-                {district}
-              </span>
-            </span>
-          ))}
+            );
+          })}
         </div>
       </>
     );

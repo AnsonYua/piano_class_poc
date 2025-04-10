@@ -1,22 +1,28 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import LoginForm from "@/shared/LoginForm";
 import { Route } from "@/routers/types";
 import { useRouter } from "next/navigation";
-import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { ApiUtils } from "@/utils/ApiUtils";
+import { UserTypeUtils, UserType } from "@/utils/UserTypeUtils";
 
 const ShopOwnerLoginPage: FC = () => {
   const router = useRouter();
-  const { checkAuth } = useAuthRedirect();
+  const userType: UserType = 'shopOwner';
   
-  // Call checkAuth directly in the component
-  checkAuth();
+  // Check if shop owner is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem(`${userType}_auth_token`);
+    if (token) {
+      const homepageUrl = UserTypeUtils.getHomepageUrl(userType);
+      router.push(homepageUrl);
+    }
+  }, [router, userType]);
 
   const handleLogin = async (data: { contactNumber: string; password: string }) => {
     try {
-      const response = await fetch(ApiUtils.getAuthUrl('login', 'shop-owner'), {
+      const response = await fetch(ApiUtils.getAuthUrl('login', userType), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,8 +36,9 @@ const ShopOwnerLoginPage: FC = () => {
       const responseData = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('shop_owner_auth_token', responseData.token);
-        router.push('/shop-owner-admin/dashboard' as Route<string>);
+        localStorage.setItem(`${userType}_auth_token`, responseData.token);
+        const homepageUrl = UserTypeUtils.getHomepageUrl(userType);
+        router.push(homepageUrl);
         return null; // No error message
       } else {
         return responseData.message || '登入失敗，請重試';
@@ -45,9 +52,9 @@ const ShopOwnerLoginPage: FC = () => {
     <LoginForm
       title="琴行登入"
       onSubmit={handleLogin}
-      redirectPath={"/shop-owner-admin/dashboard" as Route<string>}
-      forgotPasswordPath={"/shop-owner-admin/forgot-password" as Route<string>}
-      signupPath={"/shop-owner-admin/signup" as Route<string>}
+      redirectPath={UserTypeUtils.getHomepageUrl(userType) as Route<string>}
+      forgotPasswordPath={`${UserTypeUtils.getHomepageUrl(userType)}/forgot-password` as Route<string>}
+      signupPath={`${UserTypeUtils.getHomepageUrl(userType)}/signup` as Route<string>}
     />
   );
 };

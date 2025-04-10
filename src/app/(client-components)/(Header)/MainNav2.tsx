@@ -36,15 +36,12 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
 
   // Get login URL based on user type
   const getLoginUrl = (type: UserType | null): Route<string> => {
-    switch (type) {
-      case 'teacher':
-        return '/teacher-admin/login' as Route<string>;
-      case 'shopOwner':
-        return '/shop-owner-admin/login' as Route<string>;
-      case 'student':
-      default:
-        return '/login' as Route<string>;
-    }
+    // If type is provided, use it; otherwise use the current path to determine user type
+    const userTypeToUse = type || UserTypeUtils.getUserTypeFromPathname(pathname);
+    
+    // Use the base path from UserTypeUtils and append '/login'
+    const basePath = UserTypeUtils.getHomepageUrl(userTypeToUse);
+    return `${basePath}/login` as Route<string>;
   };
 
   // Check auth on pathname change

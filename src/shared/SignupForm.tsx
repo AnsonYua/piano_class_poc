@@ -33,7 +33,7 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [students, setStudents] = useState<Student[]>([{ studentName: "", studentAge: 0 }]);
+  const [students, setStudents] = useState<Student[]>([{ studentName: "", studentAge:6 }]);
   const [shopAddress, setShopAddress] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -56,7 +56,7 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
   }, [errorMessage]);
 
   const addStudent = () => {
-    setStudents([...students, { studentName: "", studentAge: 0 }]);
+    setStudents([...students, { studentName: "", studentAge: 6 }]);
   };
 
   const handleStudentChange = (index: number, field: keyof Student, value: string | number) => {
@@ -321,7 +321,7 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
                     />
                   </label>
                   <label className="block">
-                    <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">同學年齡</span>
+                    <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">同學年齡(5歲以上)</span>
                     <Input
                       type="number"
                       placeholder="請輸入同學年齡"
