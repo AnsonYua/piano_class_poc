@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 import { Route } from "@/routers/types";
 import SignupPageLayout from "@/shared/SignupPageLayout";
 import SignupForm from "@/shared/SignupForm";
+import { ApiUtils } from "@/utils/ApiUtils";
 
 export default function SignupPage() {
   const router = useRouter();
 
   const handleSignup = async (data: any) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/signup`, {
+      const response = await fetch(ApiUtils.getAuthUrl('signup'), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

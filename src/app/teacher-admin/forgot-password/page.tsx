@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Route } from "@/routers/types";
 import ForgotPasswordPageLayout from '@/shared/ForgotPasswordPageLayout';
 import ForgotPasswordForm from '@/shared/ForgotPasswordForm';
+import { ApiUtils } from '@/utils/ApiUtils';
 
 export default function TeacherForgotPasswordPage() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function TeacherForgotPasswordPage() {
         ? data.contactNumber 
         : `852${data.contactNumber}`;
       
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/teacher/request-reset-password`, {
+      const response = await fetch(ApiUtils.getAuthUrl('request-reset-password', 'teacher'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

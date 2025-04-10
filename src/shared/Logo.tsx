@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import logoImg from "@/images/logo.png";
 import logoLightImg from "@/images/logo-light.png";
 import LogoSvgLight from "./LogoSvgLight";
 import LogoSvg from "./LogoSvg";
 import Link from "next/link";
 import { StaticImageData } from "next/image";
+import { UserTypeUtils, UserType } from "@/utils/UserTypeUtils";
+import { usePathname } from "next/navigation";
+import { Route } from "@/routers/types";
 
 export interface LogoProps {
   img?: StaticImageData;
@@ -17,9 +20,20 @@ const Logo: React.FC<LogoProps> = ({
   imgLight = logoLightImg,
   className = "w-24",
 }) => {
+  const pathname = usePathname() || "";
+  const [homepageUrl, setHomepageUrl] = useState<Route<string>>("/" as Route<string>);
+  
+  useEffect(() => {
+    // Determine user type based on current pathname
+    const userType = UserTypeUtils.getUserTypeFromPathname(pathname);
+    // Get the appropriate homepage URL
+    const url = UserTypeUtils.getHomepageUrl(userType);
+    setHomepageUrl(url);
+  }, [pathname]);
+
   return (
     <Link
-      href="/"
+      href={homepageUrl}
       className={`ttnc-logo inline-block text-primary-6000 focus:outline-none focus:ring-0 ${className}`}
     >
       <LogoSvgLight />

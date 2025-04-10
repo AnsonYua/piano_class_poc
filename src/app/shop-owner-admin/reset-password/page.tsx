@@ -5,6 +5,7 @@ import { Route } from "@/routers/types";
 import ResetPasswordPageLayout from '@/shared/ResetPasswordPageLayout';
 import ResetPasswordForm from '@/shared/ResetPasswordForm';
 import { useEffect } from 'react';
+import { ApiUtils } from '@/utils/ApiUtils';
 
 export default function ShopOwnerResetPasswordPage() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function ShopOwnerResetPasswordPage() {
         return '無效的請求，請重新發送驗證碼';
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/shop-admin/reset-password`, {
+      const response = await fetch(ApiUtils.getAuthUrl('reset-password', 'shop-admin'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

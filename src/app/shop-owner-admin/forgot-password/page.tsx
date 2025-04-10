@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Route } from "@/routers/types";
 import ForgotPasswordPageLayout from '@/shared/ForgotPasswordPageLayout';
 import ForgotPasswordForm from '@/shared/ForgotPasswordForm';
+import { ApiUtils } from '@/utils/ApiUtils';
 
 export default function ShopOwnerForgotPasswordPage() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function ShopOwnerForgotPasswordPage() {
         ? data.contactNumber 
         : `852${data.contactNumber}`;
       
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/shop-admin/request-reset-password`, {
+      const response = await fetch(ApiUtils.getAuthUrl('request-reset-password', 'shop-admin'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

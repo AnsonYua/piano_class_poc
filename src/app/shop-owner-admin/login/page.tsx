@@ -5,6 +5,7 @@ import LoginForm from "@/shared/LoginForm";
 import { Route } from "@/routers/types";
 import { useRouter } from "next/navigation";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { ApiUtils } from "@/utils/ApiUtils";
 
 const ShopOwnerLoginPage: FC = () => {
   const router = useRouter();
@@ -15,7 +16,7 @@ const ShopOwnerLoginPage: FC = () => {
 
   const handleLogin = async (data: { contactNumber: string; password: string }) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/shop-owner/login`, {
+      const response = await fetch(ApiUtils.getAuthUrl('login', 'shop-owner'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

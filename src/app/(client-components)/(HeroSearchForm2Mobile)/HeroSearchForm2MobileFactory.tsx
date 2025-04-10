@@ -1,16 +1,16 @@
 "use client";
 
 import React from "react";
-import { PathName } from "@/routers/types";
+import { PathName, Route } from "@/routers/types";
 import HeroSearchForm2Mobile from "./HeroSearchForm2Mobile";
 import HeroSearchForm2RealEstateMobile from "./HeroSearchForm2RealEstateMobile";
 import { usePathname } from "next/navigation";
 import CommonTopBar from "../(Header)/CommonTopBar";
 
 const PAGES_REAL_ESTATE: PathName[] = [
-  "/home-2",
-  "/listing-real-estate",
-  "/listing-real-estate-map",
+  "/home-2" as Route,
+  "/listing-real-estate" as Route,
+  "/listing-real-estate-map" as Route,
 ];
 
 const HeroSearchForm2MobileFactory = () => {
@@ -56,6 +56,13 @@ const HeroSearchForm2MobileFactory = () => {
   if (PAGES_REAL_ESTATE.includes(pathname as PathName)) {
     return <HeroSearchForm2RealEstateMobile />;
   }
+
+  if (pathname && pathname.startsWith("/teacher-admin")||
+    pathname && pathname.startsWith("/shop-owner-admin")
+  ) {
+     return <CommonTopBar title={``} className="nc-LoginTopBar" />;
+  } 
+
   return <HeroSearchForm2Mobile />;
 };
 

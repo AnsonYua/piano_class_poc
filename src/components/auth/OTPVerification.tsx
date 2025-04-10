@@ -106,7 +106,7 @@ const OTPVerification: FC<OTPVerificationProps> = ({ userType, email, onVerify, 
           </h2>
           <div className="space-y-8">
             <div className="text-center text-neutral-600 dark:text-neutral-400">
-              我們已發送驗證碼至您的手機號碼
+              我們已發送驗證碼至您的WhatsApp號碼<br/>請查看你的WhatsApp
             </div>
             
             {errorMessage && (

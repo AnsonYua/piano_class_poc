@@ -91,16 +91,21 @@ const LoginForm: FC<LoginFormProps> = ({
               <span className="text-neutral-800 dark:text-neutral-200">
                 電話號碼
               </span>
-              <Input
-                type="tel"
-                name={`phone-${Date.now()}`}
-                placeholder="請輸入聯絡電話"
-                className="mt-1"
-                value={contactNumber}
-                onChange={(e) => setContactNumber(e.target.value)}
-                autoComplete="tel"
-                disabled={isLoading}
-              />
+              <div className="flex">
+                <div className="flex items-center px-3 mt-1 border border-neutral-300 dark:border-neutral-700 rounded-l-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
+                  +852
+                </div>
+                <Input
+                  type="tel"
+                  name={`phone-${Date.now()}`}
+                  placeholder="請輸入聯絡電話"
+                  className="mt-1 rounded-l-none"
+                  value={contactNumber}
+                  onChange={(e) => setContactNumber(e.target.value)}
+                  autoComplete="tel"
+                  disabled={isLoading}
+                />
+              </div>
             </label>
             
             <label className="block">

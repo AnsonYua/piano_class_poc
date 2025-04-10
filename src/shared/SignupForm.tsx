@@ -180,21 +180,26 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
             </label>
             <label className="block">
               <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">聯絡號碼(可收到WhatsApp的號碼)</span>
-              <Input
-                type="tel"
-                placeholder="請輸入電話號碼"
-                className="w-full"
-                value={email}
-                autoComplete="new-phone"
-                name="random-phone-field"
-                pattern="[5698][0-9]{7}"
-                maxLength={8}
-                onChange={(e) => {
-                  const onlyNumbers = e.target.value.replace(/\D/g, "");
-                  setEmail(onlyNumbers);
-                }}
-                disabled={isLoading}
-              />
+              <div className="flex">
+                <div className="flex items-center px-3 border border-neutral-300 dark:border-neutral-700 rounded-l-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
+                  +852
+                </div>
+                <Input
+                  type="tel"
+                  placeholder="請輸入電話號碼"
+                  className="w-full rounded-l-none"
+                  value={email}
+                  autoComplete="new-phone"
+                  name="random-phone-field"
+                  pattern="[5698][0-9]{7}"
+                  maxLength={8}
+                  onChange={(e) => {
+                    const onlyNumbers = e.target.value.replace(/\D/g, "");
+                    setEmail(onlyNumbers);
+                  }}
+                  disabled={isLoading}
+                />
+              </div>
             </label>
             <label className="block">
               <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">帳戶密碼</span>

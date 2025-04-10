@@ -4,6 +4,7 @@ import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import OTPVerification from '@/components/auth/OTPVerification';
 import { Route } from '@/routers/types';
+import { ApiUtils } from '@/utils/ApiUtils';
 
 export default function TeacherOTPVerificationPage() {
   const router = useRouter();
@@ -12,7 +13,7 @@ export default function TeacherOTPVerificationPage() {
 
   const handleVerify = async (otp: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/teacher/verify-otp`, {
+      const response = await fetch(ApiUtils.getAuthUrl('verify-otp', 'teacher'), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -45,7 +46,7 @@ export default function TeacherOTPVerificationPage() {
 
   const handleResendOTP = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/resend-otp`, {
+      const response = await fetch(ApiUtils.getAuthUrl('resend-otp'), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,13 +61,13 @@ export default function TeacherOTPVerificationPage() {
       } else {
         return { 
           success: false, 
-          message: data.message || "發送失敗，請重試" 
+          message: data.message || "重發驗證碼失敗，請重試" 
         };
       }
     } catch (error) {
       return { 
         success: false, 
-        message: "發送失敗，請重試" 
+        message: "重發驗證碼失敗，請重試" 
       };
     }
   };
