@@ -34,7 +34,6 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [students, setStudents] = useState<Student[]>([{ studentName: "", studentAge:6 }]);
-  const [shopAddress, setShopAddress] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -113,11 +112,6 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
       }
     }
 
-    if (userType === 'shop-owner' && !shopAddress) {
-      showError("請填寫琴行地址");
-      return;
-    }
-
     setIsLoading(true);
     setErrorMessage(null);
 
@@ -133,10 +127,6 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
           name: student.studentName,
           age: student.studentAge.toString()
         }));
-      }
-
-      if (userType === 'shop-owner') {
-        formData.shopAddress = shopAddress;
       }
 
       const errorMessage = await onSubmit(formData);
@@ -265,26 +255,6 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
             </label>
           </div>
         </section>
-
-        {/* Shop Owner Data Section */}
-        {userType === 'shop-owner' && (
-          <section className="space-y-6">
-            <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">琴行資料</h3>
-            <div className="space-y-4">
-              <label className="block">
-                <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">琴行地址</span>
-                <Input
-                  type="text"
-                  placeholder="請輸入琴行地址"
-                  className="w-full"
-                  value={shopAddress}
-                  onChange={(e) => setShopAddress(e.target.value)}
-                  disabled={isLoading}
-                />
-              </label>
-            </div>
-          </section>
-        )}
 
         {/* Student Data Section */}
         {userType === 'student' && (

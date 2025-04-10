@@ -24,7 +24,7 @@ export default function ShopOwnerResetPasswordPage() {
         return '無效的請求，請重新發送驗證碼';
       }
 
-      const response = await fetch(ApiUtils.getAuthUrl('reset-password', 'shop-admin'), {
+      const response = await fetch(ApiUtils.getAuthUrl('reset-password', 'shop_admin'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

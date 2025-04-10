@@ -16,7 +16,7 @@ export default function ShopOwnerForgotPasswordPage() {
         ? data.contactNumber 
         : `852${data.contactNumber}`;
       
-      const response = await fetch(ApiUtils.getAuthUrl('request-reset-password', 'shop-admin'), {
+      const response = await fetch(ApiUtils.getAuthUrl('request-reset-password', 'shop_admin'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

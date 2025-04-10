@@ -13,7 +13,7 @@ export default function ShopOwnerOTPVerificationPage() {
 
   const handleVerify = async (otp: string) => {
     try {
-      const response = await fetch(ApiUtils.getAuthUrl('verify-otp', 'shop-admin'), {
+      const response = await fetch(ApiUtils.getAuthUrl('verify-otp', 'shop_admin'), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

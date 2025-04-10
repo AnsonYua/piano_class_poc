@@ -16,6 +16,9 @@ export class ApiUtils {
    * @returns The full URL for the user profile endpoint
    */
   public static getUserProfileUrl(userType: string): string {
+    if (userType === 'shopOwner') {
+        userType = 'shop_admin';
+    }
     return `${this.getBaseUrl()}/api/user/${userType}/getProfile`;
   }
 
@@ -27,7 +30,10 @@ export class ApiUtils {
    */
   public static getAuthUrl(endpoint: string, userType?: string): string {
     if (userType) {
-      return `${this.getBaseUrl()}/api/auth/${userType}/${endpoint}`;
+        if (userType === 'shopOwner') {
+            userType = 'shop_admin';
+        }
+        return `${this.getBaseUrl()}/api/auth/${userType}/${endpoint}`;
     }
     return `${this.getBaseUrl()}/api/auth/${endpoint}`;
   }
