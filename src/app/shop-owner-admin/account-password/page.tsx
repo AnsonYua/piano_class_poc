@@ -2,13 +2,13 @@
 
 import React from "react";
 import SharedPasswordPage from "@/components/SharedPasswordPage";
-import ClientAccountLayout from "@/app/(account-pages)/(components)/ClientAccountLayout";
+import AdminPageLayout from "@/components/AdminPageLayout";
 
 const ShopOwnerAccountPasswordPage = () => {
   return (
-    <ClientAccountLayout role="shop-owner">
+    <AdminPageLayout userType="shopOwner">
       <SharedPasswordPage userType="shopOwner" />
-    </ClientAccountLayout>
+    </AdminPageLayout>
   );
 };
 

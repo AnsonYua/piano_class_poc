@@ -6,6 +6,7 @@ import Input from "@/shared/Input";
 import Label from "@/components/Label";
 import Link from "next/link";
 import { Route } from "@/routers/types";
+import AdminPageLayout from "@/components/AdminPageLayout";
 
 export interface ShopOwnerRoomsPageProps {}
 
@@ -78,6 +79,7 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
   };
   
   return (
+    <AdminPageLayout userType="shopOwner">
     <div className="nc-AccountRoomsPage max-w-4xl mx-auto">
       {/* HEADING */}
       <div className="relative mb-4">
@@ -192,7 +194,8 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div>  
+    </AdminPageLayout>
   );
 };
 

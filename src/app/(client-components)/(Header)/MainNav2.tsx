@@ -51,7 +51,7 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
     
     switch (userTypeToUse) {
       case 'teacher':
-        return '/teacher/account' as Route<string>;
+        return '/teacher-admin/account' as Route<string>;
       case 'shopOwner':
         return '/shop-owner-admin/account' as Route<string>;
       case 'student':

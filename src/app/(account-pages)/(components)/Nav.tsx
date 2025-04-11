@@ -17,7 +17,7 @@ export const AccountNavigation: React.FC<AccountNavigationProps> = ({ role: prop
   
   // Determine role from URL if not provided as prop
   const role = propRole || (
-    pathname?.startsWith("/teacher") ? "teacher" :
+    pathname?.startsWith("/teacher-admin") ? "teacher" :
     pathname?.startsWith("/shop-owner-admin") ? "shop-owner" :
     pathname?.startsWith("/student") ? "student" :
     undefined
@@ -58,8 +58,8 @@ export const AccountNavigation: React.FC<AccountNavigationProps> = ({ role: prop
     }
     
     const commonTabs = [
-      { name: "帳號資料", href: `/${role}/account`, icon: UserIcon },
-      { name: "密碼修改", href: `/${role}/account-password`, icon: KeyIcon },
+      { name: "帳號資料", href: role === "teacher" ? "/teacher-admin/account" : `/${role}/account`, icon: UserIcon },
+      { name: "密碼修改", href: role === "teacher" ? "/teacher-admin/account-password" : `/${role}/account-password`, icon: KeyIcon },
     ];
     
     if (role === "student") {

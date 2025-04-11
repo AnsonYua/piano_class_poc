@@ -54,12 +54,12 @@ export function Nav() {
           {
             id: "account",
             name: "帳戶資料",
-            href: "/teacher/account" as any,
+            href: "/teacher-admin/account" as any,
           },
           {
             id: "account-password",
             name: "密碼修改",
-            href: "/teacher/account-password" as any,
+            href: "/teacher-admin/account-password" as any,
           },
         ];
       default:

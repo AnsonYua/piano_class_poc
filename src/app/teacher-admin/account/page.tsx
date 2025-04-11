@@ -4,12 +4,12 @@ import React from "react";
 import SharedAccountPage from "@/components/SharedAccountPage";
 import AdminPageLayout from "@/components/AdminPageLayout";
 
-const ShopOwnerAccountPage = () => {
+const TeacherAccountPage = () => {
   return (
-    <AdminPageLayout userType="shopOwner">
-      <SharedAccountPage userType="shopOwner" />
+    <AdminPageLayout userType="teacher">
+      <SharedAccountPage userType="teacher" />
     </AdminPageLayout>
   );
 };
 
-export default ShopOwnerAccountPage; 
+export default TeacherAccountPage; 
