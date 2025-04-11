@@ -2,53 +2,54 @@
 
 import React, { FC, useState } from "react";
 import ButtonPrimary from "@/shared/ButtonPrimary";
-import Select from "@/shared/Select";
-import Link from "next/link";
 import Input from "@/shared/Input";
 import Label from "@/components/Label";
+import Link from "next/link";
 import { Route } from "@/routers/types";
 
-export interface AccountStudentsPageProps {}
+export interface ShopOwnerRoomsPageProps {}
 
-const AccountStudentsPage = () => {
+const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
   // Sample data - replace with actual data from your API
-  const [selectedStudent, setSelectedStudent] = useState("student1");
+  const [selectedRoom, setSelectedRoom] = useState("room1");
   
-  const students = [
-    { id: "student1", name: "同學 1", age: 10 },
-    { id: "student2", name: "同學 2", age: 12 },
-    { id: "student3", name: "同學 3", age: 8 },
+  const rooms = [
+    { id: "room1", name: "琴房 1", address: "台北市信義區松高路68號", pianoCount: 5 },
+    { id: "room2", name: "琴房 2", address: "台北市大安區敦化南路二段201號", pianoCount: 3 },
+    { id: "room3", name: "琴房 3", address: "台北市信義區松仁路100號", pianoCount: 4 },
   ];
   
-  // Get the currently selected student data
-  const currentStudent = students.find(student => student.id === selectedStudent) || students[0];
+  // Get the currently selected room data
+  const currentRoom = rooms.find(room => room.id === selectedRoom) || rooms[0];
   
   // State for the form
   const [formData, setFormData] = useState({
-    name: currentStudent.name,
-    age: currentStudent.age
+    name: currentRoom.name,
+    address: currentRoom.address,
+    pianoCount: currentRoom.pianoCount
   });
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   
-  // Update form data when selected student changes
+  // Update form data when selected room changes
   React.useEffect(() => {
-    const student = students.find(s => s.id === selectedStudent);
-    if (student) {
+    const room = rooms.find(r => r.id === selectedRoom);
+    if (room) {
       setFormData({
-        name: student.name,
-        age: student.age
+        name: room.name,
+        address: room.address,
+        pianoCount: room.pianoCount
       });
     }
-  }, [selectedStudent]);
+  }, [selectedRoom]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === "age" ? parseInt(value) || 0 : value
+      [name]: name === "pianoCount" ? parseInt(value) || 0 : value
     }));
   };
   
@@ -59,18 +60,10 @@ const AccountStudentsPage = () => {
     setSuccessMessage(null);
     
     try {
-      // In a real app, you would send the updated student data to your API
+      // In a real app, you would send the updated data to your API
       // For now, we'll just simulate a successful update
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Update the local data (in a real app, this would come from the API response)
-      const updatedStudents = students.map(student => 
-        student.id === selectedStudent 
-          ? { ...student, name: formData.name, age: formData.age } 
-          : student
-      );
-      
-      // In a real app, you would update the state with the API response
       setSuccessMessage("更新成功");
       setIsLoading(false);
       
@@ -83,85 +76,95 @@ const AccountStudentsPage = () => {
       setIsLoading(false);
     }
   };
-
+  
   return (
-    <div className="nc-AccountStudentsPage max-w-4xl mx-auto">
+    <div className="nc-AccountRoomsPage max-w-4xl mx-auto">
       {/* HEADING */}
       <div className="relative mb-4">
-        <h2 className="text-3xl font-semibold text-center">同學資料</h2>
-        <Link href={"/account-students/add" as Route} className="absolute right-0 top-1/2 -translate-y-1/2 text-blue-600 hover:underline">
-          新增同學
+        <h2 className="text-3xl font-semibold text-center">琴房管理</h2>
+        <Link href={"/shop-owner-admin/account-rooms/add" as Route} className="absolute right-0 top-1/2 -translate-y-1/2 text-blue-600 hover:underline">
+          新增琴房
         </Link>
       </div>
       <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-6"></div>
       
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-          {/* Student List Column */}
+          {/* Room List Column */}
           <div className="md:col-span-3">
             <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">同學列表</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">琴房列表</h3>
               <div className="md:hidden mb-3">
                 <select
-                  value={selectedStudent}
-                  onChange={(e) => setSelectedStudent(e.target.value)}
+                  value={selectedRoom}
+                  onChange={(e) => setSelectedRoom(e.target.value)}
                   className="w-full p-2 border border-gray-300 dark:border-neutral-600 rounded-md"
                 >
-                  <option value="">所有同學</option>
-                  {students.map((student) => (
-                    <option key={student.id} value={student.id}>
-                      {student.name}
+                  {rooms.map((room) => (
+                    <option key={room.id} value={room.id}>
+                      {room.name}
                     </option>
                   ))}
                 </select>
               </div>
               <div className="hidden md:block space-y-1">
-                {students.map((student) => (
+                {rooms.map((room) => (
                   <button
-                    key={student.id}
-                    onClick={() => setSelectedStudent(student.id)}
+                    key={room.id}
+                    onClick={() => setSelectedRoom(room.id)}
                     className={`w-full text-left px-4 py-2 rounded-lg transition-colors duration-200 ${
-                      selectedStudent === student.id
+                      selectedRoom === room.id
                         ? 'bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-100'
                         : 'hover:bg-gray-50 dark:hover:bg-neutral-700 text-gray-700 dark:text-gray-300'
                     }`}
                   >
-                    {student.name}
+                    {room.name}
                   </button>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Student Details Column */}
+          {/* Room Details Column */}
           <div className="md:col-span-9">
             <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">同學資料</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">琴房詳情</h3>
               <div className="space-y-3">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <Label>同學姓名</Label>
+                    <Label>琴房名稱</Label>
                     <Input 
                       className="mt-1.5" 
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="請輸入同學姓名"
+                      placeholder="請輸入琴房名稱"
                       required
                     />
                   </div>
                   
                   <div>
-                    <Label>同學年齡</Label>
+                    <Label>琴房地址</Label>
+                    <Input 
+                      className="mt-1.5" 
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      placeholder="請輸入琴房地址"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label>琴房數目</Label>
                     <Input 
                       className="mt-1.5" 
                       type="number"
-                      name="age"
-                      value={formData.age}
+                      name="pianoCount"
+                      value={formData.pianoCount}
                       onChange={handleChange}
                       min="1"
-                      max="100"
-                      placeholder="請輸入同學年齡"
+                      placeholder="請輸入琴房數目"
                       required
                     />
                   </div>
@@ -180,7 +183,7 @@ const AccountStudentsPage = () => {
                   
                   <div className="pt-2">
                     <ButtonPrimary type="submit" className="w-full" disabled={isLoading}>
-                      {isLoading ? "處理中..." : "更新"}
+                      {isLoading ? "處理中..." : "更新琴房"}
                     </ButtonPrimary>
                   </div>
                 </form>
@@ -193,4 +196,4 @@ const AccountStudentsPage = () => {
   );
 };
 
-export default AccountStudentsPage; 
+export default ShopOwnerRoomsPage; 

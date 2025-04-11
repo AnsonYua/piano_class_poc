@@ -24,7 +24,7 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
   const isSignupPage = pathname.endsWith("/signup");
   const isVerifyOtpPage = pathname.endsWith("/verify-otp");
   const isMyReservationsPage = pathname.endsWith("/my-reservations");
-  const isAccountPage = pathname.endsWith("/account");
+  const isAccountPage = pathname.includes("/account");
   
   const { isAuthenticated, isLoading, userType, checkAuth } = useAuth();
   
@@ -42,6 +42,22 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
     // Use the base path from UserTypeUtils and append '/login'
     const basePath = UserTypeUtils.getHomepageUrl(userTypeToUse);
     return `${basePath}/login` as Route<string>;
+  };
+
+  // Get account URL based on user type
+  const getAccountUrl = (type: UserType | null): Route<string> => {
+    // If type is provided, use it; otherwise use the current path to determine user type
+    const userTypeToUse = type || UserTypeUtils.getUserTypeFromPathname(pathname);
+    
+    switch (userTypeToUse) {
+      case 'teacher':
+        return '/teacher/account' as Route<string>;
+      case 'shopOwner':
+        return '/shop-owner-admin/account' as Route<string>;
+      case 'student':
+      default:
+        return '/account' as Route<string>;
+    }
   };
 
   // Check auth on pathname change
@@ -99,7 +115,7 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
                 </div>
                 <div className="TemplatesDropdown hidden lg:block self-center">
                   <Link 
-                    href={"/account" as Route<string>} 
+                    href={getAccountUrl(userType)} 
                     className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                       isAccountPage 
                         ? "text-primary-6000 underline" 
