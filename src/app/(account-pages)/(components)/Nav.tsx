@@ -72,7 +72,7 @@ export const AccountNavigation: React.FC<AccountNavigationProps> = ({ role: prop
     } else if (role === "shop-owner") {
       return [
         ...commonTabs,
-        { name: "琴房資料", href: "/shop-owner-admin/account-rooms", icon: BuildingOfficeIcon },
+        { name: "琴室資料", href: "/shop-owner-admin/account-rooms", icon: BuildingOfficeIcon },
       ];
     }
     

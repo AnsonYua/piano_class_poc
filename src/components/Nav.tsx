@@ -40,7 +40,7 @@ export function Nav() {
           },
           {
             id: "account-rooms",
-            name: "琴房資料",
+            name: "琴室資料",
             href: "/shop-owner-admin/account-rooms" as any,
           },
           {

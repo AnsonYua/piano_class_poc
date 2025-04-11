@@ -26,10 +26,8 @@ export default function AvatarDropdown({ className = "" }: Props) {
     // Use the utility class to handle logout if userType is not null
     if (userType) {
       UserTypeUtils.handleLogout(userType, router);
+      logout();
     }
-    
-    // Call the logout function from context to update auth state
-    logout();
   };
 
   if (!userProfile) {
