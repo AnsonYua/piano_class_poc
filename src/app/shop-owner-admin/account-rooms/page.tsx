@@ -20,31 +20,39 @@ import LoadingScreen from "@/components/LoadingScreen";
 
 export interface ShopOwnerRoomsPageProps {}
 
+/**
+ * Interface for a time slot in the booking system
+ */
 interface TimeSlot {
   time: string;
   isSelected: boolean;
-  status: 'requested' | 'requestCanceled' | 'confirmed' | 'blocked' | 'pending' | 'available';
-  bookingId?: string;  // For tracking booking requests
+  status: 'requested' |  'confirmed' | 'blocked' | 'pending' | 'available';  // For tracking booking requests
   timeSlotSection?: string;
 }
-
+interface BookingData {
+  date: Date;
+  slots: BookingSlotsDetails[];
+}
+interface BookingSlotsDetails { 
+  status: 'requested' | 'confirmed' | 'blocked' | 'pending' | 'available';
+  timeSlotSection?: string;
+}
+/**
+ * Interface for a piano room with booking functionality
+ */
 interface PianoRoom {
-  id: string;
+  _id: string;
   name: string;
   selectedDate: Date | null;
   showTimeSlots: boolean;
   timeSlots: TimeSlot[];
-  existingBookings: { 
-    date: Date; 
-    slots: { 
-      time: string;
-      status: 'requested' | 'requestCanceled' | 'confirmed' | 'blocked' | 'pending' | 'available';
-      bookingId?: string;
-    }[] 
-  }[];
-  showDatePicker?: boolean;  // Add this to control date picker visibility
+  existingBookings: BookingData[];
+  showDatePicker?: boolean;  // Controls date picker visibility
 }
 
+/**
+ * Interface for a piano studio containing multiple rooms
+ */
 interface PianoStudio {
   _id: string;
   name: string;
@@ -52,103 +60,91 @@ interface PianoStudio {
   district: string;
   roomCount: number;
   adminId: string;
-  rooms: any[];
+  rooms: PianoRoom[];
   createdAt: string;
   updatedAt: string;
   __v: number;
 }
 
 const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
-  const formatDate = (date: Date) => {
-    return date.toISOString().split('T')[0];  // Returns YYYY-MM-DD format
+  // State management
+  const [studios, setStudios] = useState<PianoStudio[]>([]);
+  const [apiStudios, setApiStudios] = useState<PianoStudio[]>([]);
+  const [selectedStudio, setSelectedStudio] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [focusedRoomId, setFocusedRoomId] = useState<string | null>(null);
+  const [hasUpdates, setHasUpdates] = useState(false);
+  let shouldUpdateApiStudios = false;
+
+  // Add a useEffect hook to watch for changes to the studios state
+  useEffect(() => {
+    // Check for updates whenever studios state changes
+    const updates = generateUpdates();
+    console.log("Updates from useEffect:", updates);
+    setHasUpdates(updates.length > 0);
+  }, [studios]);
+
+  /**
+   * Formats a Date object to YYYY-MM-DD string format
+   */
+  const formatDate = (date: Date | null) => {
+    if (!date) return "";
+    // Use local date formatting instead of ISO string to avoid timezone issues
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
+  /**
+   * Generates time slots from 9:30 AM to 10:00 PM in 30-minute intervals
+   * Each slot has a unique section identifier for tracking
+   */
   const generateTimeSlots = () => {
     const slots: TimeSlot[] = [];
     let currentTime = new Date();
     currentTime.setHours(9, 30, 0); // Start at 9:30 AM
     let sectionIdx = 1;
+    
     while (currentTime.getHours() < 22 || (currentTime.getHours() === 22 && currentTime.getMinutes() === 0)) {
       const hours = currentTime.getHours();
       const minutes = currentTime.getMinutes();
       const period = hours >= 12 ? "PM" : "AM";
       const displayHours = hours % 12 || 12;
       const timeSlotSection = `section${sectionIdx}`;
+      
       slots.push({
         time: `${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`,
         isSelected: false,
         status: 'available',
         timeSlotSection: timeSlotSection
       });
-      sectionIdx = sectionIdx + 1
+      
+      sectionIdx = sectionIdx + 1;
       currentTime.setMinutes(currentTime.getMinutes() + 30);
     }
     
     return slots;
   };
 
-  /*  const initialStudios: PianoStudio[] = [
-    { 
-      id: "studio1", 
-      name: "信義琴室", 
-      address: "台北市信義區松高路68號", 
-      district: "北角",
-      rooms: [
-        { 
-          id: "room1", 
-          name: "琴房 1", 
-          selectedDate: null, 
-          showTimeSlots: false, 
-          timeSlots: [],
-          existingBookings: [
-            { 
-              date: new Date("2025-04-15"), 
-              slots: [
-                { time: "9:30 AM", status: 'booked', bookingId: '1' },
-                { time: "10:00 AM", status: 'blocked' },
-                { time: "11:00 AM", status: 'available' }
-              ]
-            }
-          ]
-        },
-        { id: "room2", name: "琴房 2", selectedDate: null, showTimeSlots: false, timeSlots: [], existingBookings: [] },
-        { id: "room3", name: "琴房 3", selectedDate: null, showTimeSlots: false, timeSlots: [], existingBookings: [] },
-      ]
-    },
-    { 
-      id: "studio2", 
-      name: "大安琴室", 
-      address: "台北市大安區敦化南路二段201號", 
-      district: "北角",
-      rooms: [
-        { id: "room4", name: "琴房 1", selectedDate: null, showTimeSlots: false, timeSlots: [], existingBookings: [] },
-        { id: "room5", name: "琴房 2", selectedDate: null, showTimeSlots: false, timeSlots: [], existingBookings: [] },
-      ]
-    },
-  ];*/
-
-  // Sample data - replace with actual data from your API
-  const initialStudios: PianoStudio[] = [
-  ];
-
-  const [studios, setStudios] = useState<PianoStudio[]>(initialStudios);
-  const [selectedStudio, setSelectedStudio] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [focusedRoomId, setFocusedRoomId] = useState<string | null>(null);
-  
-  // Extract fetchPianoRooms to a separate function so it can be called from other places
-  const fetchPianoRooms = async () => {
+  /**
+   * Fetches piano rooms data from the API
+   * Processes the data to ensure each studio has rooms based on roomCount
+   */
+  const fetchPianoRooms = async (shouldSelectFirst: boolean = false) => {
     try {
       const userType = UserTypeUtils.getUserTypeFromPathname(window.location.pathname);
       const token = localStorage.getItem(`${userType}_auth_token`);
+      
       if (!token) {
         setError('未登入或登入已過期');
         setIsLoading(false);
         return;
       }
 
+      console.log("fetchPianoRooms - Fetching piano rooms");
       const response = await fetch(ApiUtils.getApiUrl('api/piano-rooms'), {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -161,9 +157,11 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
       }
 
       const data = await response.json();
+      console.log("fetchPianoRooms - API response:", JSON.stringify(data));
       
       // Process the data to ensure each studio has rooms based on roomCount
       const processedData = data.map((studio: any) => {
+        console.log("fetchPianoRooms - Processing studio:", studio._id);
         // Convert API field 'studios' to interface property 'rooms'
         const studioWithRooms = {
           ...studio,
@@ -171,10 +169,13 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
         };
         delete studioWithRooms.studios;
         
+        console.log("fetchPianoRooms - Studio rooms:", JSON.stringify(studioWithRooms.rooms));
+        
         // If rooms array is empty but roomCount is greater than 0, create default rooms
         if (studioWithRooms.rooms.length === 0 && studioWithRooms.roomCount > 0) {
+          console.log("fetchPianoRooms - Creating default rooms for studio:", studio._id);
           const defaultRooms = Array.from({ length: studioWithRooms.roomCount }, (_, index) => ({
-            id: `room-${index + 1}`,
+            _id: `room-${index + 1}`,
             name: `琴房 ${index + 1}`,
             selectedDate: null,
             showTimeSlots: false,
@@ -189,10 +190,12 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
         }
         return studioWithRooms;
       });
+      console.log("fetchPianoRooms - Processed data:", JSON.stringify(processedData));
       setStudios(processedData);
-      
-      // Automatically select the first studio if there is data
-      if (processedData && processedData.length > 0) {
+      setApiStudios(processedData);
+      // Only select first studio if explicitly requested
+      if (shouldSelectFirst && processedData && processedData.length > 0) {
+        console.log("fetchPianoRooms - Selecting first studio:", processedData[0]._id);
         handleStudioSelection(processedData[0]._id);
       }
     } catch (err) {
@@ -203,25 +206,33 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
     }
   };
   
+  // Fetch piano rooms on component mount
   useEffect(() => {
-    fetchPianoRooms();
+    fetchPianoRooms(true);
   }, []);
 
-  // Add a useEffect to log studios after it's updated
+  // Log studios after updates (for debugging)
   useEffect(() => {
-    console.log("Studios updated:", JSON.stringify(studios));
+    console.log("shouldUpdateApiStudios Studios updated:", JSON.stringify(studios));
+   
+
   }, [studios]);
 
-  // Function to fetch room status from the API
+  /**
+   * Fetches room status from the API for a specific room
+   * Updates the UI with the fetched status data
+   */
   const fetchRoomStatus = async (roomId: string) => {
     try {
       const userType = UserTypeUtils.getUserTypeFromPathname(window.location.pathname);
       const token = localStorage.getItem(`${userType}_auth_token`);
+      
       if (!token) {
         console.error('未登入或登入已過期');
         return null;
       }
 
+      console.log("fetchRoomStatus - Fetching status for room:", roomId);
       const response = await fetch(ApiUtils.getApiUrl(`api/studio-status/room/${roomId}`), {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -234,80 +245,14 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
       }
 
       const data = await response.json();
+      console.log("fetchRoomStatus - API response:", JSON.stringify(data));
       
       // Process the response data to update the UI
       if (data && data.studios && data.studios.length > 0) {
-        // Update the studios state with the new status data
-        
-        setStudios(prevStudios => 
-          prevStudios.map(studio => {
-            console.log("studio ",JSON.stringify(studio));  
-            // Only update the studio that matches the roomId (琴室)
-            if (studio._id === data.roomId) {
-              // Map each item in the studios array to a room (琴房)
-              const updatedRooms = data.studios.map((studioEntry: any) => {
-                // Find the existing room in our state
-                const existingRoom = studio.rooms.find((room: any) => room._id === studioEntry._id);
-                
-                if (existingRoom && studioEntry.statusEntries) {
-                  // Convert statusEntries to existingBookings format
-                  const existingBookings = studioEntry.statusEntries.map((entry: any) => {
-                    // Convert the slots to our format
-                    const formattedSlots = entry.slot.map((slot: any) => {
-                      // Convert section numbers to time slots
-                      let time = slot.sectionDescription;
-                      
-                      if (slot.timeSlotSection.startsWith('section')) {
-                        const sectionNum = parseInt(slot.timeSlotSection.replace('section', ''));
-                        if (sectionNum === 0) {
-                          time = '9:00 AM'; // Default time for section0
-                        } else {
-                          const hours = Math.floor((sectionNum * 30 + 540) / 60); // 540 minutes = 9:00 AM
-                          const minutes = (sectionNum * 30 + 540) % 60;
-                          const period = hours >= 12 ? 'PM' : 'AM';
-                          const displayHours = hours % 12 || 12;
-                          time = `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
-                        }
-                      }
-                      return {
-                        time,
-                        timeSlotSection: slot.timeSlotSection,
-                        status: slot.status,
-                        bookingId: slot._id
-                      };
-                    });
-
-                    return {
-                      date: new Date(entry.date),
-                      slots: formattedSlots
-                    };
-                  });
-                  
-                  return {
-                    ...existingRoom,
-                    existingBookings
-                  };
-                }
-                
-                // If room doesn't exist in our state, create a new one
-                return {
-                  id: studioEntry._id,
-                  name: studioEntry.name,
-                  selectedDate: null,
-                  showTimeSlots: false,
-                  timeSlots: [],
-                  existingBookings: []
-                };
-              });
-              
-              return {
-                ...studio,
-                rooms: updatedRooms
-              };
-            }
-            return studio;
-          })
-        );
+          console.log("fetchRoomStatus - Updating studios with room status");
+          updateStudiosWithRoomStatus(data);
+      } else {
+          console.log("fetchRoomStatus - No studios found in response");
       }
       
       return data;
@@ -317,81 +262,139 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
     }
   };
 
+  /**
+   * Updates the studios state with room status data from the API
+   */
+  const updateStudiosWithRoomStatus = (data: any) => {
+    console.log("updateStudiosWithRoomStatus - Input data:", JSON.stringify(data));
+    let updatedStudios: PianoStudio[] = [];
+    setStudios(prevStudios => {
+      console.log("updateStudiosWithRoomStatus - Previous studios:", JSON.stringify(prevStudios));
+      updatedStudios = prevStudios.map(studio => {
+        // Only update the studio that matches the roomId
+        if (studio._id === data.roomId) {
+          console.log("updateStudiosWithRoomStatus - Found matching studio:", studio._id);
+          
+          // Get all rooms from the current studio
+          const currentRooms = [...studio.rooms];
+          
+          // Map each item in the studios array to a room
+          const updatedRooms = data.studios.map((studioEntry: any) => {
+            console.log("updateStudiosWithRoomStatus - Processing studio entry:", JSON.stringify(studioEntry));
+            
+            // Find the existing room in our state
+            const existingRoom = currentRooms.find((room: any) => room._id === studioEntry._id);
+            
+            if (existingRoom && studioEntry.statusEntries) {
+              console.log("updateStudiosWithRoomStatus - Found existing room with status entries:", existingRoom._id);
+              // Convert statusEntries to existingBookings format
+              const existingBookings = studioEntry.statusEntries.map((entry: any) => {
+                // Convert the slots to our format
+                const formattedSlots = entry.slot.map((slot: any) => {
+                  // Convert section numbers to time slots
+                  let time = slot.sectionDescription;
+                  
+                  if (slot.timeSlotSection.startsWith('section')) {
+                    const sectionNum = parseInt(slot.timeSlotSection.replace('section', ''));
+                    if (sectionNum === 0) {
+                      time = '9:00 AM'; // Default time for section0
+                    } else {
+                      const hours = Math.floor((sectionNum * 30 + 540) / 60); // 540 minutes = 9:00 AM
+                      const minutes = (sectionNum * 30 + 540) % 60;
+                      const period = hours >= 12 ? 'PM' : 'AM';
+                      const displayHours = hours % 12 || 12;
+                      time = `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+                    }
+                  }
+                  
+                  return {
+                    time,
+                    timeSlotSection: slot.timeSlotSection,
+                    status: slot.status,
+                    bookingId: slot._id
+                  };
+                });
+
+                return {
+                  date: new Date(entry.date),
+                  slots: formattedSlots
+                };
+              });
+              
+              return {
+                ...existingRoom,
+                existingBookings
+              };
+            }
+            
+            // If room doesn't exist in our state or doesn't have statusEntries, create a new one
+            console.log("updateStudiosWithRoomStatus - Creating new room for:", studioEntry._id);
+            return {
+              _id: studioEntry._id,
+              name: studioEntry.name,
+              selectedDate: null,
+              showTimeSlots: false,
+              timeSlots: [],
+              existingBookings: []
+            };
+          });
+          
+          // Find rooms that are in the current studio but not in the updated rooms
+          const missingRooms = currentRooms.filter((room: any) => 
+            !updatedRooms.some((updatedRoom: any) => updatedRoom._id === room._id)
+          );
+          
+          // Add the missing rooms to the updated rooms
+          if (missingRooms.length > 0) {
+            console.log("updateStudiosWithRoomStatus - Adding missing rooms:", JSON.stringify(missingRooms));
+            updatedRooms.push(...missingRooms);
+          }
+          
+          console.log("updateStudiosWithRoomStatus - Updated rooms:", JSON.stringify(updatedRooms));
+          return {
+            ...studio,
+            rooms: updatedRooms
+          };
+        }
+        return studio;
+      });
+      console.log("updateStudiosWithRoomStatus - Updated studios:", JSON.stringify(updatedStudios))
+      setApiStudios(updatedStudios);
+      return updatedStudios;
+    });
+    console.log("updateStudiosWithRoomStatus - Final updated studios:", JSON.stringify(updatedStudios))
+    setApiStudios(updatedStudios);
+    return updatedStudios;
+  };
+
+  /**
+   * Handles date selection for a room
+   * Updates the UI to show time slots for the selected date
+   * Checks for existing bookings and applies their status
+   */
   const handleDateChange = (studioId: string, roomId: string, date: Date | null) => {
-    console.log("handleDateChange :",JSON.stringify(studios));
+    setError(null);
+    console.log("handleDateChange:", JSON.stringify(studios));
+    
     if (!date) {
-      setStudios(prevStudios => 
-        prevStudios.map(studio => 
-          studio._id === studioId
-            ? {
-                ...studio,
-                rooms: studio.rooms.map(room =>
-                  room.id === roomId
-                    ? { 
-                        ...room, 
-                        selectedDate: null,
-                        showTimeSlots: false,
-                        timeSlots: []
-                      }
-                    : room
-                )
-              }
-            : studio
-        )
-      );
+      // Clear date selection
+      clearDateSelection(studioId, roomId);
       return;
     }
 
-    // First update the UI to show loading state
+    // Update the UI to show time slots for the selected date
     setStudios(prevStudios => 
       prevStudios.map(studio => 
         studio._id === studioId
           ? {
               ...studio,
               rooms: studio.rooms.map(room =>
-                room.id === roomId
+                room._id === roomId
                   ? { 
                       ...room, 
                       selectedDate: date,
                       showTimeSlots: true,
-                      timeSlots: generateTimeSlots().map(slot => {
-                        // Find if there's a matching slot in existing bookings
-                        const existingBooking = room.existingBookings?.find((booking: { 
-                          date: Date; 
-                          slots: { 
-                            time: string;
-                            status: 'requested' | 'requestCanceled' | 'confirmed' | 'blocked' | 'pending' | 'available';
-                            bookingId?: string;
-                            timeSlotSection?: string;
-                          }[] 
-                        }) => 
-                          booking.date.toISOString().split('T')[0] === date.toISOString().split('T')[0]
-                        );
-                        
-                        if (existingBooking) {
-                          const matchingSlot = existingBooking.slots.find((existingSlot: { 
-                            time: string;
-                            status: 'requested' | 'requestCanceled' | 'confirmed' | 'blocked' | 'pending' | 'available';
-                            bookingId?: string;
-                            timeSlotSection?: string;
-                          }) => 
-                            existingSlot.timeSlotSection === slot.timeSlotSection
-                          );
-                          
-                          if (matchingSlot) {
-                            return {
-                              ...slot,
-                              status: matchingSlot.status,
-                              bookingId: matchingSlot.bookingId
-                            };
-                          }
-                        }
-                        
-                        return {
-                          ...slot,
-                          status: 'available'
-                        };
-                      })
+                      timeSlots: generateTimeSlotsWithExistingBookings(room, date)
                     }
                   : room
               )
@@ -399,95 +402,75 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
           : studio
       )
     );
-
-    // Then fetch the room status from the API
-    /*
-    fetchRoomStatus(roomId).then(statusData => {
-      if (statusData) {
-        // Find the existing booking for the selected date
-        const studio = studios.find(s => s._id === studioId);
-        const room = studio?.rooms.find(r => r.id === roomId);
-        
-        if (room && Array.isArray(room.existingBookings)) {
-          const existingBooking = room.existingBookings.find((booking: { date: Date; slots: any[] }) => 
-            booking.date.toISOString().split('T')[0] === date.toISOString().split('T')[0]
-          );
-          
-          if (existingBooking) {
-            // Update the time slots with the existing booking data
-            setStudios(prevStudios => 
-              prevStudios.map(studio => 
-                studio._id === studioId
-                  ? {
-                      ...studio,
-                      rooms: studio.rooms.map(room =>
-                        room.id === roomId
-                          ? { 
-                              ...room, 
-                              timeSlots: room.timeSlots.map((slot: TimeSlot) => {
-                                // Find matching slot in the existing booking
-                                const existingSlot = existingBooking.slots.find((s: { time: string; status: string; bookingId?: string }) => 
-                                  s.time === slot.time
-                                );
-                                if (existingSlot) {
-                                  return {
-                                    ...slot,
-                                    status: existingSlot.status,
-                                    bookingId: existingSlot.bookingId
-                                  };
-                                }
-                                return slot;
-                              })
-                            }
-                          : room
-                      )
-                    }
-                  : studio
-              )
-            );
-          }
-        }
-      }
-    });
-    */
   };
 
-  const generateTimeSlotsWithBookings = (room: PianoRoom, date: Date) => {
-    const slots = generateTimeSlots().map(slot => ({
-      ...slot,
-      status: 'available' as const
-    }));
-    
-    if (!Array.isArray(room.existingBookings)) {
-      return slots;
-    }
-    
-    const existingBooking = room.existingBookings.find(booking => 
-      booking.date.toISOString().split('T')[0] === date.toISOString().split('T')[0]
-    );
-
-    if (existingBooking) {
-      return slots.map(slot => {
-        const existingSlot = existingBooking.slots.find(s => s.time === slot.time);
-        return existingSlot ? {
-          ...slot,
-          status: existingSlot.status,
-          bookingId: existingSlot.bookingId
-        } : slot;
-      });
-    }
-
-    return slots;
-  };
-
-  const handleShowTimeSlots = (studioId: string, roomId: string) => {
+  /**
+   * Clears date selection for a room
+   */
+  const clearDateSelection = (studioId: string, roomId: string) => {
     setStudios(prevStudios => 
       prevStudios.map(studio => 
         studio._id === studioId
           ? {
               ...studio,
               rooms: studio.rooms.map(room =>
-                room.id === roomId
+                room._id === roomId
+                  ? { 
+                      ...room, 
+                      selectedDate: null,
+                      showTimeSlots: false,
+                      timeSlots: []
+                    }
+                  : room
+              )
+            }
+          : studio
+      )
+    );
+  };
+
+  /**
+   * Generates time slots and applies existing booking statuses
+   */
+  const generateTimeSlotsWithExistingBookings = (room: PianoRoom, date: Date) => {
+    return generateTimeSlots().map(slot => {
+      // Find if there's a matching slot in existing bookings
+      const existingBooking = room.existingBookings?.find((booking: BookingData) => 
+        booking.date.toISOString().split('T')[0] === date.toISOString().split('T')[0]
+      );
+      
+      if (existingBooking) {
+        const matchingSlot = existingBooking.slots.find((existingSlot: BookingSlotsDetails) => 
+          existingSlot.timeSlotSection === slot.timeSlotSection
+        );
+        
+        if (matchingSlot) {
+          return {
+            ...slot,
+            status: matchingSlot.status
+          };
+        }
+      }
+      
+      return {
+        ...slot,
+        status: 'available' as const
+      };
+    });
+  };
+
+  /**
+   * Handles showing/hiding time slots for a room
+   */
+  const handleShowTimeSlots = (studioId: string, roomId: string) => {
+    setError(null);
+    setStudios(prevStudios => 
+      prevStudios.map(studio => 
+        studio._id === studioId
+          ? {
+              ...studio,
+              rooms: studio.rooms.map(room =>
+                room._id === roomId
                   ? { 
                       ...room, 
                       showTimeSlots: !room.showTimeSlots,
@@ -501,10 +484,13 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
     );
   };
 
+  /**
+   * Handles time slot actions (cancel, block, unblock)
+   */
   const handleTimeSlotAction = (studioId: string, roomId: string, slotIndex: number, action: 'cancel' | 'block' | 'unblock') => {
     const studio = studios.find(s => s._id === studioId);
-    const room = studio?.rooms.find(r => r.id === roomId);
-    
+    const room = studio?.rooms.find(r => r._id === roomId);
+    setError(null);
     if (!room?.selectedDate) return;
 
     setStudios(prevStudios => 
@@ -513,7 +499,7 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
           ? {
               ...studio,
               rooms: studio.rooms.map((room: PianoRoom) =>
-                room.id === roomId
+                room._id === roomId
                   ? {
                       ...room,
                       timeSlots: room.timeSlots.map((slot: TimeSlot, index: number) => {
@@ -540,14 +526,18 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
     );
   };
 
+  /**
+   * Handles adding a new date for a room
+   */
   const handleAddNewDate = (studioId: string, roomId: string) => {
+    setError(null);
     setStudios(prevStudios => 
       prevStudios.map(studio => 
         studio._id === studioId
           ? {
               ...studio,
               rooms: studio.rooms.map(room =>
-                room.id === roomId
+                room._id === roomId
                   ? { 
                       ...room, 
                       showTimeSlots: false,
@@ -563,16 +553,21 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
     );
   };
 
+  /**
+   * Handles date picker selection
+   */
   const handleDatePickerSelect = (studioId: string, roomId: string, date: Date | null) => {
+    setError(null);
     if (!date) return;
-
+    console.log("handleDatePickerSelect:", date)
+    
     setStudios(prevStudios => 
       prevStudios.map(studio => 
         studio._id === studioId
           ? {
               ...studio,
               rooms: studio.rooms.map(room =>
-                room.id === roomId
+                room._id === roomId
                   ? { 
                       ...room, 
                       showTimeSlots: true,
@@ -588,14 +583,18 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
     );
   };
 
+  /**
+   * Handles canceling date addition
+   */
   const handleCancelAddDate = (studioId: string, roomId: string) => {
+    setError(null);
     setStudios(prevStudios => 
       prevStudios.map(studio => 
         studio._id === studioId
           ? {
               ...studio,
               rooms: studio.rooms.map(room =>
-                room.id === roomId
+                room._id === roomId
                   ? { 
                       ...room, 
                       showTimeSlots: false,
@@ -611,6 +610,9 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
     );
   };
 
+  /**
+   * Returns a function to determine which dates should be disabled in the date picker
+   */
   const getDisabledDates = (room: PianoRoom) => {
     // Get dates that already have bookings
     if (!Array.isArray(room.existingBookings)) {
@@ -643,83 +645,242 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
     };
   };
 
-  const handleConfirmTimeSlots = (studioId: string, roomId: string) => {
-    const studio = studios.find(s => s._id === studioId);
-    const room = studio?.rooms.find(r => r.id === roomId);
+  /**
+   * Updates existing bookings with new time slots
+   */
+  const updateExistingBookingsFromTimeSlots = (
+    existingBookings: BookingData[],
+    timeSlots: TimeSlot[],
+    selectedDate: Date
+  ) => {
+    // Create a deep copy of existing bookings to avoid mutating the original
+    const updatedBookings = existingBookings?JSON.parse(JSON.stringify(existingBookings)):[]
     
+    let isDateExistInBookings = false;
+    // Convert date strings back to Date objects
+    updatedBookings.forEach((booking: any) => {
+      if (booking.date && typeof booking.date === 'string') {
+        booking.date = new Date(booking.date);
+      }
+      if(booking.date.toISOString() === selectedDate.toISOString()) {
+        isDateExistInBookings = true;
+      }
+    });
+    
+    console.log("isDateExistInBookings:", isDateExistInBookings)
+    if (isDateExistInBookings) {
+      // Loop through each booking
+      updatedBookings.forEach((booking: BookingData) => {
+        // Loop through each time slot
+        timeSlots.forEach(timeSlot => {
+          // Find if there's a matching slot in the booking
+          const existingSlotIndex = booking.slots.findIndex(
+            (slot: BookingSlotsDetails) => slot.timeSlotSection === timeSlot.timeSlotSection
+          );
+          
+          if (existingSlotIndex !== -1) {
+            // Update the existing slot with the new status
+            booking.slots[existingSlotIndex].status = timeSlot.status;
+          } else {
+            // Add the new slot to the booking
+            booking.slots.push({
+              status: timeSlot.status,
+              timeSlotSection: timeSlot.timeSlotSection
+            });
+          }
+        });
+      });
+      
+      return updatedBookings;
+    }else{
+      const unavailableSlots = timeSlots.filter((timeSlot: TimeSlot) => timeSlot.status !== 'available');
+      const removeSection0 = unavailableSlots.filter((timeSlot: TimeSlot) => timeSlot.timeSlotSection !== 'section0');
+      if(existingBookings == null){
+          existingBookings = []
+      }
+        existingBookings.push({
+          date: selectedDate,
+          slots: [{ 
+          status: 'pending',
+          timeSlotSection:'section0'
+        },...removeSection0]})
+
+      console.log("unavailableSlots:", unavailableSlots)
+      console.log("existingBookings:", existingBookings)
+      return existingBookings;
+    }
+  }
+
+  /**
+   * Handles confirming time slots for a room
+   * Updates the existingBookings array with the new time slots
+   */
+  const handleConfirmTimeSlots = (studioId: string, roomId: string) => {
+    setError(null);
+    const studio = studios.find(s => s._id === studioId);
+    const room = studio?.rooms.find(r => r._id === roomId);
     if (!room?.selectedDate) return;  // Don't allow confirmation if no date is selected
 
     const selectedDate = room.selectedDate; // Store the date before it becomes null
-
-    // Update the UI to reflect the changes
-    setStudios(prevStudios => 
-      prevStudios.map(studio => 
-        studio._id === studioId
-          ? {
-              ...studio,
-              rooms: studio.rooms.map((room: PianoRoom) =>
-                room.id === roomId
-                  ? { 
-                      ...room, 
-                      showTimeSlots: false,
-                      selectedDate: null,
-                      existingBookings: [
-                        ...(Array.isArray(room.existingBookings) ? room.existingBookings : []),
-                        {
-                          date: selectedDate,
-                          slots: room.timeSlots.map((slot: TimeSlot) => ({
-                            time: slot.time,
-                            status: slot.status,
-                            bookingId: slot.bookingId
-                          }))
-                        }
-                      ]
-                    }
-                  : room
-              )
-            }
-          : studio
-      )
+    console.log("handleConfirmTimeSlots:", selectedDate)
+    
+    // Create a new studios array with the updated data
+    const updatedStudios = studios.map(studio => 
+      studio._id === studioId
+        ? {
+            ...studio,
+            rooms: studio.rooms.map((room: PianoRoom) =>
+              room._id === roomId
+                ? { 
+                    ...room, 
+                    showTimeSlots: false,
+                    selectedDate: null,
+                    existingBookings: updateExistingBookingsFromTimeSlots(room.existingBookings, room.timeSlots, selectedDate)
+                  }
+                : room
+            )
+          }
+        : studio
     );
     
-    // Here you would typically make an API call to update the server with the new time slot statuses
-    // For example:
-    /*
-    const userType = UserTypeUtils.getUserTypeFromPathname(window.location.pathname);
-    const token = localStorage.getItem(`${userType}_auth_token`);
-    
-    if (token) {
-      fetch(ApiUtils.getApiUrl(`api/studio-status/room/${roomId}/update`), {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          date: selectedDate.toISOString(),
-          slots: room.timeSlots.map(slot => ({
-            timeSlotSection: slot.time,
-            status: slot.status
-          }))
-        })
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to update time slots');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Time slots updated successfully', data);
-      })
-      .catch(err => {
-        console.error('Error updating time slots:', err);
-        setError('更新時段失敗，請重試');
-      });
-    }
-    */
+    // Update the state with the new data
+    setStudios(updatedStudios);
   };
 
+  /**
+   * Handles removing a date from existing bookings
+   */
+  const handleRemoveDate = (studioId: string, roomId: string) => {
+    setError(null);
+    const studio = studios.find(s => s._id === studioId);
+    const room = studio?.rooms.find(r => r._id === roomId);
+    
+    if (!room?.selectedDate) return;
+
+    // Create a new studios array with the updated data
+    const updatedStudios = studios.map(studio => 
+      studio._id === studioId
+        ? {
+            ...studio,
+            rooms: studio.rooms.map((r: PianoRoom) =>
+              r._id === roomId
+                ? { 
+                    ...r, 
+                    showTimeSlots: false,
+                    selectedDate: null,
+                    existingBookings: r.existingBookings.filter((booking: BookingData) => 
+                      booking.date.toISOString().split('T')[0] !== r.selectedDate?.toISOString().split('T')[0]
+                    )
+                  }
+                : r
+            )
+          }
+        : studio
+    );
+    
+    // Update the state with the new data
+    setStudios(updatedStudios);
+  };
+
+  /**
+   * Compares original and current studio data to generate updates
+   */
+  const generateUpdates = () => {
+    const updates: any[] = [];
+    
+    console.log("generateUpdates:", JSON.stringify(studios))
+    console.log("apiStudios:", JSON.stringify(apiStudios))
+    // Iterate through each studio
+    studios.forEach(studio => {
+      // Find corresponding studio in apiStudios
+      const apiStudio = apiStudios.find(s => s._id === studio._id);
+      if (!apiStudio) return;
+
+      // Iterate through each room
+      studio.rooms.forEach(room => {
+        // Find corresponding room in apiStudio
+        const apiRoom = apiStudio.rooms.find(r => r._id === room._id);
+        if (!apiRoom) return;
+
+        // Create a deep copy of existing bookings to avoid mutating the original
+        const updatedBookings = room.existingBookings ? JSON.parse(JSON.stringify(room.existingBookings)) : [];
+        updatedBookings.forEach((booking: any) => {
+          if (booking.date && typeof booking.date === 'string') {
+            booking.date = new Date(booking.date);
+          }
+          booking.slots = booking.slots.filter((slot: BookingSlotsDetails) => slot.status !== 'available');
+        });
+
+        // If current room has no bookings but API room has bookings, mark all API bookings as delete
+        if (updatedBookings.length === 0 && apiRoom.existingBookings && apiRoom.existingBookings.length > 0) {
+          apiRoom.existingBookings.forEach((apiBooking: BookingData) => {
+            apiBooking.slots.forEach((apiSlot: BookingSlotsDetails) => {
+              updates.push({
+                studioId: room._id,
+                roomId: studio._id,
+                date: formatDate(apiBooking.date),
+                timeSlotSection: apiSlot.timeSlotSection,
+                sectionDescription: "-",
+                status: 'delete'
+              });
+            });
+          });
+          return;
+        }
+
+        // Compare existingBookings
+        updatedBookings?.forEach((booking: BookingData) => {
+          const formattedDate = formatDate(booking.date);
+          
+          // Find corresponding booking in apiRoom
+          const apiBooking = apiRoom.existingBookings?.find(b => 
+            formatDate(b.date) === formattedDate
+          );
+
+          // Compare slots
+          booking.slots.forEach(slot => {
+            const apiSlot = apiBooking?.slots.find(s => s.timeSlotSection === slot.timeSlotSection);
+            
+            // If slot doesn't exist in api data or status is different, add to updates
+            if (!apiSlot || apiSlot.status !== slot.status) {
+              updates.push({
+                studioId: room._id,
+                roomId: studio._id,
+                date: formattedDate,
+                timeSlotSection: slot.timeSlotSection,
+                sectionDescription: "-",
+                status: slot.status
+              });
+            }
+          });
+
+          // Check for deleted slots in apiBooking
+          if (apiBooking) {
+            apiBooking.slots.forEach(apiSlot => {
+              const existingSlot = booking.slots.find(s => s.timeSlotSection === apiSlot.timeSlotSection);
+              if (!existingSlot) {
+                updates.push({
+                  studioId: room._id,
+                  roomId: studio._id,
+                  date: formattedDate,
+                  timeSlotSection: apiSlot.timeSlotSection,
+                  sectionDescription: "-",
+                  status: 'delete'
+                });
+              }
+            });
+          }
+        });
+      });
+    });
+
+    return updates;
+  };
+
+  /**
+   * Handles form submission
+   * Validates that all rooms with selected dates have at least one selected time slot
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -740,34 +901,59 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
     setSuccessMessage(null);
     
     try {
-      // In a real app, you would send the data to your API
-      // For now, we'll just simulate a successful update
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const updates = generateUpdates();
+      console.log("updates:", updates)
+      if (updates.length > 0) {
+        const userType = UserTypeUtils.getUserTypeFromPathname(window.location.pathname);
+        const token = localStorage.getItem(`${userType}_auth_token`);
+        
+        if (!token) {
+          throw new Error('未登入或登入已過期');
+        }
+
+        const response = await fetch(ApiUtils.getApiUrl('api/studio-status/batch-update'), {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ updates })
+        });
+
+        if (!response.ok) {
+          throw new Error('更新失敗');
+        }
+
+        // Refresh room status after successful update
+        await fetchRoomStatus(selectedStudio!);
+      }
       
       setSuccessMessage("更新成功");
       setIsLoading(false);
+      setHasUpdates(false);
       
       // Clear success message after 3 seconds
       setTimeout(() => {
         setSuccessMessage(null);
       }, 3000);
     } catch (err) {
+      console.error('Error updating studio status:', err);
       setError("更新失敗，請重試");
       setIsLoading(false);
     }
   };
   
-  // Helper function to get status color
+  /**
+   * Returns the appropriate CSS class for a status
+   */
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'requested':
         return 'bg-yellow-500 text-white';
-      case 'requestCanceled':
-        return 'bg-red-500 text-white';
       case 'confirmed':
         return 'bg-blue-500 text-white';
       case 'blocked':
-        return 'bg-orange-500 text-white';
+        return 'bg-red-500 text-white';
       case 'pending':
         return 'bg-purple-500 text-white';
       case 'available':
@@ -776,13 +962,13 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
     }
   };
 
-  // Helper function to get status text
+  /**
+   * Returns the display text for a status
+   */
   const getStatusText = (status: string) => {
     switch (status) {
       case 'requested':
-        return '待確認';
-      case 'requestCanceled':
-        return '已取消';
+        return '待導師確認';
       case 'confirmed':
         return '已確認';
       case 'blocked':
@@ -795,11 +981,25 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
     }
   };
 
-  // Create a function to handle studio selection
-  const handleStudioSelection = (studioId: string) => {
+  /**
+   * Handles studio selection
+   * Fetches room status for the selected studio
+   */
+  const handleStudioSelection = async (studioId: string) => {
+    console.log("handleStudioSelection - Selecting studio:", studioId);
+    setError(null);
+    setIsLoading(true);
     setSelectedStudio(studioId);
-    //alert(studioId);
-    fetchRoomStatus(studioId);
+    try {
+      console.log("handleStudioSelection - Fetching piano rooms");
+      await fetchPianoRooms(false);
+      console.log("handleStudioSelection - Fetching room status");
+      await fetchRoomStatus(studioId);
+    } catch (error) {
+      console.error('Error refreshing studio data:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -815,7 +1015,9 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
         <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-6"></div>
         
         {isLoading ? (
-          <LoadingScreen />
+          <div className="flex justify-center items-center min-h-[200px]">
+            <LoadingScreen />
+          </div>
         ) : (
           <div className="space-y-4">
             {studios.length === 0 ? (
@@ -903,7 +1105,7 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
                         
                         {studios.find(s => s._id === selectedStudio)?.rooms.map((room) => (
                           <div 
-                            key={room.id} 
+                            key={room._id} 
                             className="p-4 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-gray-50 dark:hover:bg-neutral-700 transition-colors mb-4"
                           >
                             <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -916,12 +1118,13 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
                                   <select
                                     value={room.selectedDate ? formatDate(room.selectedDate) : ""}
                                     onChange={(e) => {
+                                      console.log("e",e.target.value)
                                       if (e.target.value === "add-new") {
-                                        handleAddNewDate(selectedStudio, room.id);
+                                        handleAddNewDate(selectedStudio, room._id);
                                       } else if (e.target.value) {
-                                        handleDateChange(selectedStudio, room.id, new Date(e.target.value));
+                                        handleDateChange(selectedStudio, room._id, new Date(e.target.value));
                                       } else {
-                                        handleDateChange(selectedStudio, room.id, null);
+                                        handleDateChange(selectedStudio, room._id, null);
                                       }
                                     }}
                                     className="w-full rounded-lg border-gray-300 dark:border-neutral-600 dark:bg-neutral-700"
@@ -946,7 +1149,7 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
                                 <div className="mt-2">
                                   <DatePicker
                                     selected={room.selectedDate}
-                                    onChange={(date) => handleDatePickerSelect(selectedStudio, room.id, date)}
+                                    onChange={(date) => handleDatePickerSelect(selectedStudio, room._id, date)}
                                     className="w-full rounded-lg border-gray-300 dark:border-neutral-600 dark:bg-neutral-700"
                                     dateFormat="yyyy/MM/dd"
                                     placeholderText="選擇日期"
@@ -957,7 +1160,7 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
                                 <div className="mt-4 flex justify-end space-x-2">
                                   <button
                                     type="button"
-                                    onClick={() => handleCancelAddDate(selectedStudio, room.id)}
+                                    onClick={() => handleCancelAddDate(selectedStudio, room._id)}
                                     className="text-gray-600 hover:underline"
                                   >
                                     取消
@@ -979,19 +1182,15 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-                                    <span>待確認</span>
+                                    <span>待導師確認</span>
                                   </div>
                                   <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4 bg-orange-500 rounded"></div>
+                                    <div className="w-4 h-4 bg-red-500 rounded"></div>
                                     <span>不可預約</span>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 bg-purple-500 rounded"></div>
                                     <span>待取消</span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4 bg-red-500 rounded"></div>
-                                    <span>已取消</span>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <div className="w-4 h-4 bg-emerald-500 rounded"></div>
@@ -1005,11 +1204,11 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
                                         type="button"
                                         onClick={() => {
                                           if (slot.status === 'confirmed' || slot.status === 'requested') {
-                                            handleTimeSlotAction(selectedStudio, room.id, index, 'cancel');
+                                            handleTimeSlotAction(selectedStudio, room._id, index, 'cancel');
                                           } else if (slot.status === 'blocked') {
-                                            handleTimeSlotAction(selectedStudio, room.id, index, 'unblock');
+                                            handleTimeSlotAction(selectedStudio, room._id, index, 'unblock');
                                           } else {
-                                            handleTimeSlotAction(selectedStudio, room.id, index, 'block');
+                                            handleTimeSlotAction(selectedStudio, room._id, index, 'block');
                                           }
                                         }}
                                         disabled={slot.status === 'confirmed' || slot.status === 'requested'}
@@ -1022,7 +1221,7 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
                                       {(slot.status === 'confirmed' || slot.status === 'requested') && (
                                         <button
                                           type="button"
-                                          onClick={() => handleTimeSlotAction(selectedStudio, room.id, index, 'cancel')}
+                                          onClick={() => handleTimeSlotAction(selectedStudio, room._id, index, 'cancel')}
                                           className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
                                         >
                                           ×
@@ -1034,10 +1233,17 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
                                 <div className="mt-4 flex justify-end space-x-2">
                                   <button
                                     type="button"
-                                    onClick={() => handleConfirmTimeSlots(selectedStudio, room.id)}
+                                    onClick={() => handleConfirmTimeSlots(selectedStudio, room._id)}
                                     className="text-blue-600 hover:underline"
                                   >
                                     確認
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveDate(selectedStudio, room._id)}
+                                    className="text-red-600 hover:underline"
+                                  >
+                                    移除日期
                                   </button>
                                   <button
                                     type="button"
@@ -1048,7 +1254,7 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
                                             ? {
                                                 ...studio,
                                                 rooms: studio.rooms.map((r: PianoRoom) =>
-                                                  r.id === room.id
+                                                  r._id === room._id
                                                     ? { 
                                                         ...r, 
                                                         showTimeSlots: false,
@@ -1087,8 +1293,12 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
                     )}
                     
                     <div className="pt-2">
-                      <ButtonPrimary type="submit" className="w-full" disabled={isLoading}>
-                        {isLoading ? "處理中..." : "更新時段"}
+                      <ButtonPrimary 
+                        type="submit" 
+                        className="w-full" 
+                        disabled={isLoading || !hasUpdates}
+                      >
+                        {isLoading ? "處理中..." : "更新琴房"}
                       </ButtonPrimary>
                     </div>
                   </form>
