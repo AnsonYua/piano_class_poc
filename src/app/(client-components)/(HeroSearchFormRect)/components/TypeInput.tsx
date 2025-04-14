@@ -13,6 +13,8 @@ export interface TypeInputProps {
   autoFocus?: boolean;
   defaultValue?: string;
   onChange?: (value: string) => void;
+  selectedStudent?: string | null;
+  studentGrade?: string | null;
 }
 
 const TypeInput: FC<TypeInputProps> = ({
@@ -20,9 +22,11 @@ const TypeInput: FC<TypeInputProps> = ({
   placeHolder = "類型",
   desc = "課程類型",
   className = "nc-flex-1.5",
-  divHideVerticalLineClass = "left-10 -right-0.5",
+  divHideVerticalLineClass = "left-10 right-0.5",
   defaultValue = "",
   onChange,
+  selectedStudent = null,
+  studentGrade = null,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -30,28 +34,28 @@ const TypeInput: FC<TypeInputProps> = ({
   const popoverId = "type-input";
 
   const [value, setValue] = useState(defaultValue);
+  const [showStudentRequiredPopup, setShowStudentRequiredPopup] = useState(false);
   const showPopover = activePopover === popoverId;
+
+  // Update value when defaultValue changes (including when it's cleared)
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
 
   useEffect(() => {
     setActivePopover(autoFocus ? popoverId : null);
   }, [autoFocus, setActivePopover, popoverId]);
 
   useEffect(() => {
-    if (defaultValue) {
-      setValue(defaultValue);
-    }
-  }, [defaultValue]);
-
-  useEffect(() => {
     if (eventClickOutsideDiv) {
       document.removeEventListener("click", eventClickOutsideDiv);
     }
-    showPopover && document.addEventListener("click", eventClickOutsideDiv);
+    (showPopover || showStudentRequiredPopup) && document.addEventListener("click", eventClickOutsideDiv);
     return () => {
       document.removeEventListener("click", eventClickOutsideDiv);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showPopover]);
+  }, [showPopover, showStudentRequiredPopup]);
 
   useEffect(() => {
     if (showPopover && inputRef.current) {
@@ -62,11 +66,12 @@ const TypeInput: FC<TypeInputProps> = ({
   const eventClickOutsideDiv = (event: MouseEvent) => {
     if (!containerRef.current) return;
     // CLICK IN_SIDE
-    if (!showPopover || containerRef.current.contains(event.target as Node)) {
+    if ((!showPopover && !showStudentRequiredPopup) || containerRef.current.contains(event.target as Node)) {
       return;
     }
     // CLICK OUT_SIDE
     setActivePopover(null);
+    setShowStudentRequiredPopup(false);
   };
 
   const handleTypeSelect = (selectedType: string) => {
@@ -77,16 +82,33 @@ const TypeInput: FC<TypeInputProps> = ({
     setActivePopover(null);
   };
 
-  const types = [
-    "鋼琴", "小提琴", "大提琴", "中提琴", "長笛", "單簧管",
-    "雙簧管", "巴松管", "小號", "長號", "法國號", "大號",
-    "吉他", "貝斯", "鼓", "其他"
-  ];
+  const handleClick = () => {
+    if (!selectedStudent) {
+      setShowStudentRequiredPopup(true);
+      return;
+    }
+    setActivePopover(popoverId);
+  };
+
+  // Dynamic types based on student grade
+  const getTypes = () => {
+    if (!selectedStudent) {
+      return [];
+    }
+    
+    if (studentGrade) {
+      return ["上課", "練琴"];
+    } else {
+      return ["評估"];
+    }
+  };
+
+  const types = getTypes();
 
   return (
     <div className={`relative flex ${className}`} ref={containerRef}>
       <div
-        onClick={() => setActivePopover(popoverId)}
+        onClick={handleClick}
         className={`flex z-10 flex-1 relative [ nc-hero-field-padding ] flex-shrink-0 items-center space-x-3 cursor-pointer focus:outline-none text-left ${
           showPopover ? "nc-hero-field-focused rounded-none" : ""
         }`}
@@ -127,24 +149,39 @@ const TypeInput: FC<TypeInputProps> = ({
       )}
 
       {showPopover && (
-        <div className="absolute left-0 z-50 w-full min-w-[300px] sm:min-w-[500px] bg-white dark:bg-neutral-800 top-full mt-3 py-3 sm:py-6 rounded-none shadow-xl">
+        <div className="absolute left-0 z-50 w-full bg-white dark:bg-neutral-800 top-full mt-3 py-3 sm:py-6 rounded-none shadow-xl">
           <div className="p-4">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 max-h-[300px] overflow-y-auto">
+            <div className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-4">
+              選擇類型
+            </div>
+            <div className="space-y-2 max-h-[300px] overflow-y-auto">
               {types.map((type) => (
-                <button
+                <div
                   key={type}
-                  type="button"
-                  className={`px-3 py-2 text-sm rounded-lg ${
-                    value === type
-                      ? "bg-primary-600 text-white"
-                      : "bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600"
+                  className={`flex items-center p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg cursor-pointer ${
+                    value === type ? "bg-neutral-100 dark:bg-neutral-700" : ""
                   }`}
                   onClick={() => handleTypeSelect(type)}
                 >
-                  {type}
-                </button>
+                  <div className="flex-1">
+                    <div className="font-medium">{type}</div>
+                  </div>
+                </div>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {showStudentRequiredPopup && (
+        <div className="absolute left-0 z-50 w-full bg-white dark:bg-neutral-800 top-full mt-3 py-3 sm:py-6 rounded-none shadow-xl">
+          <div className="p-4 text-center">
+            <p className="text-lg font-medium text-neutral-800 dark:text-neutral-200 mb-2">
+              請先選擇學生
+            </p>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+              您需要先選擇一個學生才能選擇課程類型
+            </p>
           </div>
         </div>
       )}

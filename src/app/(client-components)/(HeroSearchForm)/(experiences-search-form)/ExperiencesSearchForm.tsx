@@ -87,8 +87,6 @@ const ExperiencesSearchForm: FC<ExperiencesSearchFormProps> = ({ onSearch, defau
         <ExperiencesDateSingleInput 
           className="flex-1" 
           selectsRange={false} 
-          defaultValue={selectedDate}
-          onChange={handleDateSelect}
         />
         <div className="self-center border-r border-slate-200 dark:border-slate-700 h-4"></div>
         <ClassTimeSlotInput

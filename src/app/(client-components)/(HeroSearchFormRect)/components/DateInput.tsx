@@ -130,7 +130,7 @@ const DateInput: FC<DateInputProps> = ({
   placeHolder = "日期",
   desc = "上課日期",
   className = "nc-flex-1.5",
-  divHideVerticalLineClass = "left-10 -right-0.5",
+  divHideVerticalLineClass = "left-10 right-0.5",
   defaultValue = null,
   onChange,
 }) => {
@@ -273,67 +273,21 @@ const DateInput: FC<DateInputProps> = ({
       )}
 
       {showPopover && (
-        <div className="absolute left-1/2 z-50 mt-3 top-full -translate-x-1/2 w-[90vw] sm:w-auto">
+        <div className="absolute left-0 z-50 mt-3 top-full w-[90vw] sm:w-auto">
           <div className="overflow-hidden rounded-none shadow-lg ring-1 ring-black ring-opacity-5 bg-white dark:bg-neutral-800 p-4">
             <div className="flex flex-row">
               <DatePicker
                 selected={date || getDefaultDate()}
                 onChange={handleDateChange}
                 monthsShown={1}
-                showPopperArrow={false}
-                inline
-                peekNextMonth={true}
-                showPreviousMonths={false}
-                showMonthYearPicker={false}
-                showYearPicker={false}
-                showQuarterYearPicker={false}
-                showTimeSelect={false}
-                showTimeSelectOnly={false}
-                showWeekNumbers={false}
-                showTwoColumnMonthYearPicker={false}
-                showFourColumnMonthYearPicker={false}
-                locale="zh-TW"
-                dateFormat="yyyy年MM月dd日"
-                minDate={getMinDate()}
-                renderCustomHeader={(p: any) => (
-                  <DatePickerCustomHeaderTwoMonth {...p} />
-                )}
-                renderDayContents={(day: number, date: Date) => (
-                  <DatePickerCustomDay dayOfMonth={day} date={date} />
-                )}
-                calendarClassName="w-full sm:w-[300px]"
-                wrapperClassName="w-full sm:w-[300px]"
-                popperClassName="w-full sm:w-[300px]"
+                      showPopperArrow={false}
+                      inline
+                      locale="zh-TW"
+                      dateFormat="yyyy年MM月dd日"
+                      calendarClassName="w-[240px]"
+                      minDate={new Date(new Date().setDate(new Date().getDate() + 3))}
               />
-              <DatePicker
-                selected={getNextMonthDate()}
-                onChange={handleDateChange}
-                monthsShown={1}
-                showPopperArrow={false}
-                inline
-                peekNextMonth={true}
-                showPreviousMonths={false}
-                showMonthYearPicker={false}
-                showYearPicker={false}
-                showQuarterYearPicker={false}
-                showTimeSelect={false}
-                showTimeSelectOnly={false}
-                showWeekNumbers={false}
-                showTwoColumnMonthYearPicker={false}
-                showFourColumnMonthYearPicker={false}
-                locale="zh-TW"
-                dateFormat="yyyy年MM月dd日"
-                minDate={getMinDate()}
-                renderCustomHeader={(p: any) => (
-                  <DatePickerCustomHeaderTwoMonth {...p} />
-                )}
-                renderDayContents={(day: number, date: Date) => (
-                  <DatePickerCustomDay dayOfMonth={day} date={date} />
-                )}
-                calendarClassName="w-full sm:w-[300px]"
-                wrapperClassName="w-full sm:w-[300px]"
-                popperClassName="w-full sm:w-[300px]"
-              />
+
             </div>
           </div>
         </div>

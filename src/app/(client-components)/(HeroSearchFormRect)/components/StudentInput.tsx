@@ -13,16 +13,20 @@ export interface StudentInputProps {
   autoFocus?: boolean;
   defaultValue?: string;
   onChange?: (value: string) => void;
+  onStudentChange?: (value: string) => void;
+  students?: Array<{ id: string; name: string }>;
 }
 
 const StudentInput: FC<StudentInputProps> = ({
   autoFocus = false,
   placeHolder = "學生",
-  desc = "學生人數",
+  desc = "上課學生",
   className = "nc-flex-1.5",
-  divHideVerticalLineClass = "left-10 -right-0.5",
+  divHideVerticalLineClass = "left-10 right-0.5",
   defaultValue = "",
   onChange,
+  onStudentChange,
+  students = [],
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -69,11 +73,14 @@ const StudentInput: FC<StudentInputProps> = ({
     setActivePopover(null);
   };
 
-  const handleStudentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setValue(newValue);
+  const handleStudentSelect = (studentName: string) => {
+    setValue(studentName);
     if (onChange) {
-      onChange(newValue);
+      onChange(studentName);
+    }
+    // Call the onStudentChange callback to reset other form fields
+    if (onStudentChange) {
+      onStudentChange(studentName);
     }
     setActivePopover(null);
   };
@@ -100,19 +107,19 @@ const StudentInput: FC<StudentInputProps> = ({
             ref={inputRef}
           />
           <span className="block mt-0.5 text-sm text-neutral-400 font-light">
-            <span className="line-clamp-1">{desc}</span>
+            {desc}
           </span>
-          {value && showPopover && (
-            <ClearDataButton
-              onClick={() => {
-                setValue("");
-                if (onChange) {
-                  onChange("");
-                }
-              }}
-            />
-          )}
         </div>
+        {value && showPopover && (
+          <ClearDataButton
+            onClick={() => {
+              setValue("");
+              onChange && onChange("");
+              // Also call onStudentChange with empty string to reset other fields
+              onStudentChange && onStudentChange("");
+            }}
+          />
+        )}
       </div>
 
       {showPopover && (
@@ -122,17 +129,32 @@ const StudentInput: FC<StudentInputProps> = ({
       )}
 
       {showPopover && (
-        <div className="absolute left-0 z-50 w-full min-w-[300px] sm:min-w-[500px] bg-white dark:bg-neutral-800 top-full mt-3 py-3 sm:py-6 rounded-none shadow-xl">
-          <div className="p-4">
-            <input
-              type="number"
-              min="1"
-              max="10"
-              className="w-full p-2 border rounded-md"
-              value={value}
-              onChange={handleStudentChange}
-              placeholder="請輸入學生人數 (1-10)"
-            />
+        <div
+          className={`absolute left-0 z-50 w-full sm:min-w-[340px] bg-white dark:bg-neutral-800 top-full mt-3 py-3 sm:py-6 rounded-none shadow-xl max-h-96 overflow-y-auto`}
+        >
+          <div className="px-4 sm:px-6">
+            <div className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-4">
+              {students.length > 0 ? "選擇學生" : "沒有可用的學生"}
+            </div>
+            {students.length > 0 ? (
+              <div className="space-y-2">
+                {students.map((student) => (
+                  <div
+                    key={student.id}
+                    className="flex items-center p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg cursor-pointer"
+                    onClick={() => handleStudentSelect(student.name)}
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium">{student.name}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-neutral-500 dark:text-neutral-400">
+                請先添加學生到您的個人資料
+              </div>
+            )}
           </div>
         </div>
       )}

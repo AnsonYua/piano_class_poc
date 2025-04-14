@@ -14,6 +14,7 @@ export interface LocationInputProps {
   autoFocus?: boolean;
   defaultValue?: string;
   onChange?: (value: string) => void;
+  enabledDistricts?: string[];
 }
 
 const LocationInput: FC<LocationInputProps> = ({
@@ -21,9 +22,10 @@ const LocationInput: FC<LocationInputProps> = ({
   placeHolder = "地區",
   desc = "上課地區",
   className = "nc-flex-1.5",
-  divHideVerticalLineClass = "left-10 -right-0.5",
+  divHideVerticalLineClass = "left-10 right-0.5",
   defaultValue = "",
   onChange,
+  enabledDistricts = HONG_KONG_DISTRICTS,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -86,33 +88,40 @@ const LocationInput: FC<LocationInputProps> = ({
     return (
       <>
         <h3 className="block mt-2 sm:mt-0 px-4 sm:px-8 font-semibold text-base sm:text-lg text-neutral-800 dark:text-neutral-100">
-          搜尋結果
+          選擇地區
         </h3>
         <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 px-4 sm:px-8">
-          {filteredDistricts.map((district) => (
-            <span
-              onClick={() => handleSelectLocation(district)}
-              key={district}
-              className="flex items-center space-x-3 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
-            >
-              <span className="block text-neutral-400">
-                <MapPinIcon className="h-4 w-4" />
+          {filteredDistricts.map((district) => {
+            const isEnabled = enabledDistricts.includes(district);
+            return (
+              <span
+                onClick={() => isEnabled && handleSelectLocation(district)}
+                key={district}
+                className={`flex items-center space-x-3 py-3 ${
+                  isEnabled 
+                    ? "hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer" 
+                    : "opacity-50 cursor-not-allowed"
+                }`}
+              >
+                <span className="block text-neutral-400">
+                  <MapPinIcon className="h-4 w-4" />
+                </span>
+                <span className="block font-medium text-neutral-700 dark:text-neutral-200">
+                  {district}
+                </span>
               </span>
-              <span className="block font-medium text-neutral-700 dark:text-neutral-200">
-                {district}
-              </span>
-            </span>
-          ))}
+            );
+          })}
         </div>
       </>
     );
   };
 
   return (
-    <div className={`relative flex ${className}`} ref={containerRef}>
+    <div className={`relative flex ${className} `} ref={containerRef}>
       <div
         onClick={() => setActivePopover(popoverId)}
-        className={`flex z-10 flex-1 relative [ nc-hero-field-padding ] flex-shrink-0 items-center space-x-3 cursor-pointer focus:outline-none text-left ${
+        className={`flex z-10 flex-1 relative [ nc-hero-field-padding ]flex-shrink-0 items-center space-x-3 cursor-pointer focus:outline-none text-left ${
           showPopover ? "nc-hero-field-focused rounded-none" : ""
         }`}
         style={showPopover ? { borderRadius: '0' } : undefined}
@@ -152,7 +161,7 @@ const LocationInput: FC<LocationInputProps> = ({
       )}
 
       {showPopover && (
-        <div className="absolute left-0 z-50 w-full min-w-[300px] sm:min-w-[500px] bg-white dark:bg-neutral-800 top-full mt-3 py-3 sm:py-6 rounded-none shadow-xl max-h-96 overflow-y-auto">
+        <div className="absolute right-1 translate-x-1 z-50 w-full min-w-[300px] sm:min-w-[500px] bg-white dark:bg-neutral-800 top-full mt-3 py-3 sm:py-6 rounded-none shadow-xl max-h-96 overflow-y-auto">
           {renderSearchValues()}
         </div>
       )}

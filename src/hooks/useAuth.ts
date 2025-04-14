@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ApiUtils } from "@/utils/ApiUtils";
 
@@ -9,6 +9,22 @@ export function useAuth() {
   const [isLoading, setIsLoading] = useState(true);
   const [userProfile, setUserProfile] = useState<any>(null);
   const router = useRouter();
+  
+  // Callback function to be called when profile is loaded
+  const [profileCallback, setProfileCallback] = useState<((profile: any) => void) | null>(null);
+
+  // Function to register a callback that will be called when profile is loaded
+  const onProfileLoaded = useCallback((callback: (profile: any) => void) => {
+    setProfileCallback(callback);
+    
+    // If profile is already loaded, call the callback immediately
+    if (userProfile) {
+      callback(userProfile);
+    }
+    
+    // Return cleanup function
+    return () => setProfileCallback(null);
+  }, [userProfile]);
 
   useEffect(() => {
     // Check if user is logged in by looking for a token in localStorage
@@ -54,6 +70,11 @@ export function useAuth() {
         const profile = await response.json();
         setUserProfile(profile);
         setIsAuthenticated(true);
+        
+        // Call the registered callback if it exists
+        if (profileCallback) {
+          profileCallback(profile);
+        }
       } catch (error) {
         console.error('Error fetching profile:', error);
         // Clear the token on error
@@ -65,7 +86,7 @@ export function useAuth() {
     };
 
     checkAuth();
-  }, []);
+  }, [profileCallback]);
 
   const redirectToLogin = () => {
     router.push("/login");
@@ -75,6 +96,7 @@ export function useAuth() {
     isAuthenticated,
     isLoading,
     userProfile,
-    redirectToLogin
+    redirectToLogin,
+    onProfileLoaded
   };
 } 

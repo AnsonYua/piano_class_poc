@@ -20,7 +20,7 @@ const TimeInput: FC<TimeInputProps> = ({
   placeHolder = "時間",
   desc = "上課時間",
   className = "nc-flex-1.5",
-  divHideVerticalLineClass = "left-10 -right-0.5",
+  divHideVerticalLineClass = "left-10 right-0.5",
   defaultValue = "",
   onChange,
 }) => {
