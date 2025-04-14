@@ -24,8 +24,9 @@ const GuestsInput: FC<GuestsInputProps> = ({
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   const options = [
-    { id: "assessment", label: "參加評估" },
-    { id: "lesson", label: "上堂" },
+    { id: "assessment", label: "評估" },
+    { id: "lesson", label: "上課" },
+    { id: "lesson", label: "練琴" }
   ];
 
   const handleOptionClick = (label: string, close: () => void) => (e: React.MouseEvent) => {
@@ -54,7 +55,7 @@ const GuestsInput: FC<GuestsInputProps> = ({
                   {selectedOption || "類型"}
                 </span>
                 <span className="block mt-1 text-sm text-neutral-400 leading-none font-light">
-                  參加評估還是上堂？
+                  上課類型
                 </span>
               </div>
 

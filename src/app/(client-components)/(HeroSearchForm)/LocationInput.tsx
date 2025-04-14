@@ -16,7 +16,7 @@ export interface LocationInputProps {
 const LocationInput: FC<LocationInputProps> = ({
   autoFocus = false,
   placeHolder = "地區",
-  desc = "你希望在哪區上堂?",
+  desc = "上課地區",
   className = "nc-flex-1.5",
   divHideVerticalLineClass = "left-10 -right-0.5",
 }) => {
@@ -147,7 +147,7 @@ const LocationInput: FC<LocationInputProps> = ({
     <div className={`relative flex ${className}`} ref={containerRef}>
       <div
         onClick={() => setShowPopover(true)}
-        className={`flex z-10 flex-1 relative [ nc-hero-field-padding ] flex-shrink-0 items-center space-x-3 cursor-pointer focus:outline-none text-left  ${
+        className={`flex z-10 flex-1 relative [ nc-hero-field-padding ] flex-shrink-0 items-center space-x-3 cursor-pointer focus:outline-none text-left ${
           showPopover ? "nc-hero-field-focused" : ""
         }`}
       >
@@ -156,17 +156,15 @@ const LocationInput: FC<LocationInputProps> = ({
         </div>
         <div className="flex-grow">
           <input
-            className={`block w-full bg-transparent border-none focus:ring-0 p-0 focus:outline-none focus:placeholder-neutral-300 xl:text-lg font-semibold placeholder-neutral-800 dark:placeholder-neutral-200 truncate`}
+            className={`block w-full bg-transparent border-none focus:ring-0 p-0 focus:outline-none xl:text-lg font-semibold placeholder-neutral-800 dark:placeholder-neutral-200 truncate`}
             placeholder={placeHolder}
             value={value}
             autoFocus={showPopover}
-            onChange={(e) => {
-              setValue(e.currentTarget.value);
-            }}
+            readOnly
             ref={inputRef}
           />
-          <span className="block mt-0.5 text-sm text-neutral-400 font-light ">
-            <span className="line-clamp-1">{!!value ? placeHolder : desc}</span>
+          <span className="block mt-0.5 text-sm text-neutral-400 font-light">
+            <span className="line-clamp-1">{desc}</span>
           </span>
           {value && showPopover && (
             <ClearDataButton

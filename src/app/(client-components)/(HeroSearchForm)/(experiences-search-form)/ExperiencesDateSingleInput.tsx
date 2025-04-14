@@ -45,7 +45,7 @@ const ExperiencesDateSingleInput: FC<ExperiencesDateSingleInputProps> = ({
             }) || "日期"}
           </span>
           <span className="block mt-1 text-sm text-neutral-400 leading-none font-light">
-            {selectedDate ? "你希望的上堂日期？" : `你希望的上堂日期？`}
+            {selectedDate ? "上課日期" : `上課日期`}
           </span>
         </div>
       </>

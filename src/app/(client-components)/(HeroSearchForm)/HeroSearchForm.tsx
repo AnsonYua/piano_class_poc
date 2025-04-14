@@ -29,6 +29,7 @@ const HeroSearchForm: FC<HeroSearchFormProps> = ({
     }
     
     // User is logged in, proceed with search
+    alert("assessment")
     console.log("User is logged in, proceeding with search");
   };
 

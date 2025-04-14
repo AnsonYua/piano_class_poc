@@ -41,7 +41,7 @@ const ClassTimeSlotInput: FC<ClassTimeSlotInputProps> = ({
         `${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`
       );
       
-      currentTime.setMinutes(currentTime.getMinutes() + 45);
+      currentTime.setMinutes(currentTime.getMinutes() + 30);
     }
     
     return slots;
@@ -80,7 +80,7 @@ const ClassTimeSlotInput: FC<ClassTimeSlotInputProps> = ({
         </div>
         <div className="flex-grow text-left">
           <span className="block xl:text-lg font-semibold">
-            {selectedTime || "選擇時間"}
+            {selectedTime || "時間"}
           </span>
           <span className="block mt-1 text-sm text-neutral-400 leading-none font-light">
             上課時間
