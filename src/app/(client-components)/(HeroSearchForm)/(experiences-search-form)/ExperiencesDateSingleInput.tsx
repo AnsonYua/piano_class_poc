@@ -1,8 +1,6 @@
 "use client";
 
-import React, { Fragment, useState } from "react";
-import { FC } from "react";
-import DatePicker from "react-datepicker";
+import React, { Fragment, useState, FC, useEffect } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { CalendarIcon } from "@heroicons/react/24/outline";
 import DatePickerCustomHeaderTwoMonth from "@/components/DatePickerCustomHeaderTwoMonth";
@@ -10,6 +8,7 @@ import DatePickerCustomDay from "@/components/DatePickerCustomDay";
 import ClearDataButton from "../ClearDataButton";
 import { registerLocale } from "react-datepicker";
 import zhTW from "date-fns/locale/zh-TW";
+import DatePicker from "react-datepicker";
 // Register Traditional Chinese locale
 registerLocale("zh-TW", zhTW);
 
@@ -17,17 +16,30 @@ export interface ExperiencesDateSingleInputProps {
   className?: string;
   fieldClassName?: string;
   selectsRange?: boolean;
+  defaultValue?: Date | null;
+  onChange?: (date: Date | null) => void;
 }
 
 const ExperiencesDateSingleInput: FC<ExperiencesDateSingleInputProps> = ({
   className = "",
   fieldClassName = "[ nc-hero-field-padding ]",
   selectsRange = false,
+  defaultValue = null,
+  onChange,
 }) => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(defaultValue);
+
+  useEffect(() => {
+    if (defaultValue) {
+      setSelectedDate(defaultValue);
+    }
+  }, [defaultValue]);
 
   const onChangeDate = (date: Date | null) => {
     setSelectedDate(date);
+    if (onChange) {
+      onChange(date);
+    }
   };
 
   const renderInput = () => {
@@ -57,6 +69,13 @@ const ExperiencesDateSingleInput: FC<ExperiencesDateSingleInputProps> = ({
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow;
+  };
+
+  // Calculate the minimum date (current date - 2 days)
+  const getMinDate = () => {
+    const minDate = new Date();
+    minDate.setDate(minDate.getDate() + 2);
+    return minDate;
   };
 
   return (
@@ -90,7 +109,7 @@ const ExperiencesDateSingleInput: FC<ExperiencesDateSingleInputProps> = ({
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute left-1/2 z-10 mt-3 top-full -translate-x-1/2">
+              <Popover.Panel className="absolute left-1/2 z-50 mt-3 top-full -translate-x-1/2 w-[90vw] sm:w-auto">
                 <div className="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5 bg-white dark:bg-neutral-800 p-4">
                   <DatePicker
                     selected={selectedDate || getDefaultDate()}
@@ -102,7 +121,7 @@ const ExperiencesDateSingleInput: FC<ExperiencesDateSingleInputProps> = ({
                     showPopperArrow={false}
                     inline
                     selectsRange={selectsRange}
-                    peekNextMonth={false}
+                    peekNextMonth={true}
                     showPreviousMonths={false}
                     showMonthYearPicker={false}
                     showYearPicker={false}
@@ -114,15 +133,16 @@ const ExperiencesDateSingleInput: FC<ExperiencesDateSingleInputProps> = ({
                     showFourColumnMonthYearPicker={false}
                     locale="zh-TW"
                     dateFormat="yyyy年MM月dd日"
-                    renderCustomHeader={(p) => (
+                    minDate={getMinDate()}
+                    renderCustomHeader={(p: any) => (
                       <DatePickerCustomHeaderTwoMonth {...p} />
                     )}
-                    renderDayContents={(day, date) => (
+                    renderDayContents={(day: number, date: Date) => (
                       <DatePickerCustomDay dayOfMonth={day} date={date} />
                     )}
-                    calendarClassName="w-[600px]"
-                    wrapperClassName="w-[600px]"
-                    popperClassName="w-[600px]"
+                    calendarClassName="w-full sm:w-[600px]"
+                    wrapperClassName="w-full sm:w-[600px]"
+                    popperClassName="w-full sm:w-[600px]"
                   />
                 </div>
               </Popover.Panel>

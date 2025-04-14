@@ -11,6 +11,8 @@ export interface LocationInputProps {
   className?: string;
   divHideVerticalLineClass?: string;
   autoFocus?: boolean;
+  defaultValue?: string;
+  onChange?: (value: string) => void;
 }
 
 const LocationInput: FC<LocationInputProps> = ({
@@ -19,16 +21,24 @@ const LocationInput: FC<LocationInputProps> = ({
   desc = "上課地區",
   className = "nc-flex-1.5",
   divHideVerticalLineClass = "left-10 -right-0.5",
+  defaultValue = "",
+  onChange,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(defaultValue);
   const [showPopover, setShowPopover] = useState(autoFocus);
 
   useEffect(() => {
     setShowPopover(autoFocus);
   }, [autoFocus]);
+
+  useEffect(() => {
+    if (defaultValue) {
+      setValue(defaultValue);
+    }
+  }, [defaultValue]);
 
   useEffect(() => {
     if (eventClickOutsideDiv) {
@@ -62,6 +72,9 @@ const LocationInput: FC<LocationInputProps> = ({
     if (item !== "北角") return;
     
     setValue(item);
+    if (onChange) {
+      onChange(item);
+    }
     setShowPopover(false);
   };
 
@@ -75,7 +88,7 @@ const LocationInput: FC<LocationInputProps> = ({
         <h3 className="block mt-2 sm:mt-0 px-4 sm:px-8 font-semibold text-base sm:text-lg text-neutral-800 dark:text-neutral-100">
           搜尋結果
         </h3>
-        <div className="mt-2 grid grid-cols-4 gap-2 px-4 sm:px-8">
+        <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 px-4 sm:px-8">
           {filteredDistricts.map((district) => {
             const isActive = district === "北角";
             return (
@@ -112,7 +125,7 @@ const LocationInput: FC<LocationInputProps> = ({
         <h3 className="block mt-2 sm:mt-0 px-4 sm:px-8 font-semibold text-base sm:text-lg text-neutral-800 dark:text-neutral-100">
          
         </h3>
-        <div className="mt-2 grid grid-cols-4 gap-2 px-4 sm:px-8">
+        <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 px-4 sm:px-8">
           {HONG_KONG_DISTRICTS.map((district) => {
             const isActive = district === "北角";
             return (
@@ -170,6 +183,9 @@ const LocationInput: FC<LocationInputProps> = ({
             <ClearDataButton
               onClick={() => {
                 setValue("");
+                if (onChange) {
+                  onChange("");
+                }
               }}
             />
           )}
@@ -183,7 +199,7 @@ const LocationInput: FC<LocationInputProps> = ({
       )}
 
       {showPopover && (
-        <div className="absolute left-0 z-40 w-full min-w-[300px] sm:min-w-[500px] bg-white dark:bg-neutral-800 top-full mt-3 py-3 sm:py-6 rounded-3xl shadow-xl max-h-96 overflow-y-auto">
+        <div className="absolute left-0 z-50 w-full min-w-[300px] sm:min-w-[500px] bg-white dark:bg-neutral-800 top-full mt-3 py-3 sm:py-6 rounded-3xl shadow-xl max-h-96 overflow-y-auto">
           {value ? renderSearchValues() : renderRecentSearches()}
         </div>
       )}
