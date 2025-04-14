@@ -86,7 +86,7 @@ const ClassTimeSlotInput: FC<ClassTimeSlotInputProps> = ({
             >
               <Popover.Panel className="absolute left-1/2 z-50 mt-3 top-full -translate-x-1/2 w-[90vw] sm:w-[500px] md:w-[600px]">
                 <div className="overflow-hidden rounded-3xl shadow-lg ring-1 ring-black ring-opacity-5 bg-white dark:bg-neutral-800 p-4">
-                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 max-h-[300px] overflow-y-auto">
+                  <div className="grid grid-cols-4 sm:grid-cols-7 gap-2 max-h-[300px] overflow-y-auto">
                     {timeSlots.map((slot) => (
                       <button
                         key={slot}
