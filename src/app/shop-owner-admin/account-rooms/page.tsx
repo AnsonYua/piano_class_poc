@@ -278,17 +278,26 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
           // Get all rooms from the current studio
           const currentRooms = [...studio.rooms];
           
-          // Map each item in the studios array to a room
-          const updatedRooms = data.studios.map((studioEntry: any) => {
-            console.log("updateStudiosWithRoomStatus - Processing studio entry:", JSON.stringify(studioEntry));
+          // Create a map of existing rooms by ID for quick lookup
+          const existingRoomsMap = new Map();
+          currentRooms.forEach(room => {
+            existingRoomsMap.set(room._id, room);
+          });
+          
+          // Create a map of API rooms by ID for quick lookup
+          const apiRoomsMap = new Map();
+          data.studios.forEach((apiRoom: any) => {
+            apiRoomsMap.set(apiRoom._id, apiRoom);
+          });
+          
+          // Update rooms while preserving the original order
+          const updatedRooms = currentRooms.map(existingRoom => {
+            const apiRoom = apiRoomsMap.get(existingRoom._id);
             
-            // Find the existing room in our state
-            const existingRoom = currentRooms.find((room: any) => room._id === studioEntry._id);
-            
-            if (existingRoom && studioEntry.statusEntries) {
+            if (apiRoom && apiRoom.statusEntries) {
               console.log("updateStudiosWithRoomStatus - Found existing room with status entries:", existingRoom._id);
               // Convert statusEntries to existingBookings format
-              const existingBookings = studioEntry.statusEntries.map((entry: any) => {
+              const existingBookings = apiRoom.statusEntries.map((entry: any) => {
                 // Convert the slots to our format
                 const formattedSlots = entry.slot.map((slot: any) => {
                   // Convert section numbers to time slots
@@ -327,28 +336,9 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
               };
             }
             
-            // If room doesn't exist in our state or doesn't have statusEntries, create a new one
-            console.log("updateStudiosWithRoomStatus - Creating new room for:", studioEntry._id);
-            return {
-              _id: studioEntry._id,
-              name: studioEntry.name,
-              selectedDate: null,
-              showTimeSlots: false,
-              timeSlots: [],
-              existingBookings: []
-            };
+            // If no API data for this room, keep the existing room as is
+            return existingRoom;
           });
-          
-          // Find rooms that are in the current studio but not in the updated rooms
-          const missingRooms = currentRooms.filter((room: any) => 
-            !updatedRooms.some((updatedRoom: any) => updatedRoom._id === room._id)
-          );
-          
-          // Add the missing rooms to the updated rooms
-          if (missingRooms.length > 0) {
-            console.log("updateStudiosWithRoomStatus - Adding missing rooms:", JSON.stringify(missingRooms));
-            updatedRooms.push(...missingRooms);
-          }
           
           console.log("updateStudiosWithRoomStatus - Updated rooms:", JSON.stringify(updatedRooms));
           return {
