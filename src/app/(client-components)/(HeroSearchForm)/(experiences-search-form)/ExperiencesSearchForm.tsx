@@ -96,11 +96,7 @@ const ExperiencesSearchForm: FC<ExperiencesSearchFormProps> = ({ onSearch, defau
           selectedTime={selectedTime}
           onTimeSelect={handleTimeSelect}
         />
-        <div className="self-center border-r border-slate-200 dark:border-slate-700 h-4"></div>
-        <GuestsInput
-          className="flex-1"
-          hasButtonSubmit={false}
-        />
+        
         
         <div className="flex items-center justify-center px-4 py-3">
           <ButtonSubmit 

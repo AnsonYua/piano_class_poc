@@ -28,6 +28,9 @@ const RoomAvailabilityPage = () => {
   const [section, setSection] = useState<string | null>(null);
   const [district, setDistrict] = useState<string | null>(null);
   const [date, setDate] = useState<string | null>(null);
+  const [time, setTime] = useState<string | null>(null);
+  const [student, setStudent] = useState<string | null>(null);
+  const [type, setType] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -41,12 +44,18 @@ const RoomAvailabilityPage = () => {
         const sectionParam = searchParams.get("section");
         const districtParam = searchParams.get("district");
         const dateParam = searchParams.get("date");
+        const timeParam = searchParams.get("time");
+        const studentParam = searchParams.get("student");
+        const typeParam = searchParams.get("type");
 
         setSection(sectionParam);
         setDistrict(districtParam);
         setDate(dateParam);
+        setTime(timeParam);
+        setStudent(studentParam);
+        setType(typeParam);
 
-        if (!sectionParam || !districtParam || !dateParam) {
+        if (!districtParam || !dateParam) {
           setError("Missing required search parameters");
           setIsLoading(false);
           return;
@@ -71,6 +80,9 @@ const RoomAvailabilityPage = () => {
             section: sectionParam,
             district: districtParam,
             date: dateParam,
+            time: timeParam,
+            student: studentParam,
+            type: typeParam,
           }),
         });
 
@@ -91,21 +103,26 @@ const RoomAvailabilityPage = () => {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-neutral-900">
+    <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-6">Available Piano Rooms</h1>
+        <h1 className="text-3xl font-bold text-center mb-6">立即上課</h1>
         
-        <div className="mb-8 bg-white dark:bg-neutral-800 rounded-lg shadow-md p-4">
-          <HeroSearchFormRect 
-            defaultValues={{
-              section: section || "",
-              district: district || "",
-              date: date || "",
-            }}
-          />
-        </div>
+        <div className="bg-gray-50 dark:bg-neutral-800 rounded-lg shadow-md p-6">
+          <div className="mb-8">
+            <HeroSearchFormRect 
+              defaultValues={{
+                section: section || "",
+                district: district || "",
+                date: date || "",
+                time: time || "",
+                student: student || "",
+                type: type || "",
+              }}
+            />
+          </div>
 
-        <div className="bg-gray-100 dark:bg-neutral-800 rounded-lg p-6 shadow-md">
+          <div className="border-t border-gray-200 dark:border-neutral-700 my-8"></div>
+
           {isLoading ? (
             <div className="text-center py-8">Loading...</div>
           ) : error ? (
@@ -116,7 +133,7 @@ const RoomAvailabilityPage = () => {
                 {rooms.map((room) => (
                   <div
                     key={room._id}
-                    className="bg-white dark:bg-neutral-700 rounded-lg shadow-lg overflow-hidden transition-transform hover:scale-105"
+                    className="bg-gray-50/50 dark:bg-neutral-700 rounded-lg shadow-lg overflow-hidden transition-transform hover:scale-105 border border-gray-200 dark:border-neutral-600"
                   >
                     <div className="p-6">
                       <div className="flex items-center mb-4">
@@ -129,14 +146,14 @@ const RoomAvailabilityPage = () => {
                       </p>
                       
                       <div className="flex items-center mb-4">
-                        <ClockIcon className="h-5 w-5 text-primary-600 mr-2" />
+                        {/*<ClockIcon className="h-5 w-5 text-primary-600 mr-2" />*/}
                         <span className="text-sm text-gray-500 dark:text-gray-400">
-                          {room.roomCount} {room.roomCount === 1 ? 'Room' : 'Rooms'} Available
+                          HKD $300
                         </span>
                       </div>
                       
                       <div className="mt-6">
-                        <ButtonPrimary className="w-full">Book Now</ButtonPrimary>
+                        <ButtonPrimary className="w-full">預約</ButtonPrimary>
                       </div>
                     </div>
                   </div>

@@ -10,7 +10,7 @@ export interface AppRouter {
 export class UserTypeUtils {
   private static readonly TEACHER_ADMIN_PATH = '/teacher-admin';
   private static readonly SHOP_OWNER_ADMIN_PATH = '/shop-owner-admin';
-  private static readonly STUDENT_PATH = '/';
+  private static readonly STUDENT_PATH = '';
 
   public static getUserTypeFromPathname(pathname: string | null | undefined): UserType {
     if (!pathname) {

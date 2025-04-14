@@ -1,8 +1,9 @@
 import React, { FC } from "react";
 import imagePng from "@/images/homePageBanner1.png";
-import HeroSearchForm from "../(client-components)/(HeroSearchForm)/HeroSearchForm";
 import Image from "next/image";
 import ButtonPrimary from "@/shared/ButtonPrimary";
+import AuthWrapper from "../(client-components)/(AuthWrapper)/AuthWrapper";
+import { Route } from "@/routers/types";
 
 export interface SectionHeroProps {
   className?: string;
@@ -21,7 +22,7 @@ const SectionHero: FC<SectionHeroProps> = ({ className = "" }) => {
           <span className="text-base md:text-lg text-neutral-500 dark:text-neutral-400">
           為親子打造全新鋼琴學習體驗，運用標準化教學模組和AI技術，擺脫對固定導師與時間的依賴，讓學琴更自由、高效、無壓力。
           </span>
-          <ButtonPrimary href="/listing-stay-map" sizeClass="px-5 py-4 sm:px-7">
+          <ButtonPrimary href={"/listing-stay-map" as Route<string>} sizeClass="px-5 py-4 sm:px-7">
             立即預約學琴
           </ButtonPrimary>
         </div>
@@ -30,8 +31,8 @@ const SectionHero: FC<SectionHeroProps> = ({ className = "" }) => {
         </div>
       </div>
 
-      <div className="hidden lg:block z-10 mb-12 lg:mb-0 lg:-mt-40 w-full">
-        <HeroSearchForm />
+      <div className="hidden lg:block z-10 mb-12 lg:mb-5 lg:-mt-40 w-full">
+        <AuthWrapper />
       </div>
     </div>
   );
