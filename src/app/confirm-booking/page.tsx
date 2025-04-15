@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { ApiUtils } from "@/utils/ApiUtils";
-import { UserTypeUtils } from "@/utils/UserTypeUtils";
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useBooking } from '@/context/BookingContext';
+import { useAuth } from '@/hooks/useAuth';
+import { UserTypeUtils, UserType } from '@/utils/UserTypeUtils';
+import { ApiUtils } from '@/utils/ApiUtils';
 import ButtonPrimary from "@/shared/ButtonPrimary";
-import { Route } from "@/routers/types";
+import ButtonSecondary from "@/shared/ButtonSecondary";
 
-interface Room {
+interface PianoRoom {
   _id: string;
   name: string;
   district: string;
@@ -16,223 +18,215 @@ interface Room {
   studios: string[];
 }
 
-interface BookingDetails {
-  studentName: string;
-  lessonType: string;
-  date: string;
-  section: string;
-  district: string;
-}
-
 const ConfirmBookingPage = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { bookingParams } = useBooking();
+  const { isAuthenticated, isLoading } = useAuth();
+  const [pianoRooms, setPianoRooms] = useState<PianoRoom[]>([]);
+  const [selectedRoom, setSelectedRoom] = useState<PianoRoom | null>(null);
+  const [isLoadingRooms, setIsLoadingRooms] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
-  const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
-    studentName: searchParams?.get("studentName") || "",
-    lessonType: searchParams?.get("lessonType") || "",
-    date: searchParams?.get("date") || "",
-    section: searchParams?.get("section") || "",
-    district: searchParams?.get("district") || "",
-  });
 
   useEffect(() => {
-    const fetchRooms = async () => {
+    // Redirect to home if not authenticated
+    if (!isLoading && !isAuthenticated) {
+      router.push('/');
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  useEffect(() => {
+    const fetchPianoRooms = async () => {
+      if (!isAuthenticated) return;
+      
       try {
+        setIsLoadingRooms(true);
+        setError(null);
+        
+        // Get user type and token
         const userType = UserTypeUtils.getUserTypeFromPathname(window.location.pathname);
         const token = localStorage.getItem(`${userType}_auth_token`);
-
+        
         if (!token) {
-          throw new Error("No authentication token found");
+          throw new Error('Authentication token not found');
         }
-
-        const response = await fetch(ApiUtils.getApiUrl("api/piano-rooms/availability"), {
-          method: "POST",
+        
+        const response = await fetch(ApiUtils.getApiUrl('api/piano-rooms/availability'), {
+          method: 'POST',
           headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             section: "section1",
-            district: "北角",
-            date: "2025-04-24",
-            type: "",
-          }),
+            district: bookingParams.district || "",
+            date: bookingParams.date || "",
+            type: bookingParams.type || ""
+          })
         });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch room availability");
-        }
-
-        const data = await response.json();
-        setRooms(data);
         
-        // Select the first room by default
+        if (!response.ok) {
+          throw new Error('Failed to fetch piano rooms');
+        }
+        
+        const data = await response.json();
+        setPianoRooms(data);
+        
+        // Select the first room by default if available
         if (data.length > 0) {
           setSelectedRoom(data[0]);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
+        setError('Failed to load available piano rooms. Please try again.');
+        console.error('Error fetching piano rooms:', err);
       } finally {
-        setIsLoading(false);
+        setIsLoadingRooms(false);
       }
     };
-
-    fetchRooms();
-  }, [bookingDetails]);
-
-  const handleRoomSelect = (room: Room) => {
-    setSelectedRoom(room);
-  };
+    
+    fetchPianoRooms();
+  }, [isAuthenticated, bookingParams]);
 
   const handleConfirmBooking = async () => {
+    if (!selectedRoom) {
+      setError('Please select a piano room');
+      return;
+    }
+    
     try {
+      // Get user type and token
       const userType = UserTypeUtils.getUserTypeFromPathname(window.location.pathname);
       const token = localStorage.getItem(`${userType}_auth_token`);
-
-      if (!token || !selectedRoom) {
-        throw new Error("Missing required information");
+      
+      if (!token) {
+        throw new Error('Authentication token not found');
       }
-
-      // TODO: Replace with actual booking confirmation API endpoint
-      const response = await fetch(ApiUtils.getApiUrl("api/bookings/confirm"), {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          roomId: selectedRoom._id,
-          studentName: bookingDetails.studentName,
-          lessonType: bookingDetails.lessonType,
-          date: bookingDetails.date,
-          section: bookingDetails.section,
-          district: bookingDetails.district,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to confirm booking");
-      }
-
-      // Redirect to success page
-      router.push("/booking-success" as Route<string>);
+      
+      // Here you would implement the API call to confirm the booking
+      console.log('Booking confirmed with room:', selectedRoom);
+      console.log('Booking params:', bookingParams);
+      
+      // Redirect to success page or show success message
+      // router.push('/booking-success');
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to confirm booking");
+      setError('Failed to confirm booking. Please try again.');
+      console.error('Error confirming booking:', err);
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center">
-          <div className="w-12 h-12 border-3 border-gray-300 border-t-gray-900 rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-gray-500 text-sm">載入中...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="bg-white p-8 rounded-xl shadow-sm max-w-md w-full text-center">
-          <div className="text-red-500 text-5xl mb-4">⚠️</div>
-          <h2 className="text-xl font-medium mb-2">發生錯誤</h2>
-          <p className="text-gray-500 mb-6">{error}</p>
-          <ButtonPrimary onClick={() => window.location.reload()}>
-            重試
-          </ButtonPrimary>
-        </div>
-      </div>
-    );
+  // If loading or not authenticated, show nothing
+  if (isLoading || !isAuthenticated) {
+    return null;
   }
 
   return (
-    <div className="bg-gray-50 py-12">
-      <div className="max-w-3xl mx-auto px-4">
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="p-8">
-            <h1 className="text-3xl font-medium text-center mb-8">預約確認</h1>
-            
-            <div className="mb-10">
-              <h2 className="text-xl font-medium mb-4">預約詳情</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-500 mb-1">學生姓名</p>
-                    <p className="text-lg">{bookingDetails.studentName}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500 mb-1">課程類型</p>
-                    <p className="text-lg">{bookingDetails.lessonType}</p>
-                  </div>
-                </div>
-                <div>
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-500 mb-1">日期</p>
-                    <p className="text-lg">{bookingDetails.date}</p>
-                  </div>
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-500 mb-1">時段</p>
-                    <p className="text-lg">{bookingDetails.section}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500 mb-1">地區</p>
-                    <p className="text-lg">{bookingDetails.district}</p>
-                  </div>
-                </div>
-              </div>
+    <div className="bg-gray-100 py-12">
+      <div className="container mx-auto px-4 max-w-3xl">
+        <h1 className="text-3xl font-bold mb-8 text-center">確認您的預訂</h1>
+        
+        <div className="bg-white rounded-xl shadow-sm p-8">
+          <h2 className="text-2xl font-semibold mb-6 pb-4 border-b border-gray-200">預訂詳情</h2>
+          
+          <div className="space-y-5">
+            <div className="flex items-center">
+              <span className="font-medium w-32 text-gray-600">地區：</span>
+              <span className="text-gray-800">{bookingParams.district || '未選擇'}</span>
             </div>
-
-            <div className="mb-10">
-              <h2 className="text-xl font-medium mb-4">選擇琴房</h2>
-              <div className="space-y-3">
-                {rooms.map((room) => (
+            
+            <div className="flex items-center">
+              <span className="font-medium w-32 text-gray-600">日期：</span>
+              <span className="text-gray-800">{bookingParams.date || '未選擇'}</span>
+            </div>
+            
+            <div className="flex items-center">
+              <span className="font-medium w-32 text-gray-600">時間：</span>
+              <span className="text-gray-800">{bookingParams.time || '未選擇'}</span>
+            </div>
+            
+            <div className="flex items-center">
+              <span className="font-medium w-32 text-gray-600">學生：</span>
+              <span className="text-gray-800">{bookingParams.student || '未選擇'}</span>
+            </div>
+            
+            <div className="flex items-center">
+              <span className="font-medium w-32 text-gray-600">類型：</span>
+              <span className="text-gray-800">{bookingParams.type || '未選擇'}</span>
+            </div>
+            
+            <div className="flex items-center justify-end mt-4">
+              <span className="text-lg font-medium text-gray-700 mr-2">總價：</span>
+              <span className="text-2xl font-bold text-blue-600">$350</span>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-200 my-8"></div>
+          
+          <div className="mt-8">
+            <h3 className="text-xl font-semibold mb-4">可用琴房</h3>
+            
+            {isLoadingRooms ? (
+              <div className="text-center py-6">
+                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
+                  <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">載入中...</span>
+                </div>
+                <p className="mt-2 text-gray-600">正在載入可用房間...</p>
+              </div>
+            ) : error ? (
+              <div className="bg-red-50 text-red-600 p-4 rounded-md">
+                {error}
+              </div>
+            ) : pianoRooms.length === 0 ? (
+              <div className="bg-yellow-50 text-yellow-700 p-4 rounded-md">
+                根據所選條件，沒有可用的鋼琴房間。
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {pianoRooms.map((room) => (
                   <div 
-                    key={room._id} 
-                    className={`border rounded-xl p-5 transition-all duration-200 cursor-pointer ${
+                    key={room._id}
+                    className={`p-4 border rounded-lg cursor-pointer transition-all ${
                       selectedRoom?._id === room._id 
                         ? 'border-blue-500 bg-blue-50' 
-                        : 'border-gray-200 hover:border-gray-300'
+                        : 'border-gray-200 hover:border-blue-300'
                     }`}
-                    onClick={() => handleRoomSelect(room)}
+                    onClick={() => setSelectedRoom(room)}
                   >
-                    <div className="flex justify-between items-start">
+                    <div className="flex justify-between items-center">
                       <div>
-                        <h3 className="text-lg font-medium">{room.name}</h3>
-                        <p className="text-gray-500 mt-1">{room.address}</p>
+                        <h4 className="font-semibold text-lg">{room.name}</h4>
+                        <p className="text-gray-600">{room.address}</p>
                       </div>
-                      <div className="bg-gray-100 text-gray-700 text-xs font-medium px-2.5 py-1 rounded-full">
-                        {room.roomCount} 間琴房
+                      <div className="flex items-center">
+                        <div className={`h-4 w-4 rounded-full mr-2 ${
+                          selectedRoom?._id === room._id ? 'bg-blue-500' : 'bg-gray-300'
+                        }`}></div>
+                        <span className="text-sm font-medium">
+                          {selectedRoom?._id === room._id ? '已選擇' : '選擇'}
+                        </span>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
-            
-            <div className="border-t border-gray-200 pt-6">
-              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                <div className="w-full md:w-auto">
-                  {selectedRoom && (
-                    <div className="text-center md:text-left">
-                      <p className="text-sm text-gray-500 mb-1">已選擇琴房</p>
-                      <p className="font-medium">{selectedRoom.name}</p>
-                    </div>
-                  )}
-                </div>
-                <ButtonPrimary 
-                  onClick={handleConfirmBooking}
-                  className="w-full md:w-auto"
-                  disabled={!selectedRoom}
-                >
-                  確認預約
-                </ButtonPrimary>
-              </div>
+            )}
+          </div>
+          
+          <div className="border-t border-gray-200 my-8"></div>
+          
+          <div className="mt-10 flex justify-end">
+            <div className="flex space-x-4">
+              <ButtonSecondary
+                onClick={() => router.back()}
+                className="w-32"
+              >
+                返回
+              </ButtonSecondary>
+              <ButtonPrimary
+                onClick={handleConfirmBooking}
+                disabled={!selectedRoom || isLoadingRooms}
+                className="w-32"
+              >
+                結帳
+              </ButtonPrimary>
             </div>
           </div>
         </div>

@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import FooterNav from "@/components/FooterNav";
 import Providers from "./providers";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { BookingProvider } from '@/context/BookingContext';
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -27,13 +28,15 @@ export default function RootLayout({
     <html lang="en" className={poppins.className}>
       <body className="bg-white text-base dark:bg-neutral-900 text-neutral-900 dark:text-neutral-200">
         <AuthProvider>
-          <Providers>
-            <ClientCommons />
-            <SiteHeader />
-            {children}
-            <FooterNav />
-            <Footer />
-          </Providers>
+          <BookingProvider>
+            <Providers>
+              <ClientCommons />
+              <SiteHeader />
+              {children}
+              <FooterNav />
+              <Footer />
+            </Providers>
+          </BookingProvider>
         </AuthProvider>
       </body>
     </html>

@@ -3,6 +3,7 @@
 import React, { FC, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useBooking } from "@/context/BookingContext";
 import LocationInput from "./components/LocationInput";
 import DateInput from "./components/DateInput";
 import TimeInput from "./components/TimeInput";
@@ -30,6 +31,7 @@ const HeroSearchFormRect: FC<HeroSearchFormRectProps> = ({
 }) => {
   const router = useRouter();
   const { isAuthenticated, isLoading, redirectToLogin, onProfileLoaded } = useAuth();
+  const { setBookingParams } = useBooking();
   
   const [district, setDistrict] = useState<string | null>(defaultValues.district || null);
   const [date, setDate] = useState<Date | null>(defaultValues.date ? new Date(defaultValues.date) : null);
@@ -109,6 +111,7 @@ const HeroSearchFormRect: FC<HeroSearchFormRectProps> = ({
           setAvailableTimeSlots([]);
         } else {
           let blockedSlots: string[] = []; // Specify the type of blockedSlots
+          blockedSlots.push("aaa")
           data.data.unAvailableSlots.forEach((slot: any) => {
             let idx: number = parseInt(slot.replace("section", ""), 10); // Corrected line
             blockedSlots.push(timeSlots[idx - 1]);
@@ -203,17 +206,17 @@ const HeroSearchFormRect: FC<HeroSearchFormRectProps> = ({
       return;
     }
     
-    // Build query parameters
-    const params = new URLSearchParams();
+    // Set booking parameters in context
+    setBookingParams({
+      district,
+      date: date ? date.toISOString().split("T")[0] : null,
+      time,
+      student,
+      type,
+    });
     
-    if (district) params.append("district", district);
-    if (date) params.append("date", date.toISOString().split("T")[0]);
-    if (time) params.append("time", time);
-    if (student) params.append("student", student);
-    if (type) params.append("type", type);
-    
-    // Navigate to room availability page with query parameters
-   // router.push(`/room-availability?${params.toString()}`);
+    // Navigate to confirm-booking page
+    router.push('/confirm-booking');
   };
 
   return (
