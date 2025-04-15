@@ -13,6 +13,7 @@ export interface TypeInputProps {
   autoFocus?: boolean;
   defaultValue?: string;
   onChange?: (value: string) => void;
+  onTypeChange?: (value: string) => void;
   selectedStudent?: string | null;
   studentGrade?: string | null;
 }
@@ -25,6 +26,7 @@ const TypeInput: FC<TypeInputProps> = ({
   divHideVerticalLineClass = "left-10 right-0.5",
   defaultValue = "",
   onChange,
+  onTypeChange,
   selectedStudent = null,
   studentGrade = null,
 }) => {
@@ -78,6 +80,9 @@ const TypeInput: FC<TypeInputProps> = ({
     setValue(selectedType);
     if (onChange) {
       onChange(selectedType);
+    }
+    if (onTypeChange) {
+      onTypeChange(selectedType);
     }
     setActivePopover(null);
   };
@@ -135,6 +140,9 @@ const TypeInput: FC<TypeInputProps> = ({
                 setValue("");
                 if (onChange) {
                   onChange("");
+                }
+                if (onTypeChange) {
+                  onTypeChange("");
                 }
               }}
             />

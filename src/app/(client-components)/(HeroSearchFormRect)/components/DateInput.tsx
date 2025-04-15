@@ -123,6 +123,7 @@ export interface DateInputProps {
   autoFocus?: boolean;
   defaultValue?: Date | null;
   onChange?: (date: Date | null) => void;
+  onDateChange?: (date: Date | null) => void;
 }
 
 const DateInput: FC<DateInputProps> = ({
@@ -133,6 +134,7 @@ const DateInput: FC<DateInputProps> = ({
   divHideVerticalLineClass = "left-10 right-0.5",
   defaultValue = null,
   onChange,
+  onDateChange,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { activePopover, setActivePopover } = usePopover();
@@ -158,12 +160,19 @@ const DateInput: FC<DateInputProps> = ({
   }, [autoFocus, setActivePopover, popoverId]);
 
   useEffect(() => {
+    if (onChange) {
+     // onChange(date);
+    }
+  }, [date]);
+
+  useEffect(() => {
     if (defaultValue) {
       setDate(defaultValue);
       localStorage.setItem('selectedDate', defaultValue.toISOString());
     }
   }, [defaultValue]);
 
+  
   useEffect(() => {
     if (eventClickOutsideDiv) {
       document.removeEventListener("click", eventClickOutsideDiv);
@@ -194,6 +203,10 @@ const DateInput: FC<DateInputProps> = ({
     }
     if (onChange) {
       onChange(selectedDate);
+    }
+    // Call the onDateChange callback to reset other form fields
+    if (onDateChange) {
+      onDateChange(selectedDate);
     }
     setActivePopover(null);
   };
@@ -259,6 +272,10 @@ const DateInput: FC<DateInputProps> = ({
                 localStorage.removeItem('selectedDate');
                 if (onChange) {
                   onChange(null);
+                }
+                // Also call onDateChange with null to reset other fields
+                if (onDateChange) {
+                  onDateChange(null);
                 }
               }}
             />

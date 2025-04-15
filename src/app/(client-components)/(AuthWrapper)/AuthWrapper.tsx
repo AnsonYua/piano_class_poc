@@ -14,7 +14,9 @@ export interface AuthWrapperProps {
 
 const AuthWrapper: FC<AuthWrapperProps> = ({ className = "" }) => {
   const { isAuthenticated, isLoading } = useAuth();
-  const userType = UserTypeUtils.getUserTypeFromPathname(window.location.pathname);
+  const userType = typeof window !== "undefined" 
+    ? UserTypeUtils.getUserTypeFromPathname(window.location.pathname) 
+    : null;
   
   // Construct the correct login path based on user type
 

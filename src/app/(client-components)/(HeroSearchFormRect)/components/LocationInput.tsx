@@ -14,6 +14,7 @@ export interface LocationInputProps {
   autoFocus?: boolean;
   defaultValue?: string;
   onChange?: (value: string) => void;
+  onLocationChange?: (value: string) => void;
   enabledDistricts?: string[];
 }
 
@@ -25,6 +26,7 @@ const LocationInput: FC<LocationInputProps> = ({
   divHideVerticalLineClass = "left-10 right-0.5",
   defaultValue = "",
   onChange,
+  onLocationChange,
   enabledDistricts = HONG_KONG_DISTRICTS,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -77,6 +79,9 @@ const LocationInput: FC<LocationInputProps> = ({
     if (onChange) {
       onChange(item);
     }
+    if (onLocationChange) {
+      onLocationChange(item);
+    }
     setActivePopover(null);
   };
 
@@ -91,7 +96,7 @@ const LocationInput: FC<LocationInputProps> = ({
           選擇地區
         </h3>
         <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 px-4 sm:px-8">
-          {filteredDistricts.map((district) => {
+          {HONG_KONG_DISTRICTS.map((district) => {
             const isEnabled = enabledDistricts.includes(district);
             return (
               <span
@@ -147,6 +152,9 @@ const LocationInput: FC<LocationInputProps> = ({
                 setValue("");
                 if (onChange) {
                   onChange("");
+                }
+                if (onLocationChange) {
+                  onLocationChange("");
                 }
               }}
             />

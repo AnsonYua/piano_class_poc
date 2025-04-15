@@ -65,18 +65,18 @@ interface PianoStudio {
   updatedAt: string;
   __v: number;
 }
-
+let tempStudioData:PianoStudio[] = [];
 const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
   // State management
   const [studios, setStudios] = useState<PianoStudio[]>([]);
-  const [apiStudios, setApiStudios] = useState<PianoStudio[]>([]);
+  //const [apiStudios, setApiStudios] = useState<PianoStudio[]>([]);
   const [selectedStudio, setSelectedStudio] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [focusedRoomId, setFocusedRoomId] = useState<string | null>(null);
   const [hasUpdates, setHasUpdates] = useState(false);
-  let shouldUpdateApiStudios = false;
+
 
   // Add a useEffect hook to watch for changes to the studios state
   useEffect(() => {
@@ -91,6 +91,9 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
    */
   const formatDate = (date: Date | null) => {
     if (!date) return "";
+    if (date && typeof date === 'string') {
+      date = new Date(date);
+    }
     // Use local date formatting instead of ISO string to avoid timezone issues
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -192,7 +195,8 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
       });
       console.log("fetchPianoRooms - Processed data:", JSON.stringify(processedData));
       setStudios(processedData);
-      setApiStudios(processedData);
+      //setApiStudios(processedData);
+      tempStudioData = JSON.parse(JSON.stringify(processedData));
       // Only select first studio if explicitly requested
       if (shouldSelectFirst && processedData && processedData.length > 0) {
         console.log("fetchPianoRooms - Selecting first studio:", processedData[0]._id);
@@ -349,11 +353,13 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
         return studio;
       });
       console.log("updateStudiosWithRoomStatus - Updated studios:", JSON.stringify(updatedStudios))
-      setApiStudios(updatedStudios);
+      //(updatedStudios);
+      tempStudioData = JSON.parse(JSON.stringify(updatedStudios));;
       return updatedStudios;
     });
     console.log("updateStudiosWithRoomStatus - Final updated studios:", JSON.stringify(updatedStudios))
-    setApiStudios(updatedStudios);
+    //setApiStudios(updatedStudios);
+    tempStudioData = JSON.parse(JSON.stringify(updatedStudios));
     return updatedStudios;
   };
 
@@ -779,11 +785,11 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
     const updates: any[] = [];
     
     console.log("generateUpdates:", JSON.stringify(studios))
-    console.log("apiStudios:", JSON.stringify(apiStudios))
+    console.log("apiStudios:", JSON.stringify(tempStudioData))
     // Iterate through each studio
     studios.forEach(studio => {
       // Find corresponding studio in apiStudios
-      const apiStudio = apiStudios.find(s => s._id === studio._id);
+      const apiStudio = tempStudioData.find(s => s._id === studio._id);
       if (!apiStudio) return;
 
       // Iterate through each room
@@ -817,7 +823,7 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
           });
           return;
         }
-
+      
         // Compare existingBookings
         updatedBookings?.forEach((booking: BookingData) => {
           const formattedDate = formatDate(booking.date);
@@ -826,6 +832,7 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
           const apiBooking = apiRoom.existingBookings?.find(b => 
             formatDate(b.date) === formattedDate
           );
+
 
           // Compare slots
           booking.slots.forEach(slot => {
@@ -858,6 +865,32 @@ const ShopOwnerRoomsPage: FC<ShopOwnerRoomsPageProps> = () => {
                   status: 'delete'
                 });
               }
+            });
+          }
+        });
+
+
+        apiRoom.existingBookings?.forEach((apiBooking: BookingData) => {
+          if (apiBooking.date && typeof apiBooking.date === 'string') {
+            apiBooking.date = new Date(apiBooking.date);
+          }
+          const missingBooking = updatedBookings?.find((b: BookingData) => 
+            formatDate(b.date) === formatDate(apiBooking.date)
+          );
+          if(!missingBooking){
+            apiRoom.existingBookings = apiRoom.existingBookings?.filter((b: BookingData) => 
+              formatDate(b.date) === formatDate(apiBooking.date)
+            );
+            console.log("missingBooking:", apiRoom.existingBookings[0])
+            apiRoom.existingBookings[0].slots.forEach((slot: BookingSlotsDetails) => {
+               updates.push({
+                  studioId: room._id,
+                  roomId: studio._id,
+                  date: formatDate(apiRoom.existingBookings[0].date),
+                  timeSlotSection: slot.timeSlotSection,
+                  sectionDescription: "-",
+                  status: 'delete'
+                });
             });
           }
         });
