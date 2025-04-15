@@ -78,6 +78,7 @@ export class UserTypeUtils {
   public static handleLogout(userType: UserType, router: AppRouter): void {
     this.removeAuthToken(userType);
     router.push(this.getLogoutRedirectPath(userType));
+    window.location.reload();
   }
 
   /**
