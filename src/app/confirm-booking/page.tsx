@@ -8,6 +8,7 @@ import { UserTypeUtils, UserType } from '@/utils/UserTypeUtils';
 import { ApiUtils } from '@/utils/ApiUtils';
 import ButtonPrimary from "@/shared/ButtonPrimary";
 import ButtonSecondary from "@/shared/ButtonSecondary";
+import { TimeSlots } from '@/utils/timeSlots';
 
 interface PianoRoom {
   _id: string;
@@ -21,11 +22,12 @@ interface PianoRoom {
 const ConfirmBookingPage = () => {
   const router = useRouter();
   const { bookingParams } = useBooking();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { userProfile, isAuthenticated, isLoading } = useAuth();
   const [pianoRooms, setPianoRooms] = useState<PianoRoom[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<PianoRoom | null>(null);
   const [isLoadingRooms, setIsLoadingRooms] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     // Redirect to home if not authenticated
@@ -49,7 +51,8 @@ const ConfirmBookingPage = () => {
         if (!token) {
           throw new Error('Authentication token not found');
         }
-        
+
+        const timeSlot = TimeSlots.getTimeSlots(bookingParams.time || "");
         const response = await fetch(ApiUtils.getApiUrl('api/piano-rooms/availability'), {
           method: 'POST',
           headers: {
@@ -57,7 +60,7 @@ const ConfirmBookingPage = () => {
             'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
-            section: "section1",
+            section:timeSlot,
             district: bookingParams.district || "",
             date: bookingParams.date || "",
             type: bookingParams.type || ""
@@ -88,28 +91,62 @@ const ConfirmBookingPage = () => {
 
   const handleConfirmBooking = async () => {
     if (!selectedRoom) {
-      setError('Please select a piano room');
+      setError('Please select a piano room ');
       return;
     }
-    
+    setIsSubmitting(true);
+    console.log('selectedRoom', JSON.stringify(selectedRoom));
+    console.log('studentId', JSON.stringify(userProfile.user.student));
     try {
       // Get user type and token
       const userType = UserTypeUtils.getUserTypeFromPathname(window.location.pathname);
       const token = localStorage.getItem(`${userType}_auth_token`);
-      
+      const studentId = userProfile.user.student.filter((student:any) => student.name !== bookingParams.student)[0]._id;
+      let studentIdx = -1;
+      for (let i = 0; i < userProfile.user.student.length; i++) {
+        if (userProfile.user.student[i].name === bookingParams.student) {
+          studentIdx = i;
+          break;
+        }
+      }
+     
       if (!token) {
         throw new Error('Authentication token not found');
       }
+      const timeSlot = TimeSlots.getTimeSlots(bookingParams.time || "");
+      const response = await fetch(ApiUtils.getApiUrl('api/studio-status/students/make-booking'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          updates:[
+            {
+              studioId: selectedRoom.studios[0],
+              roomId: selectedRoom._id,
+              date: bookingParams.date,
+              timeSlotSection: timeSlot,
+              sectionDescription: bookingParams.type,
+              status: 'requested',
+              remark: 'student_booking',
+              studentId: studentIdx
+            }
+          ]
+        })
+      });
       
-      // Here you would implement the API call to confirm the booking
-      console.log('Booking confirmed with room:', selectedRoom);
-      console.log('Booking params:', bookingParams);
-      
-      // Redirect to success page or show success message
-      // router.push('/booking-success');
+      if (response.ok) {
+        router.push('/booking-success');
+      } else {
+        const errData = await response.json();
+        setError(errData?.message || 'Failed to confirm booking. Please try again.');
+      }
     } catch (err) {
       setError('Failed to confirm booking. Please try again.');
       console.error('Error confirming booking:', err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -222,10 +259,10 @@ const ConfirmBookingPage = () => {
               </ButtonSecondary>
               <ButtonPrimary
                 onClick={handleConfirmBooking}
-                disabled={!selectedRoom || isLoadingRooms}
+                disabled={!selectedRoom || isLoadingRooms || isSubmitting}
                 className="w-32"
               >
-                結帳
+                {isSubmitting ? '處理中...' : '結帳'}
               </ButtonPrimary>
             </div>
           </div>

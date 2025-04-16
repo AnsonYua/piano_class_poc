@@ -165,6 +165,13 @@ const DateInput: FC<DateInputProps> = ({
     }
   }, [date]);
 
+  const formatDateToUTC8 = (date: Date) => {
+    // Clone the date to avoid mutating the original
+    const utc8Date = new Date(date.getTime() + 8 * 60 * 60 * 1000);
+    // Get the date in ISO format, but only the date part
+    return utc8Date.toISOString().split("T")[0];
+  };
+  
   useEffect(() => {
     if (defaultValue) {
       setDate(defaultValue);
@@ -195,18 +202,19 @@ const DateInput: FC<DateInputProps> = ({
   };
 
   const handleDateChange = (selectedDate: Date | null) => {
-    setDate(selectedDate);
-    if (selectedDate) {
-      localStorage.setItem('selectedDate', selectedDate.toISOString());
+    const hkDate = selectedDate ? toHKTime(selectedDate) : null;
+    setDate(hkDate);
+    if (hkDate) {
+      localStorage.setItem('selectedDate', hkDate.toISOString());
     } else {
       localStorage.removeItem('selectedDate');
     }
     if (onChange) {
-      onChange(selectedDate);
+      onChange(hkDate);
     }
     // Call the onDateChange callback to reset other form fields
     if (onDateChange) {
-      onDateChange(selectedDate);
+      onDateChange(hkDate);
     }
     setActivePopover(null);
   };
@@ -231,6 +239,14 @@ const DateInput: FC<DateInputProps> = ({
     nextMonth.setMonth(nextMonth.getMonth() + 1);
     return nextMonth;
   };
+  function toHKTime(date: Date) {
+    // Get UTC+8 offset in minutes
+    const HK_OFFSET = 8 * 60;
+    // Get current timezone offset in minutes
+    const localOffset = date.getTimezoneOffset();
+    // Calculate the difference and apply it
+    return new Date(date.getTime() + (HK_OFFSET + localOffset) * 60 * 1000);
+  }
 
   const formatDate = (date: Date | null) => {
     if (!date) return "";

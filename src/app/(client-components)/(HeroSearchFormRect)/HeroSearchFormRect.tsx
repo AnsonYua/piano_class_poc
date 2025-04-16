@@ -79,7 +79,7 @@ const HeroSearchFormRect: FC<HeroSearchFormRectProps> = ({
     const requestData = {
       type: _type,
       district: _district,
-      date: _date.toISOString().split("T")[0], // Convert Date to string
+      date: _date ? formatDateToUTC8(_date) : null,
     };
 
     try {
@@ -197,6 +197,12 @@ const HeroSearchFormRect: FC<HeroSearchFormRectProps> = ({
     // Reset other fields if needed
   };
 
+  const formatDateToUTC8 = (date: Date) => {
+    // Clone the date to avoid mutating the original
+    const utc8Date = new Date(date.getTime() + 8 * 60 * 60 * 1000);
+    // Get the date in ISO format, but only the date part
+    return utc8Date.toISOString().split("T")[0];
+  };
   const handleSearch = () => {
     if (isLoading) return;
     
@@ -209,7 +215,7 @@ const HeroSearchFormRect: FC<HeroSearchFormRectProps> = ({
     // Set booking parameters in context
     setBookingParams({
       district,
-      date: date ? date.toISOString().split("T")[0] : null,
+      date: date ? formatDateToUTC8(date) : null,
       time,
       student,
       type,
