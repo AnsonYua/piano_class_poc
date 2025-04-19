@@ -12,7 +12,7 @@ const PageDashboard: FC<PageDashboardProps> = ({}) => {
     // Check if teacher is logged in
     const token = localStorage.getItem("teacher_auth_token");
     if (!token) {
-      router.push("/teacher-admin/login");
+      router.push("/teacher-admin/login" as any);
     }
   }, [router]);
 

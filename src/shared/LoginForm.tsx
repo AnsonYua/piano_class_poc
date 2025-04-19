@@ -13,6 +13,7 @@ export interface LoginFormProps {
   forgotPasswordPath: Route;
   signupPath: Route;
   showSignupLink?: boolean;
+  userType?: string;
 }
 
 const LoginForm: FC<LoginFormProps> = ({
@@ -22,6 +23,7 @@ const LoginForm: FC<LoginFormProps> = ({
   forgotPasswordPath,
   signupPath,
   showSignupLink = true,
+  userType,
 }) => {
   const [contactNumber, setContactNumber] = useState("");
   const [password, setPassword] = useState("");
@@ -89,31 +91,46 @@ const LoginForm: FC<LoginFormProps> = ({
             
             <label className="block">
               <span className="text-neutral-800 dark:text-neutral-200">
-                電話號碼
+                {userType === 'hostAdmin' ? '用戶名稱' : '電話號碼'}
               </span>
-              <div className="flex">
-                <div className="flex items-center px-3 mt-1 border border-neutral-300 dark:border-neutral-700 rounded-l-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
-                  +852
-                </div>
+              {userType === 'hostAdmin' ? (
                 <Input
-                  type="tel"
-                  name={`phone-${Date.now()}`}
-                  placeholder="請輸入聯絡電話"
-                  className="mt-1 rounded-l-none"
+                  type="text"
+                  name={`phone-freetext-${Date.now()}`}
+                  placeholder="請輸入帳號/用戶名"
+                  className="mt-1"
                   value={contactNumber}
                   onChange={(e) => setContactNumber(e.target.value)}
-                  autoComplete="tel"
+                  autoComplete="username"
                   disabled={isLoading}
                 />
-              </div>
+              ) : (
+                <div className="flex">
+                  <div className="flex items-center px-3 mt-1 border border-neutral-300 dark:border-neutral-700 rounded-l-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
+                    +852
+                  </div>
+                  <Input
+                    type="tel"
+                    name={`phone-${Date.now()}`}
+                    placeholder="請輸入聯絡電話"
+                    className="mt-1 rounded-l-none"
+                    value={contactNumber}
+                    onChange={(e) => setContactNumber(e.target.value)}
+                    autoComplete="tel"
+                    disabled={isLoading}
+                  />
+                </div>
+              )}
             </label>
             
             <label className="block">
               <span className="flex justify-between items-center text-neutral-800 dark:text-neutral-200">
                 密碼
-                <Link href={forgotPasswordPath} className="text-sm underline font-medium">
-                  忘記密碼
-                </Link>
+                {userType !== 'hostAdmin' && (
+                  <Link href={forgotPasswordPath} className="text-sm underline font-medium">
+                    忘記密碼
+                  </Link>
+                )}
               </span>
               <div className="relative">
                 <Input
@@ -158,7 +175,7 @@ const LoginForm: FC<LoginFormProps> = ({
             </ButtonPrimary>
           </form>
 
-          {showSignupLink && (
+          {showSignupLink && userType !== 'hostAdmin' && (
             <span className="block text-center text-neutral-700 dark:text-neutral-300">
               沒有帳號? {` `}
               <Link href={signupPath} className="font-semibold underline">

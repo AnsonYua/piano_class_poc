@@ -1,6 +1,6 @@
 import { Route } from "@/routers/types";
 
-export type UserType = 'teacher' | 'shopOwner' | 'student';
+export type UserType = 'teacher' | 'shopOwner' | 'student' | 'hostAdmin';
 
 // Define a type for the router that matches Next.js AppRouter
 export interface AppRouter {
@@ -10,6 +10,7 @@ export interface AppRouter {
 export class UserTypeUtils {
   private static readonly TEACHER_ADMIN_PATH = '/teacher-admin';
   private static readonly SHOP_OWNER_ADMIN_PATH = '/shop-owner-admin';
+  private static readonly HOST_ADMIN_PATH = '/host-admin';
   private static readonly STUDENT_PATH = '';
 
   public static getUserTypeFromPathname(pathname: string | null | undefined): UserType {
@@ -23,6 +24,10 @@ export class UserTypeUtils {
 
     if (pathname.startsWith(this.SHOP_OWNER_ADMIN_PATH)) {
       return 'shopOwner';
+    }
+
+    if (pathname.startsWith(this.HOST_ADMIN_PATH)) {
+      return 'hostAdmin';
     }
 
     return 'student';
@@ -39,6 +44,8 @@ export class UserTypeUtils {
         return this.TEACHER_ADMIN_PATH as Route<string>;
       case 'shopOwner':
         return this.SHOP_OWNER_ADMIN_PATH as Route<string>;
+      case 'hostAdmin':
+        return this.HOST_ADMIN_PATH as Route<string>;
       case 'student':
       default:
         return this.STUDENT_PATH as Route<string>;
@@ -64,6 +71,8 @@ export class UserTypeUtils {
         return this.TEACHER_ADMIN_PATH;
       case 'shopOwner':
         return this.SHOP_OWNER_ADMIN_PATH;
+      case 'hostAdmin':
+        return this.HOST_ADMIN_PATH;
       case 'student':
       default:
         return this.STUDENT_PATH;

@@ -59,6 +59,23 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
     }
   };
 
+
+    // Get account URL based on user type
+    const getMyReservationsUrl = (type: UserType | null): Route<string> => {
+      // If type is provided, use it; otherwise use the current path to determine user type
+      const userTypeToUse = type || UserTypeUtils.getUserTypeFromPathname(pathname);
+      
+      switch (userTypeToUse) {
+        case 'teacher':
+          return '/teacher-admin/my-reservations/recent' as Route<string>;
+        case 'shopOwner':
+          return '/shop-owner-admin/my-reservations/recent' as Route<string>;
+        case 'student':
+        default:
+          return '/my-reservations/recent' as Route<string>;
+      }
+    };
+
   // Check auth on pathname change
   useEffect(() => {
     checkAuth(pathname);
@@ -86,7 +103,11 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
           <Logo className="w-24 self-center" />
           <div className="hidden lg:block self-center h-10 border-l border-neutral-300 dark:border-neutral-500"></div>
           <div className="hidden lg:flex ">
+          {userType === 'hostAdmin' ? (
+                  <>
+                  </>):(
             <DropdownTravelers />
+                  )}
           </div>
         </div>
 
@@ -97,39 +118,46 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
         <div className="hidden md:flex flex-shrink-0 justify-end flex-1 lg:flex-none text-neutral-700 dark:text-neutral-100">
        
           <div className="hidden lg:flex space-x-1">
-            
             {showAuthUI && (
               <>
-                <div className="TemplatesDropdown hidden lg:block self-center">
-                  <Link 
-                    href={"/my-reservations/recent" as Route<string>} 
-                    className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                      isMyReservationsPage 
-                        ? "text-primary-6000 underline" 
-                        : "text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100"
-                    }`}
-                  >
-                    我的預約
-                  </Link>
-                </div>
-                <div className="TemplatesDropdown hidden lg:block self-center">
-                  <Link 
-                    href={getAccountUrl(userType)} 
-                    className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                      isAccountPage 
-                        ? "text-primary-6000 underline" 
-                        : "text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100"
-                    }`}
-                  >
-                    帳號設定
-                  </Link>
-                </div>
-
-                <NotifyDropdown />
-                <AvatarDropdown />
+                {/* Host Admin: Only show notification and profile button */}
+                {userType === 'hostAdmin' ? (
+                  <>
+                   {/* <NotifyDropdown />*/}
+                    <AvatarDropdown />
+                  </>
+                ) : (
+                  <>
+                    <div className="TemplatesDropdown hidden lg:block self-center">
+                      <Link 
+                        href={getMyReservationsUrl(userType)} 
+                        className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                          isMyReservationsPage 
+                            ? "text-primary-6000 underline" 
+                            : "text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100"
+                        }`}
+                      >
+                        我的預約
+                      </Link>
+                    </div>
+                    <div className="TemplatesDropdown hidden lg:block self-center">
+                      <Link 
+                        href={getAccountUrl(userType)} 
+                        className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                          isAccountPage 
+                            ? "text-primary-6000 underline" 
+                            : "text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100"
+                        }`}
+                      >
+                        帳號設定
+                      </Link>
+                    </div>
+                    {/* <NotifyDropdown />*/}
+                    <AvatarDropdown />
+                  </>
+                )}
               </>
             )}
-            
             {!showAuthUI && !isLoginPage && !isSignupPage && !isVerifyOtpPage && (
               <ButtonPrimary href={getLoginUrl(userType)} 
                 sizeClass="px-5 py-4 sm:px-7"
@@ -142,7 +170,7 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
           <div className="flex space-x-2 lg:hidden">
             {showAuthUI && (
               <>
-                <NotifyDropdown />
+                {/* <NotifyDropdown />*/}
                 <AvatarDropdown />
               </>
             )}

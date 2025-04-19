@@ -62,6 +62,19 @@ export function Nav() {
             href: "/teacher-admin/account-password" as any,
           },
         ];
+      case 'hostAdmin':
+          return [
+            {
+              id: "account-approval",
+              name: "帳號批核",
+              href: "/host-admin/account-approval" as any,
+            },
+            {
+              id: "class-approval",
+              name: "課堂取消批核",
+              href: "/host-admin/class-approval" as any,
+            },
+          ];
       default:
         return [];
     }

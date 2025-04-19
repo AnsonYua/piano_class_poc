@@ -35,6 +35,7 @@ export function useAuth() {
       const studentToken = localStorage.getItem('student_auth_token');
       const teacherToken = localStorage.getItem('teacher_auth_token');
       const shopOwnerToken = localStorage.getItem('shop_owner_auth_token');
+      const hostAdminToken = localStorage.getItem('host_admin_auth_token');
       
       // Determine user type and token
       let userType = 'student';
@@ -46,6 +47,9 @@ export function useAuth() {
       } else if (shopOwnerToken) {
         userType = 'shop_owner';
         token = shopOwnerToken;
+      } else if (hostAdminToken) {
+        userType = 'host_admin';
+        token = hostAdminToken;
       }
       
       if (!token) {
@@ -89,7 +93,7 @@ export function useAuth() {
   }, [profileCallback]);
 
   const redirectToLogin = () => {
-    router.push("/login");
+    router.push("/login" as any); // or as RouteImpl<"/login">
   };
 
   return {

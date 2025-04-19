@@ -11,13 +11,15 @@ export class ApiUtils {
   }
 
   /**
-   * Get the full URL for a user profile endpoint
+ * Get the full URL for a user profile endpoint
    * @param userType The type of user (teacher, shopOwner, student)
    * @returns The full URL for the user profile endpoint
    */
   public static getUserProfileUrl(userType: string): string {
     if (userType === 'shopOwner') {
         userType = 'shop_admin';
+    }else if (userType === 'hostAdmin') {
+        userType = 'host_admin';
     }
     return `${this.getBaseUrl()}/api/user/${userType}/getProfile`;
   }
@@ -32,6 +34,8 @@ export class ApiUtils {
     if (userType) {
         if (userType === 'shopOwner') {
             userType = 'shop_admin';
+        }else if (userType === 'hostAdmin') {
+            userType = 'host_admin';
         }
         return `${this.getBaseUrl()}/api/auth/${userType}/${endpoint}`;
     }
@@ -47,5 +51,50 @@ export class ApiUtils {
     // Remove leading slash if present to avoid double slashes
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
     return `${this.getBaseUrl()}/${cleanEndpoint}`;
+  }
+
+  /**
+   * Make an authenticated API request
+   * @param url The full URL to make the request to
+   * @param method The HTTP method (GET, POST, PUT, DELETE)
+   * @param data Optional data to send with the request
+   * @param userType The type of user (teacher, shopOwner, student, hostAdmin)
+   * @returns The response from the API
+   */
+  public static async makeAuthenticatedRequest(
+    url: string, 
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH', 
+    data: any = null, 
+    userType: string
+  ): Promise<any> {
+    try {
+      const token = localStorage.getItem(`${userType}_auth_token`);
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+
+      const options: RequestInit = {
+        method,
+        headers,
+        credentials: 'include',
+      };
+
+      if (data && method !== 'GET') {
+        options.body = JSON.stringify(data);
+      }
+
+      const response = await fetch(url, options);
+      const result = await response.json();
+
+      return result;
+    } catch (error) {
+      console.error('API request error:', error);
+      throw error;
+    }
   }
 } 

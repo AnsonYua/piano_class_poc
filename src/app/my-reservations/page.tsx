@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Route } from '@/routers/types';
+import LoadingScreen from '@/components/LoadingScreen';
 
 const MyReservationsPage = () => {
   const router = useRouter();
@@ -12,7 +13,8 @@ const MyReservationsPage = () => {
     router.push('/my-reservations/recent' as Route);
   }, [router]);
 
-  return null;
+  return <LoadingScreen />;
+
 };
 
 export default MyReservationsPage; 
