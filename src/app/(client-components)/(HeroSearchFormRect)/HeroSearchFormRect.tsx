@@ -135,6 +135,7 @@ const HeroSearchFormRect: FC<HeroSearchFormRectProps> = ({
       if (profile) {
         console.log("Profile loaded in HeroSearchFormRect:", JSON.stringify(profile));
         console.log("Set students:", JSON.stringify(profile.user.student));
+         //alert(JSON.stringify(profile));
         //alert(JSON.stringify(profile));
         // Extract students from profile if available
         if (profile && profile.user.student) {

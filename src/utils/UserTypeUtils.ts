@@ -61,6 +61,15 @@ export class UserTypeUtils {
   }
 
   /**
+   * Gets the auth token for the specified user type
+   * @param userType The type of user
+   * @returns The auth token or null if not found
+   */
+  public static getAuthToken(userType: UserType): string | null {
+    return localStorage.getItem(`${userType}_auth_token`);
+  }
+
+  /**
    * Gets the redirect path after logout for the specified user type
    * @param userType The type of user
    * @returns The path to redirect to after logout

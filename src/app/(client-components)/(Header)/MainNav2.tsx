@@ -24,7 +24,10 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
   const isSignupPage = pathname.endsWith("/signup");
   const isVerifyOtpPage = pathname.endsWith("/verify-otp");
   const isMyReservationsPage = pathname.endsWith("/my-reservations");
-  const isAccountPage = pathname.includes("/account");
+  //const isAccountPage = pathname.includes("/account");
+
+  const isAccountPage = pathname.includes("/account") && !pathname.includes("/account-rooms");
+  const isMyPage = pathname.includes("/account-rooms")||pathname.includes("/my-reservations/recent");
   
   const { isAuthenticated, isLoading, userType, checkAuth } = useAuth();
   
@@ -69,7 +72,7 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
         case 'teacher':
           return '/teacher-admin/my-reservations/recent' as Route<string>;
         case 'shopOwner':
-          return '/shop-owner-admin/my-reservations/recent' as Route<string>;
+          return '/shop-owner-admin/account-rooms' as Route<string>;
         case 'student':
         default:
           return '/my-reservations/recent' as Route<string>;
@@ -132,7 +135,7 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
                       <Link 
                         href={getMyReservationsUrl(userType)} 
                         className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                          isMyReservationsPage 
+                          isMyReservationsPage || isMyPage
                             ? "text-primary-6000 underline" 
                             : "text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-neutral-100"
                         }`}

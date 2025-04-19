@@ -3,13 +3,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ApiUtils } from "@/utils/ApiUtils";
+import { usePathname } from "next/navigation";
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userProfile, setUserProfile] = useState<any>(null);
   const router = useRouter();
-  
+  const pathname = usePathname();
+
   // Callback function to be called when profile is loaded
   const [profileCallback, setProfileCallback] = useState<((profile: any) => void) | null>(null);
 
@@ -40,7 +42,8 @@ export function useAuth() {
       // Determine user type and token
       let userType = 'student';
       let token = studentToken;
-      
+  
+      /*
       if (teacherToken) {
         userType = 'teacher';
         token = teacherToken;
@@ -50,14 +53,28 @@ export function useAuth() {
       } else if (hostAdminToken) {
         userType = 'host_admin';
         token = hostAdminToken;
-      }
+      }*/
       
+            
+      if(pathname?.includes("/teacher-admin")) {;
+        userType = 'teacher';
+        token = teacherToken;
+      }
+      if(pathname?.includes("/shop-owner-admin")) {;
+        userType = 'shop_owner';
+        token = shopOwnerToken;
+      }
+      if(pathname?.includes("/host-admin")) {;
+        userType = 'host_admin';
+        token = hostAdminToken;
+      }
+
       if (!token) {
         setIsAuthenticated(false);
         setIsLoading(false);
         return;
       }
-      
+
       try {
         // Call your custom getProfile endpoint
         const response = await fetch(ApiUtils.getUserProfileUrl(userType), {
@@ -90,7 +107,7 @@ export function useAuth() {
     };
 
     checkAuth();
-  }, [profileCallback]);
+  }, [profileCallback, pathname]);
 
   const redirectToLogin = () => {
     router.push("/login" as any); // or as RouteImpl<"/login">
@@ -103,4 +120,4 @@ export function useAuth() {
     redirectToLogin,
     onProfileLoaded
   };
-} 
+}

@@ -32,23 +32,31 @@ export function Nav() {
           },
         ];
       case 'shopOwner':
-        return [
-          {
-            id: "account",
-            name: "帳戶資料",
-            href: "/shop-owner-admin/account" as any,
-          },
-          {
-            id: "account-rooms",
-            name: "琴室資料",
-            href: "/shop-owner-admin/account-rooms" as any,
-          },
-          {
-            id: "account-password",
-            name: "密碼修改",
-            href: "/shop-owner-admin/account-password" as any,
-          },
-        ];
+        // get current path
+        const currentPath = pathname;
+        if(currentPath?.includes("/account-rooms")){
+          return [
+            {
+              id: "account-rooms",
+              name: "琴室資料",
+              href: "/shop-owner-admin/account-rooms" as any,
+            }
+          ];
+        }else{
+          return [
+            {
+              id: "account",
+              name: "帳戶資料",
+              href: "/shop-owner-admin/account" as any,
+              },
+            {
+              id: "account-password",
+              name: "密碼修改",
+              href: "/shop-owner-admin/account-password" as any,
+            },
+          ];
+        }
+
       case 'teacher':
         return [
           {
