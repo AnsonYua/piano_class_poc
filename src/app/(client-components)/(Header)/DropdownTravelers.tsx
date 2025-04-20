@@ -18,7 +18,7 @@ const categories: CategoryItem[] = [
   {
     name: "家長或同學",
     description: "尋找適合的鋼琴課程和導師",
-    href: "",
+    href: "/",
     icon: StudentIcon,
   },
   {
