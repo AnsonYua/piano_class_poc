@@ -66,7 +66,10 @@ export class UserTypeUtils {
    * @returns The auth token or null if not found
    */
   public static getAuthToken(userType: UserType): string | null {
-    return localStorage.getItem(`${userType}_auth_token`);
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem(`${userType}_auth_token`);
+    }
+    return null;
   }
 
   /**

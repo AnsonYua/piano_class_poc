@@ -224,7 +224,7 @@ const HostAdminClassApprovalPage = () => {
                         {/* 日期 / 時段 in one column, two lines */}
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
                           <div>{req.date ? new Date(req.date).toLocaleDateString() : '-'}</div>
-                          <div className="text-xs text-neutral-400 dark:text-neutral-500">{TimeSlots.slotToTime(req.timeSlotSection)}</div>
+                          <div className="text-xs text-neutral-400 dark:text-neutral-500">{TimeSlots.slotToDisplay(TimeSlots.slotToTime(req.timeSlotSection))}</div>
                         </td>
                         {/*
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">

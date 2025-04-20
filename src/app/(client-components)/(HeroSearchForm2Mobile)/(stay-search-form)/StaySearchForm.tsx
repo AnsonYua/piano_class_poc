@@ -7,12 +7,13 @@ import GuestsInput from "../GuestsInput";
 import LocationInput from "../LocationInput";
 import DatesRangeInput from "../DatesRangeInput";
 import TimeSlotInput from "./TimeSlotInput";
+import StudentDropdown from "../StudentDropdown";
 
 const StaySearchForm = () => {
   //
   const [fieldNameShow, setFieldNameShow] = useState<
-    "location" | "dates" | "guests" | "time" | ""
-  >("location");
+    "location" | "dates" | "guests" | "time" | "student" | ""
+  >("student");
   //
   const [locationInputTo, setLocationInputTo] = useState("");
   const [guestInput, setGuestInput] = useState<GuestsObject>({
@@ -22,14 +23,14 @@ const StaySearchForm = () => {
   });
   const [selectedServiceType, setSelectedServiceType] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  
+  const [selectedStudent, setSelectedStudent] = useState<string>("");
   // Get tomorrow's date (current date + 1 day)
   const getTomorrowDate = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow;
   };
-  
+  //
   const [selectedDate, setSelectedDate] = useState<Date | null>(getTomorrowDate());
   //
 
@@ -77,7 +78,7 @@ const StaySearchForm = () => {
             className={`w-full flex justify-between text-sm font-medium p-4`}
             onClick={() => setFieldNameShow("location")}
           >
-            <span className="text-neutral-400">Where</span>
+            <span className="text-neutral-400">上課地點</span>
             <span>{locationInputTo || "Location"}</span>
           </button>
         ) : (
@@ -109,7 +110,7 @@ const StaySearchForm = () => {
             className={`w-full flex justify-between text-sm font-medium p-4  `}
             onClick={() => setFieldNameShow("dates")}
           >
-            <span className="text-neutral-400">When</span>
+            <span className="text-neutral-400">日期</span>
             <span>
               {selectedDate
                 ? formatDateToJapanese(selectedDate)
@@ -192,9 +193,42 @@ const StaySearchForm = () => {
     );
   };
 
+  const renderInputStudent = () => {
+    const isActive = fieldNameShow === "student";
+    return (
+      <div
+        className={`w-full bg-white dark:bg-neutral-800 overflow-hidden ${
+          isActive
+            ? "rounded-2xl shadow-lg"
+            : "rounded-xl shadow-[0px_2px_2px_0px_rgba(0,0,0,0.25)]"
+        }`}
+      >
+        {!isActive ? (
+          <button
+            className={`w-full flex justify-between text-sm font-medium p-4`}
+            onClick={() => setFieldNameShow("student")}
+          >
+            <span className="text-neutral-400">學生</span>
+            <span>{selectedStudent || "請選擇學生"}</span>
+          </button>
+        ) : (
+          <StudentDropdown
+            value={selectedStudent}
+            onChange={(val) => {
+              setSelectedStudent(val);
+              setFieldNameShow("");
+            }}
+          />
+        )}
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className="w-full space-y-5">
+        {/*  */}
+        {renderInputStudent()}
         {/*  */}
         {renderInputLocation()}
         {/*  */}

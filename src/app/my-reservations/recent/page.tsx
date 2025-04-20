@@ -170,7 +170,7 @@ const RecentReservationsPage = () => {
                         <div className="flex flex-col gap-y-1 text-gray-700 dark:text-gray-300 text-sm">
                           <div>
                             <span className="font-medium">預約日期：</span>{reservation.bookingDate}
-                            <span className="ml-4 font-medium"></span>{TimeSlots.slotToTime(reservation.time)}
+                            <span className="ml-4 font-medium"></span>{TimeSlots.slotToDisplay(TimeSlots.slotToTime(reservation.time))}
                           </div>
                           <div>
                             <span className="font-medium">上課類別：</span>{reservation.sectionDescription}

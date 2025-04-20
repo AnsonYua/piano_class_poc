@@ -356,7 +356,7 @@ const TeacherRecentReservationsPage = () => {
                       <div className="flex flex-col gap-y-1 text-gray-700 dark:text-gray-300 text-sm">
                         <div>
                           <span className="font-medium">預約日期：</span>{reservation.bookingDate}
-                          <span className="ml-4 font-medium"></span>{reservation.time && reservation.time.startsWith('section') ? TimeSlots.slotToTime(reservation.time) : reservation.time}
+                          <span className="ml-4 font-medium"></span>{reservation.time && reservation.time.startsWith('section') ? TimeSlots.slotToDisplay(TimeSlots.slotToTime(reservation.time)) : TimeSlots.slotToDisplay(reservation.time)}
                         </div>
                         <div>
                           <span className="font-medium">上課類別：</span>{reservation.sectionDescription || '一般課堂'}
