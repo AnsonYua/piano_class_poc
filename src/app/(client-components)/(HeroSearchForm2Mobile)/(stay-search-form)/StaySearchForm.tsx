@@ -5,13 +5,26 @@ import React, { useState, useEffect } from "react";
 import { GuestsObject } from "../../type";
 import GuestsInput from "../GuestsInput";
 import LocationInput from "../LocationInput";
-import DatesRangeInput from "../DatesRangeInput";
+import StayDatesRangeInput from "../DatesRangeInput";
 import TimeSlotInput from "./TimeSlotInput";
 import StudentDropdown from "../StudentDropdown";
 import { ApiUtils } from "@/utils/ApiUtils";
 import { UserTypeUtils } from "@/utils/UserTypeUtils";
 
-const StaySearchForm = () => {
+interface StaySearchFormProps {
+  onSubmit?: (fields: {
+    student: string;
+    type: string | null;
+    location: string;
+    date: Date | null;
+    time: string | null;
+    guestInput: GuestsObject;
+    studentGrade: string | null;
+  }) => void;
+  submitTrigger?: number;
+}
+
+const StaySearchForm: React.FC<StaySearchFormProps> = ({ onSubmit, submitTrigger }) => {
   //
   const [fieldNameShow, setFieldNameShow] = useState<
     "location" | "dates" | "guests" | "time" | "student" | ""
@@ -38,6 +51,10 @@ const StaySearchForm = () => {
   //
   const [profile, setProfile] = useState<any>(null);
   const [students, setStudents] = useState<Array<{ id: string; name: string }>>([]);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState<boolean>(false);
+  const [slotsError, setSlotsError] = useState<string | null>(null);
+  const [showTimeSlotError, setShowTimeSlotError] = useState(false);
 
   // Format date to Japanese format (YYYY年M月D日)
   const formatDateToJapanese = (date: Date | null) => {
@@ -48,12 +65,22 @@ const StaySearchForm = () => {
     return `${year}年${month}月${day}日`;
   };
 
+  // Utility to format Date as yyyy-mm-dd
+  const formatDateYYYYMMDD = (date: Date | null) => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
   };
 
   const handleCloseDatePicker = () => {
-    setFieldNameShow("guests");
+    //setFieldNameShow("guests");
+    setFieldNameShow("time")
   };
 
   const handleServiceTypeChange = (data: GuestsObject) => {
@@ -78,21 +105,22 @@ const StaySearchForm = () => {
       setSelectedServiceType(null);
       return;
     }
-    // Find the selected student from the dropdown's student list (assume StudentDropdown exposes a way to get student info)
-    // For this example, we'll use a temporary workaround: if selectedStudent includes "grade", extract it; otherwise null
-    // In real code, StudentDropdown should provide the full student object or a lookup
-    // Example: setStudentGrade(students.find(s => s.id === selectedStudent)?.grade ?? null);
-    // --- Placeholder logic below ---
-    if (selectedStudent.includes("高")) {
-      setStudentGrade("高");
-    } else if (selectedStudent.includes("低")) {
-      setStudentGrade("低");
+    // Find the selected student in the original profile data
+    let studentObj = null;
+    if (profile && profile.user && Array.isArray(profile.user.student)) {
+      studentObj = profile.user.student.find((std: any, idx: number) => {
+        // Match by id (with index suffix) or by name
+        const mappedId = (std._id || std.id || std.name || String(idx)) + '-' + idx;
+        return selectedStudent === mappedId || selectedStudent === std.name;
+      });
+    }
+    if (studentObj && studentObj.grade) {
+      setStudentGrade(studentObj.grade);
     } else {
       setStudentGrade(null);
     }
-    // Reset selected service type when student changes
     setSelectedServiceType(null);
-  }, [selectedStudent]);
+  }, [selectedStudent, profile]);
 
   useEffect(() => {
     const fetchProfileAndStudents = async () => {
@@ -137,6 +165,97 @@ const StaySearchForm = () => {
     };
     fetchProfileAndStudents();
   }, []);
+
+  useEffect(() => {
+    const fetchAvailableSlots = async () => {
+      if (!selectedStudent || !selectedServiceType || !locationInputTo || !selectedDate) {
+        setAvailableTimeSlots([]);
+        return;
+      }
+      setLoadingSlots(true);
+      setSlotsError(null);
+      try {
+        const userType = UserTypeUtils.getUserTypeFromPathname(window.location.pathname);
+        const token = localStorage.getItem(`${userType}_auth_token`);
+        if (!token) {
+          setAvailableTimeSlots([]);
+          setLoadingSlots(false);
+          return;
+        }
+        //alert(selectedDate);
+        const requestData = {
+          type: selectedServiceType,
+          district: locationInputTo,
+          date: selectedDate
+            ? formatDateYYYYMMDD(selectedDate)
+            : null,
+        };
+        const response = await fetch(ApiUtils.getApiUrl("api/piano-rooms/availabilitySlot"), {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestData),
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        // The time slots must match those generated in TimeSlotInput
+        const timeSlots: string[] = [];
+        let currentTime = new Date();
+        currentTime.setHours(9, 30, 0);
+        while (currentTime.getHours() < 22 || (currentTime.getHours() === 22 && currentTime.getMinutes() === 0)) {
+          const hours = currentTime.getHours();
+          const minutes = currentTime.getMinutes();
+          const period = hours >= 12 ? "PM" : "AM";
+          const displayHours = hours % 12 || 12;
+          timeSlots.push(`${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`);
+          currentTime.setMinutes(currentTime.getMinutes() + 30);
+        }
+        let available = [...timeSlots];
+        if (data && data.data) {
+          if (data.data.isDateAvailable === false) {
+            available = [];
+          } else if (Array.isArray(data.data.unAvailableSlots)) {
+            // Remove unavailable slots
+            const blocked = data.data.unAvailableSlots.map((slot: any) => {
+              let idx = parseInt(slot.replace("section", ""), 10);
+              return timeSlots[idx - 1];
+            });
+            available = timeSlots.filter((slot) => !blocked.includes(slot));
+          }
+        } else {
+          available = [];
+        }
+        console.log("available", available);
+        console.log("available 2", JSON.stringify(data.data));
+        setAvailableTimeSlots(available);
+        setLoadingSlots(false);
+      } catch (err: any) {
+        setAvailableTimeSlots([]);
+        setSlotsError(err?.message || 'Error fetching time slots');
+        setLoadingSlots(false);
+      }
+    };
+    fetchAvailableSlots();
+  }, [selectedStudent, selectedServiceType, locationInputTo, selectedDate]);
+
+  useEffect(() => {
+    if (submitTrigger && onSubmit) {
+      onSubmit({
+        student: selectedStudent,
+        type: selectedServiceType,
+        location: locationInputTo,
+        date: selectedDate,
+        time: selectedTime,
+        guestInput,
+        studentGrade,
+      });
+    }
+    // eslint-disable-next-line
+  }, [submitTrigger]);
 
   const renderInputLocation = () => {
     const isActive = fieldNameShow === "location";
@@ -193,7 +312,7 @@ const StaySearchForm = () => {
             </span>
           </button>
         ) : (
-          <DatesRangeInput 
+          <StayDatesRangeInput 
             onDateChange={handleDateChange} 
             onClose={handleCloseDatePicker}
           />
@@ -250,20 +369,35 @@ const StaySearchForm = () => {
         }`}
       >
         {!isActive ? (
-          <button
-            className={`w-full flex justify-between text-sm font-medium p-4`}
-            onClick={() => setFieldNameShow("time")}
-          >
-            <span className="text-neutral-400">上課時間</span>
-            <span>{selectedTime || "選擇時間"}</span>
-          </button>
+          <>
+            <button
+              className={`w-full flex justify-between text-sm font-medium p-4`}
+              onClick={() => {
+                if (!locationInputTo || !selectedServiceType || !selectedStudent || !selectedDate) {
+                  setShowTimeSlotError(true);
+                  return;
+                }
+                setFieldNameShow("time");
+                setShowTimeSlotError(false);
+              }}
+            >
+              <span className="text-neutral-400">上課時間</span>
+              <span>{selectedTime || "選擇時間"}</span>
+            </button>
+            {showTimeSlotError && (
+              <div className="text-red-500 text-sm mb-3 pl-4">請先選擇地點、服務類型、學生與日期</div>
+            )}
+          </>
         ) : (
-          <TimeSlotInput 
+          <TimeSlotInput
             selectedTime={selectedTime}
             onTimeSelect={handleTimeSelect}
             onClose={() => {
               setFieldNameShow("");
             }}
+            availableTimeSlots={availableTimeSlots}
+            loadingSlots={loadingSlots}
+            slotsError={slotsError}
           />
         )}
       </div>

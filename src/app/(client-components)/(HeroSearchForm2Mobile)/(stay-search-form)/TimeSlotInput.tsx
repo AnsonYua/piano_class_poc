@@ -7,6 +7,9 @@ interface TimeSlotInputProps {
   onTimeSelect?: (time: string) => void;
   onClose?: () => void;
   selectedTime?: string | null;
+  availableTimeSlots?: string[];
+  loadingSlots?: boolean;
+  slotsError?: string | null;
 }
 
 const TimeSlotInput: FC<TimeSlotInputProps> = ({
@@ -14,6 +17,9 @@ const TimeSlotInput: FC<TimeSlotInputProps> = ({
   onTimeSelect,
   onClose,
   selectedTime: propSelectedTime,
+  availableTimeSlots = [],
+  loadingSlots = false,
+  slotsError = null,
 }) => {
   const [selectedTime, setSelectedTime] = useState<string | null>(propSelectedTime || null);
 
@@ -38,13 +44,11 @@ const TimeSlotInput: FC<TimeSlotInputProps> = ({
         `${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`
       );
       
-      currentTime.setMinutes(currentTime.getMinutes() + 45);
+      currentTime.setMinutes(currentTime.getMinutes() + 30);
     }
     
     return slots;
   };
-
-  const timeSlots = generateTimeSlots();
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
@@ -62,26 +66,39 @@ const TimeSlotInput: FC<TimeSlotInputProps> = ({
         <span className="block font-semibold text-xl sm:text-2xl">
           選擇上課時間
         </span>
+        {slotsError && (
+          <div className="text-red-500 text-sm mb-3 text-center">{slotsError}</div>
+        )}
       </div>
       <div className="p-5">
-        <div className="grid grid-cols-4 gap-2">
-          {timeSlots.map((time) => (
-            <button
-              key={time}
-              className={`p-2 text-sm rounded-lg transition-colors ${
-                selectedTime === time
-                  ? "bg-primary-500 text-white"
-                  : "bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-              }`}
-              onClick={() => handleTimeSelect(time)}
-            >
-              {time}
-            </button>
-          ))}
-        </div>
+        {loadingSlots ? (
+          <div className="text-center text-neutral-400">載入中...</div>
+        ) : !slotsError ? (
+          <div className="grid grid-cols-4 gap-2">
+            {generateTimeSlots().map((time) => {
+              const isAvailable = availableTimeSlots.includes(time);
+              return (
+                <button
+                  key={time}
+                  className={`p-2 text-sm rounded-lg transition-colors ${
+                    selectedTime === time && isAvailable
+                      ? "bg-primary-500 text-white"
+                      : isAvailable
+                        ? "bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                        : "bg-neutral-200 dark:bg-neutral-700 text-neutral-400 cursor-not-allowed"
+                  }`}
+                  onClick={() => isAvailable && handleTimeSelect(time)}
+                  disabled={!isAvailable}
+                >
+                  {time}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
       </div>
     </div>
   );
 };
 
-export default TimeSlotInput; 
+export default TimeSlotInput;

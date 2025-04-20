@@ -125,6 +125,7 @@ const HeroSearchForm2RealEstateMobile = () => {
                         </Tab.Panels>
                       </div>
                       <div className="px-4 py-3 bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-700 flex justify-between">
+                        {/*
                         <button
                           type="button"
                           className="underline font-semibold flex-shrink-0"
@@ -135,6 +136,7 @@ const HeroSearchForm2RealEstateMobile = () => {
                         >
                           Clear all
                         </button>
+                        */}
                         <ButtonSubmit
                           onClick={() => {
                             closeModal();

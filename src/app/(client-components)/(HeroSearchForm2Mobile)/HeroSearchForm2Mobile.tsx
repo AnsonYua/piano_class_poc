@@ -10,15 +10,27 @@ import StaySearchForm from "./(stay-search-form)/StaySearchForm";
 import CarsSearchForm from "./(car-search-form)/CarsSearchForm";
 import FlightSearchForm from "./(flight-search-form)/FlightSearchForm";
 import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { useBooking } from "@/context/BookingContext";
 
 const HeroSearchForm2Mobile = () => {
   const [showModal, setShowModal] = useState(false);
   const { isAuthenticated, isLoading, redirectToLogin } = useAuth();
+  const router = useRouter();
+  const { setBookingParams } = useBooking();
 
   // FOR RESET ALL DATA WHEN CLICK CLEAR BUTTON
   const [showDialog, setShowDialog] = useState(false);
   let [, , resetIsShowingDialog] = useTimeoutFn(() => setShowDialog(true), 1);
   //
+  const [submitTrigger, setSubmitTrigger] = useState(0);
+
+  // Format date to UTC+8 string (yyyy-mm-dd)
+  const formatDateToUTC8 = (date: Date) => {
+    const utc8Date = new Date(date.getTime() + 8 * 60 * 60 * 1000);
+    return utc8Date.toISOString().split("T")[0];
+  };
+
   function closeModal() {
     setShowModal(false);
   }
@@ -35,6 +47,22 @@ const HeroSearchForm2Mobile = () => {
     // User is logged in, show the modal
     setShowModal(true);
   }
+
+  const handleFormSubmit = (fields: any) => {
+    if (isLoading) return;
+    if (!isAuthenticated) {
+      redirectToLogin();
+      return;
+    }
+    setBookingParams({
+      district: fields.location,
+      date: fields.date ? formatDateToUTC8(fields.date) : null,
+      time: fields.time,
+      student: fields.student,
+      type: fields.type,
+    });
+    router.push("/confirm-booking");
+  };
 
   const renderButtonOpenModal = () => {
     return (
@@ -126,7 +154,7 @@ const HeroSearchForm2Mobile = () => {
                         <Tab.Panels className="flex-1 overflow-y-auto hiddenScrollbar py-4">
                           <Tab.Panel>
                             <div className="transition-opacity animate-[myblur_0.4s_ease-in-out]">
-                              <StaySearchForm />
+                              <StaySearchForm onSubmit={handleFormSubmit} submitTrigger={submitTrigger} />
                             </div>
                           </Tab.Panel>
                           {/*
@@ -157,10 +185,11 @@ const HeroSearchForm2Mobile = () => {
                             resetIsShowingDialog();
                           }}
                         >
-                          Clear all
+                          
                         </button>
                         <ButtonSubmit
                           onClick={() => {
+                            setSubmitTrigger((prev) => prev + 1);
                             closeModal();
                           }}
                         />
