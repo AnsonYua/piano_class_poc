@@ -24,6 +24,7 @@ const HeroSearchForm2Mobile = () => {
   let [, , resetIsShowingDialog] = useTimeoutFn(() => setShowDialog(true), 1);
   //
   const [submitTrigger, setSubmitTrigger] = useState(0);
+  const [pendingSubmit, setPendingSubmit] = useState(false);
 
   // Format date to UTC+8 string (yyyy-mm-dd)
   const formatDateToUTC8 = (date: Date) => {
@@ -54,13 +55,16 @@ const HeroSearchForm2Mobile = () => {
       redirectToLogin();
       return;
     }
+    if (!pendingSubmit) return; // Only submit if triggered by ButtonSubmit
     setBookingParams({
       district: fields.location,
       date: fields.date ? formatDateToUTC8(fields.date) : null,
-      time: fields.time,
+      time: fields.time.replace("AM", "").replace("PM", "").replace(" ", ""),
       student: fields.student,
       type: fields.type,
     });
+    setPendingSubmit(false); // Reset pending state
+    closeModal(); // Close modal after successful submit
     router.push("/confirm-booking");
   };
 
@@ -189,8 +193,8 @@ const HeroSearchForm2Mobile = () => {
                         </button>
                         <ButtonSubmit
                           onClick={() => {
+                            setPendingSubmit(true);
                             setSubmitTrigger((prev) => prev + 1);
-                            closeModal();
                           }}
                         />
                       </div>

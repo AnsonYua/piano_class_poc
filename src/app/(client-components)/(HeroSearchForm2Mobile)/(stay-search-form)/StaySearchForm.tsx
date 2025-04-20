@@ -244,8 +244,9 @@ const StaySearchForm: React.FC<StaySearchFormProps> = ({ onSubmit, submitTrigger
 
   useEffect(() => {
     if (submitTrigger && onSubmit) {
+      const studentId = selectedStudent.split("-")[1];
       onSubmit({
-        student: selectedStudent,
+        student: students[studentId].name,
         type: selectedServiceType,
         location: locationInputTo,
         date: selectedDate,
