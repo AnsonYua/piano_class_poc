@@ -156,49 +156,49 @@ const ConfirmBookingPage = () => {
   }
 
   return (
-    <div className="bg-gray-100 py-12">
-      <div className="container mx-auto px-4 max-w-3xl">
-        <h1 className="text-3xl font-bold mb-8 text-center">確認您的預訂</h1>
+    <div className="bg-gray-100 py-4 md:py-12">
+      <div className="container mx-auto px-3 md:px-4 max-w-3xl">
+        <h1 className="hidden md:block text-2xl md:text-3xl font-bold mb-5 md:mb-8 text-center">確認您的預訂</h1>
         
-        <div className="bg-white rounded-xl shadow-sm p-8">
-          <h2 className="text-2xl font-semibold mb-6 pb-4 border-b border-gray-200">預訂詳情</h2>
+        <div className="bg-white rounded-xl shadow-sm p-4 md:p-8">
+          <h2 className="text-lg md:text-2xl font-semibold mb-4 md:mb-6 pb-2 md:pb-4 border-b border-gray-200">預訂詳情</h2>
           
-          <div className="space-y-5">
-            <div className="flex items-center">
-              <span className="font-medium w-32 text-gray-600">地區：</span>
-              <span className="text-gray-800">{bookingParams.district || '未選擇'}</span>
+          <div className="space-y-3 md:space-y-5 text-base md:text-base">
+            <div className="flex flex-wrap items-center">
+              <span className="font-medium w-28 md:w-32 text-gray-600 truncate">地區：</span>
+              <span className="text-gray-800 break-all flex-1">{bookingParams.district || '未選擇'}</span>
             </div>
             
-            <div className="flex items-center">
-              <span className="font-medium w-32 text-gray-600">日期：</span>
-              <span className="text-gray-800">{bookingParams.date || '未選擇'}</span>
+            <div className="flex flex-wrap items-center">
+              <span className="font-medium w-28 md:w-32 text-gray-600 truncate">日期：</span>
+              <span className="text-gray-800 break-all flex-1">{bookingParams.date || '未選擇'}</span>
             </div>
             
-            <div className="flex items-center">
-              <span className="font-medium w-32 text-gray-600">時間：</span>
-              <span className="text-gray-800">{bookingParams.time || '未選擇'}</span>
+            <div className="flex flex-wrap items-center">
+              <span className="font-medium w-28 md:w-32 text-gray-600 truncate">時間：</span>
+              <span className="text-gray-800 break-all flex-1">{bookingParams.time || '未選擇'}</span>
             </div>
             
-            <div className="flex items-center">
-              <span className="font-medium w-32 text-gray-600">學生：</span>
-              <span className="text-gray-800">{bookingParams.student || '未選擇'}</span>
+            <div className="flex flex-wrap items-center">
+              <span className="font-medium w-28 md:w-32 text-gray-600 truncate">學生：</span>
+              <span className="text-gray-800 break-all flex-1">{bookingParams.student || '未選擇'}</span>
             </div>
             
-            <div className="flex items-center">
-              <span className="font-medium w-32 text-gray-600">類型：</span>
-              <span className="text-gray-800">{bookingParams.type || '未選擇'}</span>
+            <div className="flex flex-wrap items-center">
+              <span className="font-medium w-28 md:w-32 text-gray-600 truncate">類型：</span>
+              <span className="text-gray-800 break-all flex-1">{bookingParams.type || '未選擇'}</span>
             </div>
             
-            <div className="flex items-center justify-end mt-4">
-              <span className="text-lg font-medium text-gray-700 mr-2">總價：</span>
-              <span className="text-2xl font-bold text-blue-600">$350</span>
+            <div className="flex items-center justify-end mt-3 md:mt-4">
+              <span className="text-lg md:text-lg font-medium text-gray-700 mr-2">總價：</span>
+              <span className="text-xl md:text-2xl font-bold text-blue-600">$350</span>
             </div>
           </div>
           
-          <div className="border-t border-gray-200 my-8"></div>
+          <div className="border-t border-gray-200 my-5 md:my-8"></div>
           
-          <div className="mt-8">
-            <h3 className="text-xl font-semibold mb-4">可用琴房</h3>
+          <div className="mt-5 md:mt-8">
+            <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">可用琴房</h3>
             
             {isLoadingRooms ? (
               <div className="text-center py-6">
@@ -229,14 +229,14 @@ const ConfirmBookingPage = () => {
                   >
                     <div className="flex justify-between items-center">
                       <div>
-                        <h4 className="font-semibold text-lg">{room.name}</h4>
-                        <p className="text-gray-600">{room.address}</p>
+                        <h4 className="font-semibold text-sm md:text-lg">{room.name}</h4>
+                        <p className="text-gray-600 text-xs md:text-base">{room.address}</p>
                       </div>
                       <div className="flex items-center">
                         <div className={`h-4 w-4 rounded-full mr-2 ${
                           selectedRoom?._id === room._id ? 'bg-blue-500' : 'bg-gray-300'
                         }`}></div>
-                        <span className="text-sm font-medium">
+                        <span className="text-xs md:text-sm font-medium">
                           {selectedRoom?._id === room._id ? '已選擇' : '選擇'}
                         </span>
                       </div>
@@ -247,7 +247,7 @@ const ConfirmBookingPage = () => {
             )}
           </div>
           
-          <div className="border-t border-gray-200 my-8"></div>
+          <div className="border-t border-gray-200 my-5 md:my-8"></div>
           
           <div className="mt-10 flex justify-end">
             <div className="flex space-x-4">

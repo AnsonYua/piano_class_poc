@@ -212,8 +212,6 @@ const HeroSearchFormRect: FC<HeroSearchFormRectProps> = ({
       redirectToLogin();
       return;
     }
-    alert(time);
-    alert(student);
     // Set booking parameters in context
     setBookingParams({
       district,

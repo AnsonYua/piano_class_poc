@@ -51,7 +51,7 @@ const NAV: NavItem[] = [
   },
   {
     name: "我的",
-    link: "/account",
+    link: "/my-reservations",
     icon: HomeIcon,
   },
   {
@@ -113,8 +113,18 @@ const FooterNav = () => {
     WIN_PREV_POSITION = currentScrollPos;
   };
 
+  const isActionMapping = (item: NavItem)=>{
+    const pathname = usePathname();
+    if(pathname?.includes("account") && item.name === "設定"){
+      return true;
+    }else if(pathname?.includes("my-reservations") && item.name === "我的"){
+      return true;
+    }
+    return false;
+  }
+
   const renderItem = (item: NavItem, index: number) => {
-    const isActive = pathname === item.link;
+    const isActive = isActionMapping(item);
 
     return item.link ? (
       <Link
