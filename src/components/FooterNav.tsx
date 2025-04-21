@@ -13,6 +13,8 @@ import MenuBar from "@/shared/MenuBar";
 import isInViewport from "@/utils/isInViewport";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { UserTypeUtils } from "@/utils/UserTypeUtils";
+import { useRouter } from "next/navigation";
 
 let WIN_PREV_POSITION = 0;
 if (typeof window !== "undefined") {
@@ -68,6 +70,7 @@ const FooterNav = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -126,29 +129,59 @@ const FooterNav = () => {
         return true;
     }else if(pathname == "/" && item.name === "主頁"){
       return true;
+    }else if(pathname?.includes("/room-availability") && item.name === "主頁"){
+      return true;
     }
     return false;
   }
 
   const renderItem = (item: NavItem, index: number) => {
     const isActive = isActionMapping(item);
+    // Custom click handler for "我的"
+    const handleClick = (e: React.MouseEvent) => {
+      if (item.name === "我的") {
+        // Determine user type from path (or default to student)
+        const pathname = usePathname();
+        const userType = UserTypeUtils.getUserTypeFromPathname(pathname);
+        const token = UserTypeUtils.getAuthToken(userType);
+        /*
+        if (!token) {
+          e.preventDefault();
+          router.push("/login" );
+          return;
+        }*/
+      }
+    };
 
-    return item.link ? (
-      <Link
-        key={index}
-        href={item.link}
-        className={`flex flex-col items-center justify-between text-neutral-500 dark:text-neutral-300/90 ${
-          isActive ? "text-neutral-900 dark:text-neutral-100" : ""
-        }`}
-      >
-        <item.icon className={`w-6 h-6 ${isActive ? "text-red-600" : ""}`} />
-        <span
-          className={`text-[11px] leading-none mt-1 ${
-            isActive ? "text-red-600" : ""
+    const getUrl = (item: NavItem) => {
+      if (item.name === "我的"  || item.name === "設定") {
+        const pathname = usePathname();
+        const userType = UserTypeUtils.getUserTypeFromPathname(pathname);
+        const token = UserTypeUtils.getAuthToken(userType);
+        if (!token) {
+          return "/login";
+        }
+      }
+      return item.link;
+    };
+
+    const url = getUrl(item);
+    return url ? (
+      <Link key={index} href={url} legacyBehavior>
+        <a
+          className={`flex flex-col items-center justify-between text-neutral-500 dark:text-neutral-300/90 ${
+            isActive ? "text-neutral-900 dark:text-neutral-100" : ""
           }`}
         >
-          {item.name}
-        </span>
+          <item.icon className={`w-6 h-6 ${isActive ? "text-red-600" : ""}`} />
+          <span
+            className={`text-[11px] leading-none mt-1 ${
+              isActive ? "text-red-600" : ""
+            }`}
+          >
+            {item.name}
+          </span>
+        </a>
       </Link>
     ) : (
       <div

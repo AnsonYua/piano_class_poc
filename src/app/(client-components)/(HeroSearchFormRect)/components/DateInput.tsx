@@ -306,7 +306,7 @@ const DateInput: FC<DateInputProps> = ({
       )}
 
       {showPopover && (
-        <div className="absolute left-0 z-50 mt-3 top-full w-[90vw] sm:w-auto">
+        <div className="absolute left-1/2 -translate-x-1/2 z-50 mt-3 top-full w-auto max-w-[95vw] sm:left-0 sm:translate-x-0 sm:w-auto">
           <div className="overflow-hidden rounded-none shadow-lg ring-1 ring-black ring-opacity-5 bg-white dark:bg-neutral-800 p-4">
             <div className="flex flex-row">
               <DatePicker

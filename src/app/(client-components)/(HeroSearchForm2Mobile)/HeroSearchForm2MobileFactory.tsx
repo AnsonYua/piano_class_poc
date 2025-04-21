@@ -55,6 +55,9 @@ const HeroSearchForm2MobileFactory = () => {
   if (pathname && pathname.endsWith( "/confirm-booking")){
     return <CommonTopBar title="確認預約" className="nc-LoginTopBar" />;
   }
+  if (pathname && pathname.endsWith( "/room-availability")){
+    return <CommonTopBar title="" className="nc-LoginTopBar" />;
+  }
 
   if (PAGES_REAL_ESTATE.includes(pathname as PathName)) {
     return <HeroSearchForm2RealEstateMobile />;
