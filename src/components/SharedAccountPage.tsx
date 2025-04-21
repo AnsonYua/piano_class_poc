@@ -17,16 +17,16 @@ const SharedAccountPage: FC<SharedAccountPageProps> = ({ userType }) => {
   const currentUserType = userType || UserTypeUtils.getUserTypeFromPathname(pathname);
   
   return (
-    <div className="nc-AccountPage max-w-sm mx-auto bg-white rounded-lg shadow-sm p-6">
+    <div className="nc-AccountPage max-w-full sm:max-w-sm mx-auto bg-white rounded-lg shadow-sm p-3 sm:p-6">
       {/* HEADING */}
-      <h2 className="text-3xl font-semibold text-center mb-4">帳號資料</h2>
-      <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-6"></div>
+      <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-4">帳號資料</h2>
+      <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-4 sm:mb-6"></div>
       
-      <div className="space-y-4">
-        <div className="flex flex-col items-center mb-6">
+      <div className="space-y-3 sm:space-y-4">
+        <div className="flex flex-col items-center mb-4 sm:mb-6">
           {/* Avatar section */}
           <div className="relative rounded-full overflow-hidden flex">
-            <Avatar sizeClass="w-32 h-32" />
+            <Avatar sizeClass="w-24 h-24 sm:w-32 sm:h-32" />
             <input
               type="file"
               className="absolute inset-0 opacity-0 cursor-pointer"
@@ -34,7 +34,7 @@ const SharedAccountPage: FC<SharedAccountPageProps> = ({ userType }) => {
           </div>
         </div>
         
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <div>
             <Label>稱呼</Label>
             <Input className="mt-1.5" defaultValue="Eden Tuan" />
@@ -42,7 +42,7 @@ const SharedAccountPage: FC<SharedAccountPageProps> = ({ userType }) => {
           
           {/* Additional fields can be added here based on user type */}
           
-          <ButtonPrimary className="w-full">更新資料</ButtonPrimary>
+          <ButtonPrimary className="w-full text-sm sm:text-base py-2 sm:py-3">更新資料</ButtonPrimary>
         </div>
       </div>
     </div>

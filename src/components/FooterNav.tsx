@@ -115,9 +115,16 @@ const FooterNav = () => {
 
   const isActionMapping = (item: NavItem)=>{
     const pathname = usePathname();
+
     if(pathname?.includes("account") && item.name === "設定"){
       return true;
     }else if(pathname?.includes("my-reservations") && item.name === "我的"){
+      return true;
+    }else if(pathname?.includes("/login") && item.name === "我的"){
+      return true;
+    }else if(pathname?.includes("/signup") && item.name === "我的"){
+        return true;
+    }else if(pathname == "/" && item.name === "主頁"){
       return true;
     }
     return false;

@@ -47,17 +47,17 @@ const AddStudentPage: FC<AddStudentPageProps> = () => {
   
   return (
     <div className="nc-AddStudentPage min-h-screen bg-gray-50 dark:bg-neutral-900">
-      <div className="container max-w-2xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-8">
+      <div className="container max-w-full sm:max-w-2xl mx-auto py-4 px-2 sm:py-6 sm:px-6 lg:px-8">
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-4 sm:p-8">
           {/* HEADING */}
-          <h2 className="text-3xl font-semibold text-center mb-6">新增同學</h2>
-          <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-8"></div>
+          <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-4 sm:mb-6">新增同學</h2>
+          <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-4 sm:mb-8"></div>
           
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div>
               <Label>同學姓名</Label>
               <Input 
-                className="mt-1.5" 
+                className="mt-1.5 text-sm sm:text-base" 
                 name="name"
                 value={student.name}
                 onChange={handleChange}
@@ -69,7 +69,7 @@ const AddStudentPage: FC<AddStudentPageProps> = () => {
             <div>
               <Label>同學年齡</Label>
               <Input 
-                className="mt-1.5" 
+                className="mt-1.5 text-sm sm:text-base" 
                 type="number"
                 name="age"
                 value={student.age}
@@ -82,19 +82,19 @@ const AddStudentPage: FC<AddStudentPageProps> = () => {
             </div>
             
             {error && (
-              <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-lg text-center">
+              <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-lg text-center text-sm sm:text-base">
                 {error}
               </div>
             )}
             
-            <div className="pt-2 flex space-x-4">
-              <ButtonPrimary type="submit" className="flex-1" disabled={isLoading}>
+            <div className="pt-2 flex flex-col sm:flex-row gap-2 sm:space-x-4">
+              <ButtonPrimary type="submit" className="flex-1 text-sm sm:text-base py-2 sm:py-3" disabled={isLoading}>
                 {isLoading ? "處理中..." : "新增同學"}
               </ButtonPrimary>
               <button
                 type="button"
                 onClick={() => router.push("/account-students")}
-                className="flex-1 py-3 px-4 border border-gray-300 dark:border-neutral-600 rounded-xl text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-gray-50 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="flex-1 py-2 sm:py-3 px-4 border border-gray-300 dark:border-neutral-600 rounded-xl text-sm sm:text-base font-medium text-neutral-700 dark:text-neutral-300 hover:bg-gray-50 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                 disabled={isLoading}
               >
                 取消

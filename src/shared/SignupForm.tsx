@@ -142,70 +142,67 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
   };
 
   return (
-    <div className="space-y-8">
-      <form className="space-y-8" onSubmit={handleSubmit}>
+    <div className="space-y-6 sm:space-y-8">
+      <form className="space-y-6 sm:space-y-8" onSubmit={handleSubmit}>
         {errorMessage && (
           <div 
             ref={errorRef}
-            className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-lg text-center"
+            className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-lg text-center text-sm sm:text-base"
           >
             {errorMessage}
           </div>
         )}
-        
         {/* 帳戶資料 Section */}
-        <section className="space-y-6">
-          <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">帳戶資料</h3>
-          <div className="space-y-4">
+        <section className="space-y-4 sm:space-y-6">
+          <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-100">帳戶資料</h3>
+          <div className="space-y-3 sm:space-y-4">
             <label className="block">
               <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">稱呼</span>
               <Input
+                className="mt-1 text-sm sm:text-base"
                 type="text"
-                placeholder="請輸入您的稱呼"
-                className="w-full"
+                placeholder="請輸入稱呼"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 disabled={isLoading}
               />
             </label>
             <label className="block">
-              <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">聯絡號碼(可收到WhatsApp的號碼)</span>
+              <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">電話號碼</span>
               <div className="flex">
-                <div className="flex items-center px-3 border border-neutral-300 dark:border-neutral-700 rounded-l-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
+                <div className="flex items-center px-3 mt-1 border border-neutral-300 dark:border-neutral-700 rounded-l-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 text-sm sm:text-base">
                   +852
                 </div>
                 <Input
+                  className="mt-1 rounded-l-none text-sm sm:text-base"
                   type="tel"
-                  placeholder="請輸入電話號碼"
-                  className="w-full rounded-l-none"
+                  placeholder="請輸入聯絡電話"
                   value={email}
-                  autoComplete="new-phone"
-                  name="random-phone-field"
-                  pattern="[5698][0-9]{7}"
-                  maxLength={8}
-                  onChange={(e) => {
-                    const onlyNumbers = e.target.value.replace(/\D/g, "");
-                    setEmail(onlyNumbers);
-                  }}
+                  onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
                 />
               </div>
             </label>
+          </div>
+        </section>
+        {/* 密碼 Section */}
+        <section className="space-y-4 sm:space-y-6">
+          <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-100">密碼設定</h3>
+          <div className="space-y-3 sm:space-y-4">
             <label className="block">
-              <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">帳戶密碼</span>
+              <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">密碼</span>
               <div className="relative">
                 <Input
+                  className="mt-1 pr-10 text-sm sm:text-base"
                   type={showPassword ? "text" : "password"}
                   placeholder="請輸入密碼"
-                  className="w-full pr-10"
                   value={password}
-                  autoComplete="new-password"
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 mt-1"
                   onClick={togglePasswordVisibility}
                   disabled={isLoading}
                 >
@@ -223,20 +220,19 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
               </div>
             </label>
             <label className="block">
-              <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">再次確認密碼</span>
+              <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">確認密碼</span>
               <div className="relative">
                 <Input
+                  className="mt-1 pr-10 text-sm sm:text-base"
                   type={showConfirmPassword ? "text" : "password"}
-                  placeholder="再次輸入密碼"
-                  className="w-full pr-10"
+                  placeholder="請再次輸入密碼"
                   value={confirmPassword}
-                  autoComplete="new-password"
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   disabled={isLoading}
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 mt-1"
                   onClick={toggleConfirmPasswordVisibility}
                   disabled={isLoading}
                 >
@@ -255,58 +251,36 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
             </label>
           </div>
         </section>
-
-        {/* Student Data Section */}
+        {/* 同學資料 Section (for students) */}
         {userType === 'student' && (
-          <section className="space-y-6">
-            <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">同學資料</h3>
-            <div className="space-y-4">
+          <section className="space-y-4 sm:space-y-6">
+            <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-neutral-100">同學資料</h3>
+            <div className="space-y-3 sm:space-y-4">
               {students.map((student, index) => (
-                <div key={index} className="bg-gray-50 dark:bg-neutral-700 p-6 rounded-xl space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">同學 {index + 1}</h4>
-                    {index > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newStudents = students.filter((_, i) => i !== index);
-                          setStudents(newStudents);
-                        }}
-                        className="text-red-500 hover:text-red-700 text-sm"
-                        disabled={isLoading}
-                      >
-                        移除
-                      </button>
-                    )}
-                  </div>
-                  <label className="block">
-                    <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">同學稱呼</span>
-                    <Input
-                      type="text"
-                      placeholder="請輸入同學稱呼"
-                      className="w-full"
-                      value={student.studentName}
-                      onChange={(e) => handleStudentChange(index, "studentName", e.target.value)}
-                      disabled={isLoading}
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">同學年齡(5歲以上)</span>
-                    <Input
-                      type="number"
-                      placeholder="請輸入同學年齡"
-                      className="w-full"
-                      value={student.studentAge}
-                      onChange={(e) => handleStudentChange(index, "studentAge", parseInt(e.target.value))}
-                      disabled={isLoading}
-                    />
-                  </label>
+                <div key={index} className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center">
+                  <Input
+                    className="flex-1 text-sm sm:text-base"
+                    type="text"
+                    placeholder={`同學稱呼${students.length > 1 ? ` #${index + 1}` : ''}`}
+                    value={student.studentName}
+                    onChange={(e) => handleStudentChange(index, 'studentName', e.target.value)}
+                    disabled={isLoading}
+                  />
+                  <Input
+                    className="w-24 text-sm sm:text-base"
+                    type="number"
+                    placeholder="年齡"
+                    min={1}
+                    value={student.studentAge}
+                    onChange={(e) => handleStudentChange(index, 'studentAge', Number(e.target.value))}
+                    disabled={isLoading}
+                  />
                 </div>
               ))}
               <button
                 type="button"
+                className="text-blue-600 hover:underline text-sm sm:text-base"
                 onClick={addStudent}
-                className="w-full py-3 px-4 border border-gray-300 dark:border-neutral-600 rounded-xl text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-gray-50 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                 disabled={isLoading}
               >
                 + 新增同學
@@ -314,20 +288,12 @@ const SignupForm: FC<SignupFormProps> = ({ userType, onSubmit }) => {
             </div>
           </section>
         )}
-
-        <ButtonPrimary type="submit" className="w-full py-3 text-base" disabled={isLoading}>
-          {isLoading ? (
-            <div className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              處理中...
-            </div>
-          ) : "提交"}
-        </ButtonPrimary>
+        <div className="pt-2">
+          <ButtonPrimary type="submit" className="w-full text-sm sm:text-base py-2 sm:py-3" disabled={isLoading}>
+            {isLoading ? "處理中..." : "註冊"}
+          </ButtonPrimary>
+        </div>
       </form>
-
       <div className="text-center">
         <span className="text-sm text-neutral-600 dark:text-neutral-400">
           已有帳號?{" "}

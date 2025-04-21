@@ -134,31 +134,31 @@ const RecentReservationsPage = () => {
   return (
     <div className="bg-gray-50 dark:bg-neutral-900 flex flex-col">
       <div className="flex-1 flex items-center justify-center">
-        <div className="container max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6 min-h-[50vh]">
+        <div className="container max-w-5xl mx-auto px-2 sm:px-4 lg:px-8">
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-3 sm:p-6 min-h-[50vh]">
             {error && (
               <div className="mb-4 p-3 rounded bg-red-100 text-red-700 border border-red-300 text-center">
                 {error}
               </div>
             )}
             <div className="space-y-4">
-              <h2 className="text-3xl font-semibold text-center mb-4">近期預約</h2>
-              <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-6"></div>
-              <div className="space-y-4">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-4">近期預約</h2>
+              <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-4 sm:mb-6"></div>
+              <div className="space-y-3 sm:space-y-4">
                 {reservations.length === 0 ? (
                   <div className="flex items-center justify-center min-h-[20vh]">
-                    <span className="text-lg text-gray-500 dark:text-gray-300">沒有預約課程。</span>
+                    <span className="text-base sm:text-lg text-gray-500 dark:text-gray-300">沒有預約課程。</span>
                   </div>
                 ) : (
                   reservations.map((reservation) => (
                     <div
                       key={reservation.id}
-                      className="rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-[0_2px_12px_0_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_0_rgba(0,0,0,0.07)] transition-shadow duration-200 px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6"
-                      style={{ minHeight: '120px' }}
+                      className="rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-[0_2px_12px_0_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_0_rgba(0,0,0,0.07)] transition-shadow duration-200 px-3 sm:px-6 py-3 sm:py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6"
+                      style={{ minHeight: '100px' }}
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-3 mb-1">
-                          <span className="text-xl font-semibold text-gray-900 dark:text-white truncate">{reservation.studentName}</span>
+                        <div className="flex items-center space-x-2 sm:space-x-3 mb-1">
+                          <span className="text-base sm:text-xl font-semibold text-gray-900 dark:text-white truncate">{reservation.studentName}</span>
                           <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${getStatusColor(reservation.status)}`}>
                             {reservation.status === 'confirmed' ? '已確認' :
                               reservation.status === 'pending' ? '待確認' :
@@ -167,32 +167,28 @@ const RecentReservationsPage = () => {
                               reservation.status === 'requested' ? '配對導師中' : reservation.status}
                           </span>
                         </div>
-                        <div className="flex flex-col gap-y-1 text-gray-700 dark:text-gray-300 text-sm">
+                        <div className="flex flex-col gap-y-1 text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
                           <div>
                             <span className="font-medium">預約日期：</span>{reservation.bookingDate}
-                            <span className="ml-4 font-medium"></span>{TimeSlots.slotToDisplay(TimeSlots.slotToTime(reservation.time))}
+                            <span className="ml-2 sm:ml-4 font-medium"></span>{TimeSlots.slotToDisplay(TimeSlots.slotToTime(reservation.time))}
                           </div>
                           <div>
                             <span className="font-medium">上課類別：</span>{reservation.sectionDescription}
-                            {/*reservation.remark && <span className="ml-4 font-medium">備註：</span> {reservation.remark}*/}
                           </div>
                           <div>
                             <span className="font-medium">琴房：</span>{reservation.roomName}
-                            <span className="ml-4 font-medium">分區：</span>{reservation.district}
-                            {/*reservation.studioName && (
-                              <span className="ml-4 text-base text-gray-500 dark:text-gray-300 font-medium">{reservation.studioName}</span>
-                            )*/}
+                            <span className="ml-2 sm:ml-4 font-medium">分區：</span>{reservation.district}
                           </div>
                           <div>
                             <span className="font-medium">地址：</span>{reservation.address}
                           </div>
                         </div>
                       </div>
-                      <div className="flex flex-col items-end gap-2 min-w-[120px]">
+                      <div className="flex flex-col items-end gap-2 min-w-[90px] sm:min-w-[120px]">
                         {reservation.status !== 'cancelled' && reservation.status !== 'requestCanceled' && (
                           <button
                             onClick={() => handleCancelReservation(reservation.id)}
-                            className="inline-flex items-center px-5 py-2 border border-red-300 text-sm font-medium rounded-full text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 shadow-sm"
+                            className="inline-flex items-center px-3 sm:px-5 py-2 border border-red-300 text-xs sm:text-sm font-medium rounded-full text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 shadow-sm"
                             style={{ fontWeight: 500, letterSpacing: '0.02em' }}
                             disabled={cancelLoadingId === reservation.id}
                           >

@@ -7,6 +7,7 @@ import { Route } from '@/routers/types';
 import { ApiUtils } from '@/utils/ApiUtils';
 import { UserTypeUtils } from '@/utils/UserTypeUtils';
 import { TimeSlots } from '@/utils/timeSlots';
+
 interface ClassHistory {
   id: string;
   studentName: string;
@@ -125,17 +126,17 @@ const ClassHistoryPage = () => {
 
   return (
     <div className="bg-gray-50 dark:bg-neutral-900">
-      <div className="container max-w-5xl mx-auto py-0 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6">
+      <div className="container max-w-5xl mx-auto py-0 px-2 sm:px-4 lg:px-8">
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-3 sm:p-6">
           <div className="space-y-4">
-            <h2 className="text-3xl font-semibold text-center mb-4">上課紀錄</h2>
-            <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-6"></div>
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-4">上課紀錄</h2>
+            <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-4 sm:mb-6"></div>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-2 sm:gap-4">
               {/* Student List Column */}
               <div className="md:col-span-3">
-                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">學生列表</h3>
-                  <div className="md:hidden mb-3">
+                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-3 sm:p-4">
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2 sm:mb-3">學生列表</h3>
+                  <div className="md:hidden mb-2 sm:mb-3">
                     <select
                       value={selectedStudent || ''}
                       onChange={(e) => setSelectedStudent(e.target.value || null)}
@@ -155,7 +156,7 @@ const ClassHistoryPage = () => {
                       <button
                         key={getStudentKey(student)}
                         onClick={() => setSelectedStudent(getStudentKey(student))}
-                        className={`w-full text-left px-4 py-2 rounded-lg transition-colors duration-200 ${
+                        className={`w-full text-left px-3 sm:px-4 py-2 rounded-lg transition-colors duration-200 ${
                           selectedStudent === getStudentKey(student)
                             ? 'bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-100'
                             : 'hover:bg-gray-50 dark:hover:bg-neutral-700 text-gray-700 dark:text-gray-300'
@@ -171,9 +172,9 @@ const ClassHistoryPage = () => {
 
               {/* Class History Column */}
               <div className="md:col-span-9">
-                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">上課紀錄</h3>
-                  <div className="space-y-3">
+                <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-3 sm:p-4">
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2 sm:mb-3">上課紀錄</h3>
+                  <div className="space-y-2 sm:space-y-3">
                     {loading && <div className="text-center text-gray-400">載入中...</div>}
                     {error && <div className="text-center text-red-500">{error}</div>}
                     {!loading && !error && filteredHistory.length === 0 && (
@@ -182,11 +183,11 @@ const ClassHistoryPage = () => {
                     {!loading && !error && filteredHistory.map((history) => (
                       <div
                         key={history.id}
-                        className="rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-[0_2px_12px_0_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_0_rgba(0,0,0,0.07)] transition-shadow duration-200 px-4 sm:px-6 py-4 sm:py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6"
+                        className="rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-[0_2px_12px_0_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_0_rgba(0,0,0,0.07)] transition-shadow duration-200 px-3 sm:px-6 py-3 sm:py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6"
                       >
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <span className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate">{history.studentName}</span>
+                            <span className="text-base sm:text-xl font-semibold text-gray-900 dark:text-white truncate">{history.studentName}</span>
                             {/* Status badge */}
                             <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                               history.status === 'open' ? 'bg-green-100 text-green-800' :
@@ -194,8 +195,8 @@ const ClassHistoryPage = () => {
                               history.status === 'cancelled' ? 'bg-red-100 text-red-800' :
                               history.status === 'requestCanceled' ? 'bg-blue-100 text-blue-800' :
                               history.status === 'closed' ? 'bg-gray-100 text-gray-800' :
-                              'bg-gray-100 text-gray-800'}
-                            `}>
+                              'bg-gray-100 text-gray-800'
+                            }`}>
                               {history.status === 'open' ? '已確認' :
                                 history.status === 'pendingForComment' ? '待補上課後評估' :
                                 history.status === 'canceled' ? '已取消' :
@@ -203,23 +204,20 @@ const ClassHistoryPage = () => {
                                 history.status === 'closed' ? '已完成' : history.status}
                             </span>
                           </div>
-                          <div className="flex flex-col gap-y-1 text-gray-700 dark:text-gray-300 text-sm">
-                            <div className="flex flex-wrap gap-x-2 sm:gap-x-4">
-                              <div>
-                                <span className="font-medium">上課日期：</span>{history.date ? new Date(history.date).toLocaleDateString() : ''}
-                              </div>
-                              <div>
-                                <span className="font-medium">時間：</span> {  TimeSlots.slotToDisplay(TimeSlots.slotToTime(history.duration))}
-                              </div>
+                          <div className="flex flex-col gap-y-1 text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
+                            <div>
+                              <span className="font-medium">上課日期：</span>{history.date ? new Date(history.date).toLocaleDateString() : ''}
+                              <span className="ml-2 sm:ml-4 font-medium">{TimeSlots.slotToDisplay(TimeSlots.slotToTime(history.duration))}</span>
                             </div>
                             <div>
-                              <span className="font-medium">上課類別：</span>{history.location || '一般課堂'}
+                              <span className="font-medium">上課類別：</span>{history.location}
                             </div>
-                            {history.status === 'closed' && (
-                              <div>
-                                <span className="font-medium">課後評估：</span>{history.notes}
-                              </div>
-                            )}
+                            <div>
+                              <span className="font-medium">老師：</span>{history.teacher}
+                            </div>
+                            <div>
+                              <span className="font-medium">備註：</span>{history.notes}
+                            </div>
                           </div>
                         </div>
                       </div>

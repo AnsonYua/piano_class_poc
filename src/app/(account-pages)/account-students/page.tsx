@@ -85,27 +85,26 @@ const AccountStudentsPage = () => {
   };
 
   return (
-    <div className="nc-AccountStudentsPage max-w-4xl mx-auto">
+    <div className="nc-AccountStudentsPage max-w-full sm:max-w-4xl mx-auto p-2 sm:p-0">
       {/* HEADING */}
       <div className="relative mb-4">
-        <h2 className="text-3xl font-semibold text-center">同學資料</h2>
-        <Link href={"/account-students/add" as Route} className="absolute right-0 top-1/2 -translate-y-1/2 text-blue-600 hover:underline">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-center">同學資料</h2>
+        <Link href={"/account-students/add" as Route} className="absolute right-0 top-1/2 -translate-y-1/2 text-blue-600 hover:underline text-sm sm:text-base">
           新增同學
         </Link>
       </div>
-      <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-6"></div>
-      
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+      <div className="w-14 border-b border-neutral-200 dark:border-neutral-700 mx-auto mb-4 sm:mb-6"></div>
+      <div className="space-y-3 sm:space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-2 sm:gap-4">
           {/* Student List Column */}
           <div className="md:col-span-3">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">同學列表</h3>
-              <div className="md:hidden mb-3">
+            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-3 sm:p-4">
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2 sm:mb-3">同學列表</h3>
+              <div className="md:hidden mb-2 sm:mb-3">
                 <select
                   value={selectedStudent}
                   onChange={(e) => setSelectedStudent(e.target.value)}
-                  className="w-full p-2 border border-gray-300 dark:border-neutral-600 rounded-md"
+                  className="w-full p-2 border border-gray-300 dark:border-neutral-600 rounded-md text-sm sm:text-base"
                 >
                   <option value="">所有同學</option>
                   {students.map((student) => (
@@ -120,11 +119,11 @@ const AccountStudentsPage = () => {
                   <button
                     key={student.id}
                     onClick={() => setSelectedStudent(student.id)}
-                    className={`w-full text-left px-4 py-2 rounded-lg transition-colors duration-200 ${
+                    className={`w-full text-left px-3 sm:px-4 py-2 rounded-lg transition-colors duration-200 ${
                       selectedStudent === student.id
                         ? 'bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-100'
                         : 'hover:bg-gray-50 dark:hover:bg-neutral-700 text-gray-700 dark:text-gray-300'
-                    }`}
+                    } text-sm sm:text-base`}
                   >
                     {student.name}
                   </button>
@@ -135,14 +134,14 @@ const AccountStudentsPage = () => {
 
           {/* Student Details Column */}
           <div className="md:col-span-9">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">同學資料</h3>
+            <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-3 sm:p-4">
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2 sm:mb-3">同學資料</h3>
               <div className="space-y-3">
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                   <div>
                     <Label>同學姓名</Label>
                     <Input 
-                      className="mt-1.5" 
+                      className="mt-1.5 text-sm sm:text-base" 
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
@@ -150,11 +149,10 @@ const AccountStudentsPage = () => {
                       required
                     />
                   </div>
-                  
                   <div>
                     <Label>同學年齡</Label>
                     <Input 
-                      className="mt-1.5" 
+                      className="mt-1.5 text-sm sm:text-base" 
                       type="number"
                       name="age"
                       value={formData.age}
@@ -165,22 +163,19 @@ const AccountStudentsPage = () => {
                       required
                     />
                   </div>
-                  
                   {error && (
-                    <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-lg text-center">
+                    <div className="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-lg text-center text-sm sm:text-base">
                       {error}
                     </div>
                   )}
-                  
                   {successMessage && (
-                    <div className="bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 p-3 rounded-lg text-center">
+                    <div className="bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 p-3 rounded-lg text-center text-sm sm:text-base">
                       {successMessage}
                     </div>
                   )}
-                  
                   <div className="pt-2">
-                    <ButtonPrimary type="submit" className="w-full" disabled={isLoading}>
-                      {isLoading ? "處理中..." : "更新"}
+                    <ButtonPrimary type="submit" className="w-full text-sm sm:text-base py-2 sm:py-3" disabled={isLoading}>
+                      {isLoading ? "儲存中..." : "儲存"}
                     </ButtonPrimary>
                   </div>
                 </form>
