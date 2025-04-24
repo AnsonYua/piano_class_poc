@@ -31,7 +31,8 @@ const RoomAvailabilityPage = () => {
   const [time, setTime] = useState<string | null>(null);
   const [student, setStudent] = useState<string | null>(null);
   const [type, setType] = useState<string | null>(null);
-
+   
+  /*
   useEffect(() => {
     const fetchRooms = async () => {
       try {
@@ -101,6 +102,7 @@ const RoomAvailabilityPage = () => {
 
     fetchRooms();
   }, [searchParams]);
+  */
 
   return (
     <div className="bg-gray-100 dark:bg-neutral-900 min-h-0 md:min-h-screen lg:min-h-screen">
@@ -121,7 +123,7 @@ const RoomAvailabilityPage = () => {
         <div className="border-t border-gray-200 dark:border-neutral-700 my-8"></div>
         {isLoading ? (
           <div className="flex justify-center items-center min-h-[150px]">
-            <span className="text-lg text-gray-500">Loading...</span>
+            {/* <span className="text-lg text-gray-500">Loading...</span> */}
           </div>
         ) : error ? (
           <div className="flex justify-center items-center min-h-[150px]">

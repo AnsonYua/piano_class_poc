@@ -140,19 +140,21 @@ const DateInput: FC<DateInputProps> = ({
   const { activePopover, setActivePopover } = usePopover();
   const popoverId = "date-input";
 
-  const [date, setDate] = useState<Date | null>(() => {
-    // Try to get date from localStorage first
-    const savedDate = localStorage.getItem('selectedDate');
-    if (savedDate) {
-      const parsedDate = new Date(savedDate);
-      if (!isNaN(parsedDate.getTime())) {
-        return parsedDate;
+  const [date, setDate] = useState<Date | null>(defaultValue ?? null);
+
+  // Load date from localStorage on client only
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedDate = localStorage.getItem('selectedDate');
+      if (savedDate) {
+        const parsedDate = new Date(savedDate);
+        if (!isNaN(parsedDate.getTime())) {
+          setDate(parsedDate);
+        }
       }
     }
-    // If no valid date in localStorage, use defaultValue
-    return defaultValue;
-  });
-  
+  }, []);
+
   const showPopover = activePopover === popoverId;
 
   useEffect(() => {
